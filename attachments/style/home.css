@@ -1,5 +1,38 @@
 .session_action {position: absolute; right: 50px; top: 50px;}
 
+ul#landing_nav {
+  margin: 0;
+  padding: 0;
+  font-size: 14px; }
+  ul#landing_nav > li {
+    display: inline;
+    margin-right: 0.5em;
+    text-shadow: 0 1px 0 #ddd; }
+    ul#landing_nav > li a {
+      color: #000; }
+      ul#landing_nav > li a.login {
+        padding: 5px 8px;
+        -webkit-border-radius: 5px;
+        -moz-border-radius: 5px;
+        border-radius: 5px;
+        background-color: #DCF0F4;
+        border-top: 1px solid #D0E8F0;
+        -webkit-box-shadow: 0 1px 1px #ddd;
+        -moz-box-shadow: 0 1px 1px #ddd;
+        box-shadow: 0 1px 1px #ddd; }
+        ul#landing_nav > li a.login:hover {
+          background-color: #D0E8F0; }
+
+.account {cursor: pointer; -moz-border-radius: 2px; -webkit-border-radius: 2px; border-radius: 2px;}
+.account .option {float: left; min-width: 35px; height: 35px;}
+.account .option:hover { background: #DCF0F4; }
+.account .icon { opacity: 0.4; float: left; width: 35px; height: 35px; line-height: 35px; }
+.account .user_settings .icon { background: url('images/settings.png') center center no-repeat; }
+.account .gravatar {float: left}
+.account .gravatar img {margin: 4px; border: 1px solid #D0E8F0}
+.account .logout .icon { background: url('images/logout.png') center center no-repeat; }
+.account .username { float: left; margin-right: 4px; font-style: normal; color: #6D6D6C; line-height: 35px; }
+
 /*Copyright (c), Development Seed  
 All rights reserved.
 

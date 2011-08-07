@@ -86,27 +86,34 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. -->
   </script>
 
   <script type="text/mustache" class="loggedInTemplate">
-    <li class="avatar">
-      {{#gravatar_url}}<img src="{{gravatar_url}}" />{{/gravatar_url}}
-    </li>
-    <li><a href="#">{{nickname}}</a></li>
-    <li><a href="#logout">logout</a></li>
+    <div class="option user_profile">
+      <a href="#">
+        <div class="gravatar"><img src="{{gravatar_url}}" height="25" width="25"/></div>
+        <div class="username"><span>{{nickname}}</span></div>
+      </a>
+    </div>
+    <div class="option user_settings">
+      <a href="#settings"><div class="icon"></div></a>
+    </div>
+    <div class="option logout">
+      <a href="#logout"><div class="icon"></div></a>
+    </div>
   </script>
 
   <script type="text/mustache" class="loginButtonTemplate">
     <div class="right">
       <ul id="landing_nav">
-        <li><a href="#login" class="login">login</a></li>
+        <li><a href="#login" class="login">Log in with BrowserID</a></li>
       </ul>
     </div>
   </script>
 
   <script type="text/mustache" class="loggedOutTemplate">
-    <div class="container">You are logged out</p></div>
+    <!-- nothin here -->
   </script>
   
   <script type="text/mustache" class="profileReadyTemplate">
-    <a href="#logout">logout</a>
+    <!-- nothin here -->
   </script>
   
   <script type="text/mustache" class="newProfileFormTemplate">
