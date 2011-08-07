@@ -44,6 +44,7 @@ var monocles = function() {
           nickname : profile.nickname,
           gravatar_url : profile.gravatar_url
         });
+        util.render('userActions', 'user_actions')
       });
     } else if ( util.isAdminParty( session.userCtx ) ) {
       util.render( 'adminParty', 'account' );

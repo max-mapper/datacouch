@@ -50,11 +50,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. -->
     <a href='' class='logo'></a>
   </div>
   
-  <div class="session_action">
-    <div class="session_status"></div>
-    <ul class="account">
-    </ul>
-  </div>
+  <div class="userControls"></div>
 
   <div class='banner'>
     <ul class='limiter clearfix'>
@@ -79,6 +75,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. -->
   		<div class="dialog-content dialog-border"></div>
   	</div>
   </div>
+  
+  <script type="text/mustache" class="userControlsTemplate">
+    <div class="user_actions"></div>
+    <div class="session_actions">
+      <div class="session_status"></div>
+      <ul class="account">
+      </ul>
+    </div>
+  </script>
   
   <script type="text/mustache" class="adminPartyTemplate">
     <strong>Admin party, everyone is admin!</strong>
@@ -151,7 +156,32 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. -->
       </form>
     </div>
   </script>
-</body>
+  
+  <script type="text/mustache" class="userActionsTemplate">
+    <a href="#new">
+      <div class="option new_dataset">
+        <div class="icon"></div>
+        New Dataset
+      </div>
+    </a>
+  </script>
+  
+  <script type="text/mustache" class="newDatasetFormTemplate">
+    <div class="settings">
+      <form class="dataset_setup">
+        <h1>Create a new dataset</h1>
+        <label for="nickname">Give it a name:
+          <input type="text" name="nickname" value="{{nickname}}">
+        </label>
+        <input type="submit" class="button" value="Create  &rarr;">
+        <div class="cancel">or Cancel</div>
+        <input type="hidden" name="userCtxName" value="{{name}}" id="userCtxName">
+      </form>
+    </div>
+  </script>
+  
+  <script type="text/mustache" class="formLoadingTemplate">
+    <h1>Loading! Please hold on...</h1>
+  </script>
+  </body>
 </html>
-
-

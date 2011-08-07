@@ -18,11 +18,18 @@ app.handler = function(route) {
 
 app.routes = {
   home: function() {
+    util.render('userControls', 'userControls')
     monocles.fetchSession();
   },
   recline: function(id) {
     console.log("recline id", id);
     // recline.bootstrap();
+  },
+  new: function() {
+    monocles.ensureProfile().then(function(profile) {
+      util.show('dialog');
+      util.render( 'newDatasetForm', 'dialog-content' );
+    })
   },
   settings: function() {
     monocles.ensureProfile().then(function(profile) {
@@ -32,6 +39,7 @@ app.routes = {
   },
   logout: function() {
     couch.logout().then(function() {
+      util.render('userControls', 'userControls');
       delete app.session;
       $( '#header' ).data( 'profile', null );
       app.sammy.setLocation("#");
@@ -59,6 +67,18 @@ app.after = {
     })
     $( '.profile_setup' ).submit( function( e ) {
       monocles.updateProfile(app.profile.name, $( e.target ).serializeObject());
+      e.preventDefault();
+      util.hide('dialog');
+      app.sammy.setLocation("#");
+      return false;
+    });
+  },
+  newDatasetForm: function() {
+    $('.cancel').click(function(e) {
+      util.hide('dialog');
+      app.sammy.setLocation("#");
+    })
+    $( '.profile_setup' ).submit( function( e ) {
       e.preventDefault();
       util.hide('dialog');
       app.sammy.setLocation("#");
