@@ -112,25 +112,44 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. -->
     <!-- nothin here -->
   </script>
   
-  <script type="text/mustache" class="profileReadyTemplate">
-    <!-- nothin here -->
+  <script type="text/mustache" class="newProfileFormTemplate">
+    <div class="settings">
+      <form class="profile_setup">
+        <p>Hello {{name}}, Please setup your user profile.</p>
+        <label for="nickname">Username
+          <input type="text" name="nickname" value=""></label>
+        <label for="email">
+          Email (<em>for <a href="http://gravatar.com">Gravatar</a></em>)
+          <input type="text" name="email" value="{{name}}">
+        </label>
+        <label for="url">URL (<em>for shameless self promotion</em>)
+          <input type="text" name="url" value="">
+        </label>
+        <input type="submit" class="button" value="Save &rarr;">
+        <div class="cancel">or Cancel</div>
+        <input type="hidden" name="userCtxName" value="{{name}}" id="userCtxName">
+      </form>
+    </div>
   </script>
   
-  <script type="text/mustache" class="newProfileFormTemplate">
-    <form class="profile_setup">
-      <p>Hello {{name}}, Please setup your user profile.</p>
-      <label for="nickname">Nickname
-        <input type="text" name="nickname" value=""></label>
-      <label for="email">
-        Email (<em>for <a href="http://gravatar.com">Gravatar</a></em>)
-        <input type="text" name="email" value="{{name}}">
-      </label>
-      <label for="url">URL (<em>for shameless self promotion</em>)
-        <input type="text" name="url" value="">
-      </label>
-      <input type="submit" value="Go &rarr;">
-      <input type="hidden" name="userCtxName" value="{{name}}" id="userCtxName">
-    </form>
+  <script type="text/mustache" class="editProfileFormTemplate">
+    <div class="settings">
+      <form class="profile_setup">
+        <p>Editing {{name}}'s settings!</p>
+        <label for="nickname">Nickname
+          <input type="text" name="nickname" value="{{nickname}}"></label>
+        <label for="email">
+          Email (<em>for <a href="http://gravatar.com">Gravatar</a></em>)
+          <input type="text" name="email" value="{{email}}">
+        </label>
+        <label for="url">URL (<em>for shameless self promotion</em>)
+          <input type="text" name="url" value="{{url}}">
+        </label>
+        <input type="submit" class="button" value="Save &rarr;">
+        <div class="cancel">or Cancel</div>
+        <input type="hidden" name="userCtxName" value="{{name}}" id="userCtxName">
+      </form>
+    </div>
   </script>
 </body>
 </html>

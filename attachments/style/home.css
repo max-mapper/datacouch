@@ -23,6 +23,60 @@ ul#landing_nav {
         ul#landing_nav > li a.login:hover {
           background-color: #D0E8F0; }
 
+.settings {
+  width: 600px;
+  overflow: auto;
+  margin: 0 auto;
+  padding: 5% 0;}
+  .settings input:not(.button),
+  .settings textarea {
+    font-family: "Arial", "Helvetica", sans-serif;
+    padding: 0.3em;
+    display: block;
+    width: 95%;
+    border: 1px solid #cccccc;
+    height: auto;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px; }
+  .settings .cancel {margin-left: 5px; line-height: 40px; float: left}
+  .settings .cancel:hover { text-decoration: underline; cursor: pointer; cursor: hand; }
+  .settings input[type='hidden'] {
+    display: none; }
+  .settings input, .settings p {
+    margin-bottom: 10px },
+  .settings label {
+    margin-top: 15px;
+    font-weight: normal;
+    color: #999999;
+    text-shadow: 0 1px 1px #eeeeee; }
+  .settings form input,
+  .settings form label {
+    font-size: 21px; }
+  .settings form label {
+    top: 13px;
+    text-shadow: 0 1px 1px #cccccc; }
+  .settings form input[type='text'],
+  .settings form input[type='password'] {
+    -webkit-box-shadow: 0 1px 0px white, 0 -1px 0px #888888;
+    -moz-box-shadow: 0 1px 0px white, 0 -1px 0px #888888;
+    box-shadow: 0 1px 0px white, 0 -1px 0px #888888;}
+    .settings form p:last-child {
+      margin-left: 3px; }
+    .settings form p span.pod_location {
+      color: #888888; }
+    .settings .button {
+      float: left;
+      width: auto;
+      height: 40px;
+      border: 1px solid #ddd;
+      padding: 5px;
+      color: #666666;}
+      .settings .button:hover {
+        cursor: pointer; cursor: hand;
+        border-color: #000;
+        color: #444444; }
+
 .account {cursor: pointer; -moz-border-radius: 2px; -webkit-border-radius: 2px; border-radius: 2px;}
 .account .option {float: left; min-width: 35px; height: 35px;}
 .account .option:hover { background: #DCF0F4; }

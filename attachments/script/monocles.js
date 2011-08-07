@@ -38,7 +38,6 @@ var monocles = function() {
     }
     
     var session = app.session;
-        
     if ( session.userCtx.name ) {
       fetchProfile( session ).then( function( profile ) {
         util.render( 'loggedIn', 'account', {
@@ -52,6 +51,20 @@ var monocles = function() {
       util.render( 'loginButton', 'account' );
       util.render( 'loggedOut', 'session_status' );
     }
+  }
+  
+  function ensureProfile() {
+    var dfd = $.Deferred();
+    if( !app.session || !app.profile ) {
+      fetchSession().then(function(session) {
+        fetchProfile(session).then(function(profile) {
+          dfd.resolve(profile);
+        })
+      })
+    } else if (app.profile) {
+      dfd.resolve(app.profile);
+    }
+    return dfd.promise()
   }
 
   function fetchSession() {
@@ -68,7 +81,7 @@ var monocles = function() {
   
   // gets user's stored profile info from couch
   // asks them to fill out a form if it's their first login
-  function fetchProfile( session ) {
+  function fetchProfile(session) {
     var dfd = $.Deferred();
     couch.userDb().then(function(userDb) {
       userDb.get( "org.couchdb.user:" + session.userCtx.name).then(
@@ -79,7 +92,8 @@ var monocles = function() {
             // without publishing the entire userdoc (roles, pass, etc)
             profile.name = userDoc.name;
             profile.base_url = app.baseURL;
-            profileReady( profile );
+            app.profile = profile;
+            $( '#header' ).data( 'profile', profile );
             dfd.resolve( profile );
           } else {
             util.show('dialog');
@@ -91,43 +105,45 @@ var monocles = function() {
     return dfd.promise();
   }
   
-  function saveUser(form) {
-    var name = $( "input[name=userCtxName]", form ).val();
-    var newProfile = {
-      rand : Math.random().toString(), 
-      nickname : $( "input[name=nickname]", form ).val(),
-      email : $( "input[name=email]", form ).val(),
-      url : $( "input[name=url]", form ).val()
-    };
-
-    newProfile.gravatar_url = 'http://www.gravatar.com/avatar/' + md5.hex( newProfile.email || newProfile.rand ) + '.jpg?s=50&d=identicon';    
-
+  function gravatarURL(uuid) {
+    return 'http://www.gravatar.com/avatar/' + md5.hex( uuid ) + '.jpg?s=50&d=identicon';
+  }
+  
+  function updateProfile(username, profile) {
+    var dfd = $.Deferred();
     couch.userDb().then( function( userDb ) {
-      var userDocId = "org.couchdb.user:" + encodeURIComponent(name);
+      var userDocId = "org.couchdb.user:" + encodeURIComponent(username);
       userDb.get( userDocId ).then(
         function( userDoc ) {
-          userDoc[ "couch.app.profile" ] = newProfile;
-          userDb.save( userDoc ).then(
-            function(resp) {
-              newProfile.name = userDoc.name;
-              util.render( 'loggedIn', 'account', {
-                nickname : newProfile.nickname,
-                gravatar_url : newProfile.gravatar_url
-              });
-              profileReady( newProfile );
-            }
-          );
+          if (!userDoc["couch.app.profile"]) userDoc["couch.app.profile"] = {};
+          profile.gravatar_url = gravatarURL(profile.email || profile.rand);
+          $.extend(userDoc["couch.app.profile"], profile);
+          userDb.save( userDoc ).then(function(resp) {
+            fetchProfile(app.session).then(function(updatedProfile) {
+              dfd.resolve(updatedProfile);
+            })
+          });
         }
       )
     });
+    return dfd.promise();
   }
   
-  function profileReady( profile ) {
-    app.profile = profile;
-    $( '#header' ).data( 'profile', profile );
-    util.render( 'profileReady', 'session_status', profile )
+  function generateProfile(form) {
+    var newProfile = form.serializeObject();
+    var name = newProfile.userCtxName;
+    delete newProfile.userCtxName;
+    newProfile.rand = Math.random().toString(); 
+    updateProfile(name, newProfile).then(
+      function(resp) {
+        util.render( 'loggedIn', 'account', {
+          nickname : newProfile.nickname,
+          gravatar_url : newProfile.gravatar_url
+        });
+      }
+    );
   }
-  
+
   function switchNav(route) {
     var nav = $("#aspect_nav ul");
     nav.find(".selected").removeClass('selected');
@@ -535,10 +551,11 @@ var monocles = function() {
     userProfile: userProfile,
     showLogin: showLogin,
     showSessionStatus: showSessionStatus,
+    ensureProfile: ensureProfile,
     fetchSession: fetchSession,
     fetchProfile: fetchProfile,
-    saveUser: saveUser,
-    profileReady: profileReady,
+    updateProfile: updateProfile,
+    generateProfile: generateProfile,
     switchNav: switchNav,
     initFileUpload: initFileUpload,
     subscribeHub: subscribeHub,

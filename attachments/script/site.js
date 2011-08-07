@@ -11,7 +11,7 @@ app.handler = function(route) {
   if (route.params && route.params.route) {
     var path = route.params.route;
     app.routes[path](route.params.id);
-  } else {
+  } else {    
     app.routes['home']();
   }  
 };
@@ -24,6 +24,12 @@ app.routes = {
     console.log("recline id", id);
     // recline.bootstrap();
   },
+  settings: function() {
+    monocles.ensureProfile().then(function(profile) {
+      util.show('dialog');
+      util.render( 'editProfileForm', 'dialog-content', profile );
+    })    
+  },
   logout: function() {
     couch.logout().then(function() {
       delete app.session;
@@ -35,9 +41,27 @@ app.routes = {
 
 app.after = {
   newProfileForm: function() {
+    $('.cancel').click(function(e) {
+      util.hide('dialog');
+      app.sammy.setLocation("#");
+    })
     $( '.profile_setup' ).submit( function( e ) {
-      monocles.saveUser( $( e.target ) );
+      monocles.generateProfile( $( e.target ) );
       e.preventDefault();
+      util.hide('dialog');
+      return false;
+    });
+  },
+  editProfileForm: function() {
+    $('.cancel').click(function(e) {
+      util.hide('dialog');
+      app.sammy.setLocation("#");
+    })
+    $( '.profile_setup' ).submit( function( e ) {
+      monocles.updateProfile(app.profile.name, $( e.target ).serializeObject());
+      e.preventDefault();
+      util.hide('dialog');
+      app.sammy.setLocation("#");
       return false;
     });
   },
