@@ -10,8 +10,10 @@ ddoc =
     , {from:"/api/json", to:'_list/bulkDocs/all'}
     , {from:"/api/headers", to:'_list/array/headers', query: {group: "true"}}
     , {from:"/api/rows", to:'_view/all'}
-    , {from:"/api", to:'../../'}
-    , {from:"/api/*", to:'../../*'}
+    , {from:"/api/couch", to:"../../../"}
+    , {from:"/api/couch/*", to:"../../../*"}
+    , {from:"/api", to:"../../"}
+    , {from:"/api/*", to:"../../*"}
     , {from:"/*", to:'*'}
     ]
   }

@@ -174,31 +174,8 @@ var recline = function() {
     });
     return dfd.promise();
   }
-
-  function populatePouch() {
-    createCouch( 
-      { name: "recline"
-      , success: function (db) {
-        app.db = db;
-        console.log(db)
-        // couch.request({url: app.baseURL + "api/json"}).then(function(docs) {
-        //   console.log(docs)
-          // db.changes({onChange:function (change) {
-          //   console.log('change', change)
-          // }, error:function(e) {console.log(e)}})
-          // db.bulk(docs.docs, {success:function (infos) {
-          //   console.log('success', infos)
-          // }})
-        // })
-      }
-      , error: function (error) { console.log('err', error) }
-    })
-  }
   
   function bootstrap() {
-    populatePouch();
-    
-    util.registerEmitter();
     util.listenFor(['esc', 'return']);
     
     getDbInfo().then(function( dbInfo ) {

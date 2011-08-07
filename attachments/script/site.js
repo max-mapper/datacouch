@@ -1,7 +1,11 @@
 var app = {
 	baseURL: util.getBaseURL(document.location.pathname),
-	container: 'main_content'
+	container: 'main_content',
+	emitter: util.registerEmitter()
 };
+
+couch.dbPath = app.baseURL + "api/";
+couch.rootPath = couch.dbPath + "couch/";
 
 app.handler = function(route) {
   if (route.params && route.params.route) {
@@ -14,11 +18,35 @@ app.handler = function(route) {
 
 app.routes = {
   home: function() {
-    recline.bootstrap();
+    monocles.fetchSession();
+  },
+  recline: function(id) {
+    console.log("recline id", id);
+    // recline.bootstrap();
+  },
+  logout: function() {
+    couch.logout().then(function() {
+      delete app.session;
+      $( '#header' ).data( 'profile', null );
+      app.sammy.setLocation("#");
+    })
   }
 }
 
 app.after = {
+  newProfileForm: function() {
+    $( '.profile_setup' ).submit( function( e ) {
+      monocles.saveUser( $( e.target ) );
+      e.preventDefault();
+      return false;
+    });
+  },
+  loginButton: function() {
+    $('.login').click(function(e) {
+      monocles.showLogin();
+      return false;
+    })
+  },
   tableContainer: function() {
     recline.activateControls();
   },
@@ -246,6 +274,5 @@ app.sammy = $.sammy(function () {
 });
 
 $(function() {
-  util.traverse = require('traverse');
   app.sammy.run();  
 })

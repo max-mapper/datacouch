@@ -32,41 +32,99 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. -->
   <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
   <title>DataCouch | Home</title>
   <script type='text/javascript' src='script/lib/jquery-1.6.1.min.js'></script>
+  <script type='text/javascript' src='script/lib/jquery.couch2.js'></script>
+  <script type='text/javascript' src='script/lib/sammy-0.6.3.min.js'></script>
+  <script type='text/javascript' src='script/lib/jquery.mustache.js'></script>
+  <script type='text/javascript' src='script/lib/microevent.js'></script>
+  <script type="text/javascript" src="script/lib/md5.js"></script>
+  <script src="https://browserid.org/include.js" type="text/javascript"></script>
+  <script type='text/javascript' src='script/util.js'></script>
+  <script type='text/javascript' src='script/site.js'></script>
+  <script type='text/javascript' src='script/monocles.js'></script>
   <link rel='shortcut icon' href='images/favicon.ico' type='image/x-icon' />
   <link rel='stylesheet' media='all' href='style/reset.css' />
   <link rel='stylesheet' media='all' href='style/home.css' />
 </head>
 <body>
-<div class='header limiter'>
-  <a href='' class='logo'></a>
-</div>
+  <div class='header limiter'>
+    <a href='' class='logo'></a>
+  </div>
+  
+  <div class="session_action">
+    <div class="session_status"></div>
+    <ul class="account">
+    </ul>
+  </div>
 
-<div class='banner'>
+  <div class='banner'>
+    <ul class='limiter clearfix'>
+      <li class='first'>
+        <strong>Open Data</strong><br/>
+        Turn spreadsheets into APIs and share them with anyone in the world
+      </li>
+      <li>
+        <strong>Dataset Forking</strong><br/>
+        Let others fork, edit and send you back enhanced versions of your data
+      </li>
+      <li class='last'>
+        <strong>Free for public data</strong><br/>
+        As long as you share your data we will host it for free (until we run out of money). Our entire platform is open source so you can even run your own DataCouch
+      </li>
+    </ul>
+  </div>
+  
+  <div class="dialog-overlay" style="display: none; z-index: 101; ">&nbsp;</div>
+  <div class="dialog ui-draggable" style="display: none; z-index: 102; top: 101px; ">
+  	<div class="dialog-frame" style="width: 700px; visibility: visible; ">
+  		<div class="dialog-content dialog-border"></div>
+  	</div>
+  </div>
+  
+  <script type="text/mustache" class="adminPartyTemplate">
+    <strong>Admin party, everyone is admin!</strong>
+    Fix this in <a href="/_utils/index.html">Futon</a> before proceeding.
+  </script>
 
-  <ul class='limiter clearfix'>
-    <li class='first'>
-      <strong>Open Data</strong><br/>
-      Turn spreadsheets into APIs and share them with anyone in the world
+  <script type="text/mustache" class="loggedInTemplate">
+    <li class="avatar">
+      {{#gravatar_url}}<img src="{{gravatar_url}}" />{{/gravatar_url}}
     </li>
-    <li>
-      <strong>Dataset Forking</strong><br/>
-      Let others fork, edit and send you back enhanced versions of your data
-    </li>
-    <li class='last'>
-      <strong>Free for public data</strong><br/>
-      As long as you share your data we will host it for free (until we run out of money). Our entire platform is open source so you can even run your own DataCouch
-    </li>
-  </ul>
-</div>
+    <li><a href="#">{{nickname}}</a></li>
+    <li><a href="#logout">logout</a></li>
+  </script>
 
-<div class='limiter'>
+  <script type="text/mustache" class="loginButtonTemplate">
+    <div class="right">
+      <ul id="landing_nav">
+        <li><a href="#login" class="login">login</a></li>
+      </ul>
+    </div>
+  </script>
 
-<h1>Coming soon</h1>
-<p>...to a distributed data ecosystem near you</p>
-
-</div>
-
-</div>
+  <script type="text/mustache" class="loggedOutTemplate">
+    <div class="container">You are logged out</p></div>
+  </script>
+  
+  <script type="text/mustache" class="profileReadyTemplate">
+    <a href="#logout">logout</a>
+  </script>
+  
+  <script type="text/mustache" class="newProfileFormTemplate">
+    <form class="profile_setup">
+      <p>Hello {{name}}, Please setup your user profile.</p>
+      <label for="nickname">Nickname
+        <input type="text" name="nickname" value=""></label>
+      <label for="email">
+        Email (<em>for <a href="http://gravatar.com">Gravatar</a></em>)
+        <input type="text" name="email" value="{{name}}">
+      </label>
+      <label for="url">URL (<em>for shameless self promotion</em>)
+        <input type="text" name="url" value="">
+      </label>
+      <input type="submit" value="Go &rarr;">
+      <input type="hidden" name="userCtxName" value="{{name}}" id="userCtxName">
+    </form>
+  </script>
 </body>
 </html>
 

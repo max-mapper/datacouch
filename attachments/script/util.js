@@ -24,6 +24,11 @@ var util = function() {
     return exists;
   }
   
+  // true if no admins exist in the database
+  function isAdminParty( userCtx ) {
+    return userCtx.roles.indexOf("_admin") !== -1;
+  }
+  
   function registerEmitter() {
     var Emitter = function(obj) {
       this.emit = function(obj, channel) { 
@@ -32,7 +37,7 @@ var util = function() {
       };
     };
     MicroEvent.mixin(Emitter);
-    app.emitter = new Emitter();
+    return new Emitter();
   }
   
   function listenFor(keys) {
@@ -360,6 +365,7 @@ var util = function() {
   
   return {
     inURL: inURL,
+    isAdminParty: isAdminParty,
     registerEmitter: registerEmitter,
     listenFor: listenFor,
     show: show,
