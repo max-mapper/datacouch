@@ -85,12 +85,25 @@ app.after = {
         user: app.session.userCtx.name
       }
       couch.request({url: app.baseURL + "api", type: "POST", data: JSON.stringify(doc)}).then(function(resp) {
-        console.log('resssp', resp);
+        var dbName = encodeURIComponent(util.emailToDB(doc.user) + "/" + doc.name);
+        function waitForDB(url) {
+          couch.request({url: url, type: "HEAD"}).then(
+            function(resp, status){
+              console.log("created successfully", resp, status);
+              util.hide('dialog');
+              app.sammy.setLocation("#");
+            },
+            function(resp, status){
+              console.log("not created yet...", resp, status);
+              setTimeout(function() {
+                waitForDB(url);
+              }, 1000);
+            }
+          )
+        }
+        waitForDB(couch.rootPath + dbName);
       })
-      
       e.preventDefault();
-      util.hide('dialog');
-      app.sammy.setLocation("#");
       return false;
     });
   },

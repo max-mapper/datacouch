@@ -16,12 +16,16 @@ follow({db:db, include_docs:true}, function(error, change) {
   if (error || change.deleted || !("doc" in change)) return;
   if (!("type" in change.doc)) return;
   if (change.doc.type !== "newDB") return;
-  
   var doc = change.doc;
   var dbName = couch + "/" + encodeURIComponent(emailToDB(doc.user) + "/" + doc.name);
-  console.log('creating ' + dbName);
-  request({uri: dbName, method: "PUT", headers: h}, function (err, resp, body) {
-    console.log(body);
+  request({uri: dbName, method: "HEAD", headers: h}, function(err, resp, body) {
+    if(resp.statusCode === 404) {
+      console.log('creating ' + dbName);
+      request({uri: dbName, method: "PUT", headers: h}, function (err, resp, body) {
+        if (err) throw new Error('ahh!! ' + err);
+        if (!JSON.parse(body).ok) throw new Error('error creating: ' + body);
+      })
+    }
   })
 })
 
