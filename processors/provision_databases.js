@@ -30,7 +30,7 @@ follow({db:db, include_docs:true}, function(error, change) {
       createDB(dbPath).then(function(response) {
         copyCouchapp(couch, "_design/recline", "apps", dbName).then(function(created) {
           console.log("created " + dbName + " in " + (new Date() - start_time) + "ms");
-        }); 
+        });
       })
     }
   })

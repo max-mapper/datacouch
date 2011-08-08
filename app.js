@@ -7,6 +7,8 @@ ddoc =
   , rewrites :
     [ {from:"/", to:'pages/index.html'}
     , {from:"/edit", to:"pages/recline.html"}
+    , {from:"/api/datasets/:user", to:"_view/by_user", query:{startkey:":user", endkey:":user"}}
+    , {from:"/api/user/*", to:"../../../*"}
     , {from:"/api/couch", to:"../../../"}
     , {from:"/api/couch/*", to:"../../../*"}
     , {from:"/api", to:"../../"}
@@ -45,6 +47,16 @@ ddoc.views = {
       }
     },
     reduce: "_sum"
+  },
+  by_user: {
+    map: function(doc) {
+      if(doc.type === "database") emit(doc.user, doc.name);
+    }
+  },
+  by_date: {
+    map: function(doc) {
+      if(doc.type === "database") emit(doc.created_at, doc.name);
+    }
   }
 };
 

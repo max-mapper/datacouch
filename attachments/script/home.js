@@ -19,6 +19,16 @@ app.handler = function(route) {
 app.routes = {
   home: function() {
     monocles.fetchSession();
+    app.emitter.on('login', function(name) {
+      couch.request({url: app.baseURL + "/api/datasets/" + name}).then(function(resp) {
+        var datasets = _.map(resp.rows, function(row) {
+          row.url = app.baseURL + 'edit#/' + row.id;
+          return row;
+        })
+        util.render('datasets','datasets', {datasets: datasets});
+      })
+      app.emitter.clear('login');
+    })
   },
   recline: function(id) {
     console.log("recline id", id);
@@ -85,7 +95,8 @@ app.after = {
         _id: "dc"+docID,
         name: form.name,
         type: "database",
-        user: app.session.userCtx.name
+        user: app.session.userCtx.name,
+        createdAt: new Date()
       }
       couch.request({url: app.baseURL + "api/" + doc._id, type: "PUT", data: JSON.stringify(doc)}).then(function(resp) {
         var dbID = resp.id

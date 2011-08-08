@@ -15,6 +15,7 @@
 .account .logout .icon { background: url('images/logout.png') center center no-repeat; }
 .account .username { float: left; margin-right: 4px; font-style: normal; color: #6D6D6C; line-height: 35px; }
 
+.datasets { margin: 0px 50px }
 
 ul#landing_nav {
   margin: 0;
@@ -406,6 +407,7 @@ ul.download {
   }
 
 .download li {
+  margin: 0px 10px;
   float:left;
   border:1px solid #ccc;
   width:310px;

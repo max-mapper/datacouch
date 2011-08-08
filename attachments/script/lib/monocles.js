@@ -48,6 +48,7 @@ $(function(){
             nickname : profile.nickname,
             gravatar_url : profile.gravatar_url
           });
+          app.emitter.emit(profile.name, 'login');
           util.render('userActions', 'user_actions')
         });
       } else if ( util.isAdminParty( session.userCtx ) ) {
