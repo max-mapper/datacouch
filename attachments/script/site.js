@@ -81,23 +81,23 @@ app.after = {
       var form = $( e.target ).serializeObject();
       var doc = {
         name: form.name,
-        type: "newDB",
+        type: "database",
         user: app.session.userCtx.name
       }
       couch.request({url: app.baseURL + "api", type: "POST", data: JSON.stringify(doc)}).then(function(resp) {
-        var dbName = encodeURIComponent(util.emailToDB(doc.user) + "/" + doc.name);
+        var dbName = resp.id + "/_design/recline";
         function waitForDB(url) {
           couch.request({url: url, type: "HEAD"}).then(
             function(resp, status){
               console.log("created successfully", resp, status);
-              util.hide('dialog');
+              $('.dialog-content').html(dbName)
               app.sammy.setLocation("#");
             },
             function(resp, status){
               console.log("not created yet...", resp, status);
               setTimeout(function() {
                 waitForDB(url);
-              }, 1000);
+              }, 500);
             }
           )
         }
