@@ -88,13 +88,13 @@ app.after = {
         user: app.session.userCtx.name
       }
       couch.request({url: app.baseURL + "api/" + doc._id, type: "PUT", data: JSON.stringify(doc)}).then(function(resp) {
-        var dbName = resp.id + "/_design/recline";
+        var dbID = resp.id
+          , dbName = dbID + "/_design/recline"
+          ;
         function waitForDB(url) {
           couch.request({url: url, type: "HEAD"}).then(
             function(resp, status){
-              console.log("created successfully", resp, status);
-              $('.dialog-content').html(dbName)
-              app.sammy.setLocation("#");
+              app.sammy.setLocation(app.baseURL + 'edit#/' + dbID);
             },
             function(resp, status){
               console.log("not created yet...", resp, status);
@@ -104,6 +104,7 @@ app.after = {
             }
           )
         }
+        $('.dialog-content').html('Creating dataset...')
         waitForDB(couch.rootPath + dbName);
       })
       e.preventDefault();
