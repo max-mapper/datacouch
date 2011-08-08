@@ -37,6 +37,7 @@ var monocles = function() {
       return;
     }
     
+    util.render('userControls', 'userControls');
     var session = app.session;
     if ( session.userCtx.name ) {
       fetchProfile( session ).then( function( profile ) {

@@ -24,6 +24,10 @@ var util = function() {
     return exists;
   }
   
+  function emailToDB(email) {
+    return email.replace(/@/ig, "/").replace(/\./ig, "$");
+  }
+  
   // true if no admins exist in the database
   function isAdminParty( userCtx ) {
     return userCtx.roles.indexOf("_admin") !== -1;
@@ -365,6 +369,7 @@ var util = function() {
   
   return {
     inURL: inURL,
+    emailToDB: emailToDB,
     isAdminParty: isAdminParty,
     registerEmitter: registerEmitter,
     listenFor: listenFor,

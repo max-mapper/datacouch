@@ -18,7 +18,6 @@ app.handler = function(route) {
 
 app.routes = {
   home: function() {
-    util.render('userControls', 'userControls')
     monocles.fetchSession();
   },
   recline: function(id) {
@@ -78,7 +77,17 @@ app.after = {
       util.hide('dialog');
       app.sammy.setLocation("#");
     })
-    $( '.profile_setup' ).submit( function( e ) {
+    $( '.dataset_setup' ).submit( function( e ) {
+      var form = $( e.target ).serializeObject();
+      var doc = {
+        name: form.name,
+        type: "newDB",
+        user: app.session.userCtx.name
+      }
+      couch.request({url: app.baseURL + "api", type: "POST", data: JSON.stringify(doc)}).then(function(resp) {
+        console.log('resssp', resp);
+      })
+      
       e.preventDefault();
       util.hide('dialog');
       app.sammy.setLocation("#");
