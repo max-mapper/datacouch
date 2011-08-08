@@ -107,7 +107,7 @@ app.after = {
       util.notify("Signing you in...", {persist: true, loader: true});
       var form = $(e.target).parents('.dialog-content').find('#sign-in-form');
       var credentials = {
-        username: form.find('#username-input').val(), 
+        name: form.find('#username-input').val(), 
         password: form.find('#password-input').val()
       }
       couch.login(credentials).then(function(response) {

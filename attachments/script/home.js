@@ -73,6 +73,8 @@ app.after = {
     });
   },
   newDatasetForm: function() {
+    var docID;
+    couch.request({url: couch.rootPath + "_uuids"}).then( function( data ) { docID = data.uuids[ 0 ] });
     $('.cancel').click(function(e) {
       util.hide('dialog');
       app.sammy.setLocation("#");
@@ -80,11 +82,12 @@ app.after = {
     $( '.dataset_setup' ).submit( function( e ) {
       var form = $( e.target ).serializeObject();
       var doc = {
+        _id: "dc"+docID,
         name: form.name,
         type: "database",
         user: app.session.userCtx.name
       }
-      couch.request({url: app.baseURL + "api", type: "POST", data: JSON.stringify(doc)}).then(function(resp) {
+      couch.request({url: app.baseURL + "api/" + doc._id, type: "PUT", data: JSON.stringify(doc)}).then(function(resp) {
         var dbName = resp.id + "/_design/recline";
         function waitForDB(url) {
           couch.request({url: url, type: "HEAD"}).then(

@@ -114,11 +114,14 @@ var costco = function() {
       var reader = new FileReader();
       reader.readAsText(file);
       reader.onload = function(event) {
+        var base = window.location.href;
+        if (base.indexOf("_rewrite") > 0) base = base.split('_rewrite')[0];
+        if (base.indexOf("#") > 0) base = base.split('#')[0];
         var payload = {
-          url: window.location.href + app.dbPath + "/_bulk_docs", // todo more robust url composition
+          url: base + app.dbPath + "/_bulk_docs", // todo more robust url composition
           data: event.target.result
         };
-        var worker = new Worker('script/costco-csv-worker.js');
+        var worker = new Worker('script/lib/costco-csv-worker.js');
         worker.onmessage = function(message) {
           message = JSON.parse(message.data);
           if(message.done) {

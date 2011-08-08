@@ -1,4 +1,4 @@
-importScripts('lib/underscore.js'); 
+importScripts('underscore.js'); 
 
 onmessage = function(message) {
   var rows = message.data.data.split('\n');

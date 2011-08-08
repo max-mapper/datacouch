@@ -28,7 +28,6 @@ ddoc.validate_doc_update = function (newDoc, oldDoc, userCtx) {
   }
 };
 
-
 ddoc.views = {
   /**
    * A simple map function mocking _all, but allows usage with lists etc.
@@ -126,7 +125,6 @@ ddoc.lists = {
       if ('callback' in req.query) send(")");
   }
 }
-
 
 couchapp.loadAttachments(ddoc, path.join(__dirname, 'attachments'));
 
