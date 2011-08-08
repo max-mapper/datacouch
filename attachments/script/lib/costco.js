@@ -63,7 +63,7 @@ var costco = function() {
   function updateDocs(editFunc) {
     var dfd = $.Deferred();
     util.notify("Download entire database into Recline. This could take a while...", {persist: true, loader: true});
-    couch.request({url: app.baseURL + "api/json"}).then(function(docs) {
+    couch.request({url: app.dbPath + "/json"}).then(function(docs) {
       util.notify("Updating " + docs.docs.length + " documents. This could take a while...", {persist: true, loader: true});
       var toUpdate = costco.mapDocs(docs.docs, editFunc).edited;
       costco.uploadDocs(toUpdate).then(
@@ -82,13 +82,13 @@ var costco = function() {
   }
   
   function updateDoc(doc) {
-    return couch.request({type: "PUT", url: app.baseURL + "api/" + doc._id, data: JSON.stringify(doc)})    
+    return couch.request({type: "PUT", url: app.dbPath + "/" + doc._id, data: JSON.stringify(doc)})    
   }
 
   function uploadDocs(docs) {
     var dfd = $.Deferred();
     if(!docs.length) dfd.resolve("Failed: No docs specified");
-    couch.request({url: app.baseURL + "api/_bulk_docs", type: "POST", data: JSON.stringify({docs: docs})})
+    couch.request({url: app.dbPath + "/_bulk_docs", type: "POST", data: JSON.stringify({docs: docs})})
       .then(
         function(resp) {ensureCommit().then(function() { dfd.resolve(resp) })}, 
         function(err) { dfd.reject(err.responseText) }
@@ -97,7 +97,7 @@ var costco = function() {
   }
   
   function ensureCommit() {
-    return couch.request({url: app.baseURL + "api/_ensure_full_commit", type:'POST', data: "''"});
+    return couch.request({url: app.dbPath + "/_ensure_full_commit", type:'POST', data: "''"});
   }
   
   function deleteColumn(name) {
@@ -115,7 +115,7 @@ var costco = function() {
       reader.readAsText(file);
       reader.onload = function(event) {
         var payload = {
-          url: window.location.href + "/api/_bulk_docs", // todo more robust url composition
+          url: window.location.href + app.dbPath + "/_bulk_docs", // todo more robust url composition
           data: event.target.result
         };
         var worker = new Worker('script/costco-csv-worker.js');

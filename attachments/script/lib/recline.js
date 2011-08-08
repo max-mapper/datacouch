@@ -20,7 +20,7 @@ var recline = function() {
         bulkEdit: function() { showDialog('bulkEdit', {name: app.currentColumn}) },
         transform: function() { showDialog('transform') },
         csv: function() { window.location.href = app.csvUrl },
-        json: function() { window.location.href = "_rewrite/api/json" },
+        json: function() { window.location.href = app.dbPath + "/json" },
         urlImport: function() { showDialog('urlImport') },
         pasteImport: function() { showDialog('pasteImport') },
         uploadImport: function() { showDialog('uploadImport') },
@@ -138,7 +138,7 @@ var recline = function() {
     
     if (skip) $.extend( query, {"skip": skip});
     
-    var req = {url: app.baseURL + 'api/rows?' + $.param(query)};
+    var req = {url: app.dbPath + '/rows?' + $.param(query)};
     
     couch.request(req).then(function(response) {
       var offset = response.offset + 1;
@@ -150,7 +150,7 @@ var recline = function() {
   }
   
   function updateDocCount(totalDocs) {
-    return couch.request({url: app.baseURL + 'api/_all_docs?' + $.param({startkey: '"_design/"', endkey: '"_design0"'})}).then(
+    return couch.request({url: app.dbPath + '/_all_docs?' + $.param({startkey: '"_design/"', endkey: '"_design0"'})}).then(
       function ( data ) {
         var ddocCount = data.rows.length;
         $('#docCount').text(totalDocs - ddocCount + " documents");
@@ -160,7 +160,7 @@ var recline = function() {
   
   function getDbInfo() {
     var dfd = $.Deferred();
-    return couch.request({url: app.baseURL + "api"}).then(function(dbInfo) {
+    return couch.request({url: app.dbPath}).then(function(dbInfo) {
       app.dbInfo = dbInfo;
 
       $.extend(app.dbInfo, {
@@ -175,7 +175,9 @@ var recline = function() {
     return dfd.promise();
   }
   
-  function bootstrap() {
+  function bootstrap(id) {
+    app.dbPath = app.baseURL + "db/" + id;
+    
     util.listenFor(['esc', 'return']);
     
     getDbInfo().then(function( dbInfo ) {
@@ -201,13 +203,13 @@ var recline = function() {
   
   function initializeTable(offset) {
     showDialog('busy');
-    couch.request({url: app.baseURL + 'api/headers'}).then(function ( headers ) {
+    couch.request({url: app.dbPath + '/headers'}).then(function ( headers ) {
       util.hide('dialog');
       getDbInfo().then(function(dbInfo) { 
         updateDocCount(dbInfo.doc_count);
       });
       app.headers = headers;
-      app.csvUrl = app.baseURL + 'api/csv?headers=' + escape(JSON.stringify(headers));
+      app.csvUrl = app.dbPath + '/csv?headers=' + escape(JSON.stringify(headers));
       util.render( 'actions', 'project-actions', $.extend({}, app.dbInfo, {url: app.csvUrl}) );    
       fetchRows(false, offset);
     })
