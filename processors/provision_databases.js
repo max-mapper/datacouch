@@ -18,10 +18,10 @@ follow({db:db, include_docs:true}, function(error, change) {
   if (change.doc.type !== "newDB") return;
   
   var doc = change.doc;
-
-  console.log('creating ' + couch + "/" + emailToDB(doc.user) + "/" + doc.name)
-  request({uri: couch + "/" + emailToDB(doc.user) + "/" + doc.name, type: "PUT"}, function (err, resp, body) {
-    console.log(err, resp, body);
+  var dbName = couch + "/" + encodeURIComponent(emailToDB(doc.user) + "/" + doc.name);
+  console.log('creating ' + dbName);
+  request({uri: dbName, method: "PUT", headers: h}, function (err, resp, body) {
+    console.log(body);
   })
 })
 
