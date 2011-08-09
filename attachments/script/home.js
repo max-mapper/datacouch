@@ -16,19 +16,32 @@ app.handler = function(route) {
   }  
 };
 
+app.showDatasets = function(name) {
+  return couch.request({url: app.baseURL + "/api/datasets/" + name}).then(function(resp) {
+    var datasets = _.map(resp.rows, function(row) {
+      row.url = app.baseURL + 'edit#/' + row.id;
+      return row;
+    })
+    util.render('datasets','datasets', {name: name, datasets: datasets});
+  })
+}
+
 app.routes = {
   home: function() {
-    monocles.fetchSession();
-    app.emitter.on('login', function(name) {
-      couch.request({url: app.baseURL + "/api/datasets/" + name}).then(function(resp) {
-        var datasets = _.map(resp.rows, function(row) {
-          row.url = app.baseURL + 'edit#/' + row.id;
-          return row;
-        })
-        util.render('datasets','datasets', {datasets: datasets});
+    var path = window.location.pathname;
+    if (util.inURL(path, '_rewrite')) path = path.split('_rewrite')[1]
+    if (path === "") path = "/";
+    if (path !== "/") {
+      var user = path.split('/')[1];
+      app.showDatasets(user);
+    } else {
+      app.emitter.on('login', function(name) {
+        app.showDatasets(name);
+        app.emitter.clear('login');
       })
-      app.emitter.clear('login');
-    })
+    }
+    
+    monocles.fetchSession();
   },
   recline: function(id) {
     console.log("recline id", id);
@@ -354,6 +367,6 @@ app.sammy = $.sammy(function () {
   this.get("#:route/:id", app.handler);
 });
 
-$(function() {
+$(function() {  
   app.sammy.run();  
 })

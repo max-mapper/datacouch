@@ -182,7 +182,7 @@ app.after = {
     $('.dialog-content .okButton').click(function(e) {
       app.apiURL = $('#url-input').val().trim();
       util.notify("Fetching data...", {persist: true, loader: true});
-      $.getJSON(app.apiURL + "?callback=?").then(
+      $.getJSON(app.apiURL + "&callback=?").then(
         function(docs) {
           app.apiDocs = docs;
           util.notify("Data fetched successfully!");

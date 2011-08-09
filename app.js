@@ -19,6 +19,7 @@ ddoc =
     , {from:"/db/:id/rows", to:'../../../:id/_design/recline/_view/all'}
     , {from:"/db/:id", to:"../../../:id/"}
     , {from:"/db/:id/*", to:"../../../:id/*"}
+    , {from:"/:user", to:"pages/index.html"}
     , {from:"/*", to:'*'}
     ]
   }
