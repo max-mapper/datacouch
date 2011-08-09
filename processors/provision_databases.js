@@ -6,6 +6,7 @@
 var follow = require('follow')
   , request = require('request')
   , deferred = require('deferred')
+  , http = require('http')
   ;
 
 var couch = "http://admin:admin@localhost:5984"
@@ -22,7 +23,7 @@ follow({db:db, include_docs:true}, function(error, change) {
     , dbName = doc._id
     , dbPath = couch + "/" + dbName
     ;
-  
+
   checkForDB(dbPath).then(function(status) {
     if(status === 404) {
       console.log('creating ' + dbName);
@@ -48,7 +49,11 @@ function createDB(url) {
   var dfd = deferred();
   request({uri: url, method: "PUT", headers: h}, function (err, resp, body) {
     if (err) throw new Error('ahh!! ' + err);
-    var response = JSON.parse(body);
+    try {
+      var response = JSON.parse(body);
+    } catch(e) {
+      var response = {"ok": true};
+    }
     if (!response.ok) throw new Error(url + " - " + body);
     dfd.resolve(resp.statusCode);
   })
