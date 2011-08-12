@@ -1,5 +1,5 @@
 var app = {
-	baseURL: util.getBaseURL(document.location.pathname),
+	baseURL: util.getBaseURL(window.location.href),
 	container: 'main_content',
 	emitter: util.registerEmitter()
 };
