@@ -407,7 +407,7 @@ ul.download {
   }
 
 .download li {
-  margin: 0px 10px;
+  margin: 10px;
   float:left;
   border:1px solid #ccc;
   width:310px;
