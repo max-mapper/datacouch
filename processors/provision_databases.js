@@ -29,9 +29,10 @@ follow({db:db, include_docs:true}, function(error, change) {
       console.log('creating ' + dbName);
       var start_time = new Date();
       createDB(dbPath).then(function(response) {
-        copyCouchapp(couch, "_design/recline", "apps", dbName).then(function(created) {
+        copyCouchapp("_design/recline", "apps", dbName).then(function(created) {
           console.log("created " + dbName + " in " + (new Date() - start_time) + "ms");
         });
+        setAdmin(dbName, doc.user); 
       })
     }
   })
@@ -60,14 +61,26 @@ function createDB(url) {
   return dfd.promise();
 }
 
-function copyCouchapp(couchURL, ddoc, source, target) {
+function copyCouchapp(ddoc, source, target) {
   var dfd = deferred();
-  var data = {"source": couchURL + "/" + source,"target": couchURL + "/" + target, "doc_ids":[ddoc]};
-  request({uri: couchURL + "/_replicate", method: "POST", headers: h, body: JSON.stringify(data)}, function (err, resp, body) {
+  var reqData = {"source": couch + "/" + source,"target": couch + "/" + target, "doc_ids":[ddoc]};
+  request({uri: couch + "/_replicate", method: "POST", headers: h, body: JSON.stringify(reqData)}, function (err, resp, body) {
     if (err) throw new Error('ahh!! ' + err);
     var response = JSON.parse(body);
     if (response.docs_written !== 1) throw new Error('error creating: ' + body);
     dfd.resolve(response);
   })
   return dfd.promise();
+}
+
+function setAdmin(dbName, username) {
+  var dfd = deferred();
+  var data = {"admins":{"names":[username],"roles":[]},"members":{"names":[],"roles":[]}};
+  request({uri: couch + "/" + dbName + "/_security", method: "PUT", headers: h, body: JSON.stringify(data)}, function (err, resp, body) {
+    if (err) throw new Error('ahh!! ' + err);
+    var response = JSON.parse(body);
+    if (!response.ok) throw new Error('error setting admin: ' + body);
+    dfd.resolve(response);
+  })
+  return dfd.promise(); 
 }
