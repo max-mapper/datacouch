@@ -6,11 +6,12 @@
   <link rel="stylesheet" href="style/reset.css" media="screen">
 	<link rel="stylesheet" href="style/data-table.css" media="screen"> 
 	<link rel="stylesheet" href="style/recline.css" media="screen">
-	<script type="text/javascript" src="script/lib/jquery-1.6.1.min.js"></script>
+	<script type="text/javascript" src="script/lib/jquery-1.6.1.min.js"></script>	
   <!-- only using jqueryui for draggable - a lighter solution would be nice -->
 	<script type="text/javascript" src="script/lib/jquery-ui-1.8.14.custom.min.js"></script>
 	<script type="text/javascript" src="script/lib/jquery.mustache.js"></script>
 	<script type="text/javascript" src="script/lib/jquery.couch2.js"></script>
+	<script type='text/javascript' src='script/lib/jquery.url.js'></script>
 	<script type="text/javascript" src="script/lib/jquery.hotkeys.js"></script>
 	<script type="text/javascript" src="script/lib/sammy-0.6.3.min.js"></script>
 	<script type="text/javascript" src="script/lib/underscore.js"></script>
@@ -305,7 +306,7 @@
   		    Paste in an array of JSON objects representing the documents that you would like to insert into the database.
   		  </p>
   		  <p class="info">
-    		  <code>[{woo: "pizza"}, {tasty: "muffins"}]</code>
+    		  <code>[{"woo": "pizza"}, {"tasty": "muffins"}]</code>
   		  </p>
         <div class="menu-container data-table-cell-editor">
           <textarea class="data-table-cell-copypaste-editor" bind="textarea">{{value}}</textarea>

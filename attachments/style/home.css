@@ -15,7 +15,7 @@
 .account .logout .icon { background: url('images/logout.png') center center no-repeat; }
 .account .username { float: left; margin-right: 4px; font-style: normal; color: #6D6D6C; line-height: 35px; }
 
-.datasets { margin: 0px 50px }
+.datasets { margin: 0px auto; width: 750px; }
 
 ul#landing_nav {
   margin: 0;
@@ -439,8 +439,7 @@ a.download .icon {
   background:url(images/sprite.png) 80px 80px no-repeat;
   }
 
-a.download .icon.osx { background-position:0px -80px; }
-a.download .icon.ubuntu { background-position:-80px -80px; }
+a.download .icon { background-position:0px -80px; }
 
 a.download strong,
 a.download span { display:block; }

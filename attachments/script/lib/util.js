@@ -138,21 +138,12 @@ var util = function() {
     return out;
   }
 
-  function getBaseURL(url) {
-    var baseURL = "";
-    if ( inURL(url, '_design') ) {
-      if (inURL(url, '_rewrite')) {
-        var path = url.split("#")[0];
-        if (path[path.length - 1] === "/") {
-          baseURL = "";
-        } else {
-          baseURL = '_rewrite/';
-        }
-      } else {
-        baseURL = '_rewrite/';
-      }
-    }
-    return baseURL;
+  function getBaseURL(path) {
+    var url = $.url(path);
+    var base = url.attr('base');
+    // construct correct URL in and out of couchdb vhosts, e.g. http://awesome.com vs. http://localhost:5984/datacouch/_design/datacouch/_rewrite
+    if (url.attr('path').indexOf("_rewrite") > 0) base = base + url.attr('path').split('_rewrite')[0] + "_rewrite";
+    return base + "/";
   }
   
   var persist = {

@@ -1,5 +1,5 @@
 var app = {
-	baseURL: util.getBaseURL(document.location.pathname),
+	baseURL: util.getBaseURL(window.location.href),
 	container: 'main_content',
 	emitter: util.registerEmitter()
 };
@@ -180,9 +180,10 @@ app.after = {
   },
   urlImport: function() {
     $('.dialog-content .okButton').click(function(e) {
-      app.apiURL = $('#url-input').val().trim();
+      app.apiURL = $.url($('#url-input').val().trim());
       util.notify("Fetching data...", {persist: true, loader: true});
-      $.getJSON(app.apiURL + "&callback=?").then(
+      var query = $.param($.extend({}, app.apiURL.data.param.query, {"callback": "?"}))
+      $.getJSON(app.apiURL.attr('base') + app.apiURL.attr('path') + "?" + decodeURIComponent(query)).then(
         function(docs) {
           app.apiDocs = docs;
           util.notify("Data fetched successfully!");

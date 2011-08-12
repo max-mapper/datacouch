@@ -114,27 +114,29 @@ var costco = function() {
       var reader = new FileReader();
       reader.readAsText(file);
       reader.onload = function(event) {
-        var base = window.location.href;
-        if (base.indexOf("_rewrite") > 0) base = base.split('_rewrite')[0];
-        if (base.indexOf("#") > 0) base = base.split('#')[0];
         var payload = {
-          url: base + app.dbPath + "/_bulk_docs", // todo more robust url composition
+          url: app.dbPath + "/_bulk_docs", // todo more robust url composition
           data: event.target.result
         };
         var worker = new Worker('script/lib/costco-csv-worker.js');
         worker.onmessage = function(message) {
-          message = JSON.parse(message.data);
-          if(message.done) {
-            util.hide('dialog');
-            util.notify("Data uploaded successfully!");
-            recline.initializeTable(app.offset);
-          } else if (message.size) {
-            util.notify("Processing " + message.size + " rows. This could take a while...", {persist: true, loader: true});            
-          } else {
-            util.notify(JSON.stringify(message));
-          }
-        };
-        worker.postMessage(payload);
+           // console.log("MESSAGE", message.data)
+           message = JSON.parse(message.data);
+           if (message.done) {
+             util.hide('dialog');
+             util.notify("Data uploaded successfully!");
+             recline.initializeTable(app.offset);
+           } else if (message.percent) {
+             if (message.percent === 100) {
+               util.notify("Waiting for CouchDB...", {persist: true, loader: true})
+             } else {
+               util.notify("Uploading... " + message.percent + "%");            
+             }
+           } else {
+             util.notify(JSON.stringify(message));
+           }
+         };
+         worker.postMessage(payload);
       };
     } else {
       util.notify('File not selected. Please try again');
