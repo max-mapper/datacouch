@@ -63,7 +63,7 @@ function createDB(url) {
 
 function copyCouchapp(ddoc, source, target) {
   var dfd = deferred();
-  var reqData = {"source": couch + "/" + source,"target": couch + "/" + target, "doc_ids":[ddoc]};
+  var reqData = {"source": source,"target": target, "doc_ids":[ddoc]};
   request({uri: couch + "/_replicate", method: "POST", headers: h, body: JSON.stringify(reqData)}, function (err, resp, body) {
     if (err) throw new Error('ahh!! ' + err);
     var response = JSON.parse(body);
