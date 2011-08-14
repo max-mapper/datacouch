@@ -98,7 +98,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. -->
     <div class="option user_profile">
       <a href="#">
         <div class="gravatar"><img src="{{gravatar_url}}" height="25" width="25"/></div>
-        <div class="username"><span>{{nickname}}</span></div>
+        <div class="username"><span>{{username}}</span></div>
       </a>
     </div>
     <div class="option user_settings">
@@ -124,19 +124,26 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. -->
   <script type="text/mustache" class="newProfileFormTemplate">
     <div class="settings">
       <form class="profile_setup">
-        <p>Hello {{name}}, Please setup your user profile.</p>
-        <label for="nickname">Username
-          <input type="text" name="nickname" value=""></label>
-        <label for="email">
-          Email (<em>for <a href="http://gravatar.com">Gravatar</a></em>)
-          <input type="text" name="email" value="{{name}}">
-        </label>
-        <label for="url">URL (<em>for shameless self promotion</em>)
-          <input type="text" name="url" value="">
-        </label>
-        <input type="submit" class="button" value="Save &rarr;">
+      
+        <p class="welcome">
+          <img src="images/user.png">
+          <span class="welcome-text">Hello {{name}}, Please setup your user profile.</span>
+        </p>
+        
+        <div class="labelContainer"><label for="username">Username</label></div>
+        <input type="text" name="username" value="">
+        <div class="username-message"></div>
+        
+        <div class="labelContainer"><label for="email">Email (<em>for <a href="http://gravatar.com">Gravatar</a></em>)</label></div>
+        <input type="text" name="email" value="{{name}}">
+        
+        <div class="labelContainer"><label for="url">URL (<em>for shameless self promotion</em>)</label></div>
+        <input type="text" name="url" value="">
+        
+        <input type="submit" class="button" value="Save">
         <div class="cancel">or Cancel</div>
-        <input type="hidden" name="userCtxName" value="{{name}}" id="userCtxName">
+        
+        <input type="hidden" name="user" value="{{name}}">
       </form>
     </div>
   </script>
@@ -144,19 +151,26 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. -->
   <script type="text/mustache" class="editProfileFormTemplate">
     <div class="settings">
       <form class="profile_setup">
-        <p>Editing {{name}}'s settings!</p>
-        <label for="nickname">Nickname
-          <input type="text" name="nickname" value="{{nickname}}"></label>
-        <label for="email">
-          Email (<em>for <a href="http://gravatar.com">Gravatar</a></em>)
-          <input type="text" name="email" value="{{email}}">
-        </label>
-        <label for="url">URL (<em>for shameless self promotion</em>)
-          <input type="text" name="url" value="{{url}}">
-        </label>
-        <input type="submit" class="button" value="Save &rarr;">
+      
+        <p class="welcome">
+          <img src="images/user.png">
+          <span class="welcome-text">Editing {{_id}}'s profile.</span>
+        </p>
+        
+        <div class="labelContainer"><label for="_id">Username</label></div>
+        <input type="text" name="_id" value="{{_id}}">
+        <div class="username-message"></div>
+        
+        <div class="labelContainer"><label for="email">Email (<em>for <a href="http://gravatar.com">Gravatar</a></em>)</label></div>
+        <input type="text" name="email" value="{{email}}">
+        
+        <div class="labelContainer"><label for="url">URL (<em>for shameless self promotion</em>)</label></div>
+        <input type="text" name="url" value="{{url}}">
+        
+        <input type="submit" class="button" value="Save">
         <div class="cancel">or Cancel</div>
-        <input type="hidden" name="userCtxName" value="{{name}}" id="userCtxName">
+        
+        <input type="hidden" name="user" value="{{user}}">
       </form>
     </div>
   </script>
@@ -192,10 +206,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. -->
     <div class="settings">
       <form class="dataset_setup">
         <h1>Create a new dataset</h1>
-        <label for="nickname">Give it a name:
-          <input type="text" name="name" value="">
-        </label>
-        <input type="submit" class="button" value="Create  &rarr;">
+        <h4>Dataset name:</h4>
+        <input type="text" name="name" value="">
+        <input type="submit" class="button" value="Create">
         <div class="cancel">or Cancel</div>
       </form>
     </div>

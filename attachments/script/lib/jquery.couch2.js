@@ -41,9 +41,9 @@
   
   couch.userDb = function() {
     var dfd = $.Deferred();
-    couch.session().then(function(session) {
-      dfd.resolve(couch.db(couch.rootPath + session.info.authentication_db));
-    })
+    function resolve(session) { return dfd.resolve(couch.db(couch.rootPath + session.info.authentication_db)) }
+    if (app.session) { resolve(app.session) }
+    couch.session().then(function(session) { resolve(session) })
     return dfd;
   }
 

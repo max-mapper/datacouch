@@ -158,9 +158,9 @@ var recline = function() {
     )    
   }
   
-  function getDbInfo() {
+  function getDbInfo(url) {
     var dfd = $.Deferred();
-    return couch.request({url: app.dbPath}).then(function(dbInfo) {
+    return couch.request({url: url}).then(function(dbInfo) {
       app.dbInfo = dbInfo;
 
       $.extend(app.dbInfo, {
@@ -180,14 +180,10 @@ var recline = function() {
     
     util.listenFor(['esc', 'return']);
     
-    getDbInfo().then(function( dbInfo ) {
-
-      util.render('tableContainer', app.container);
-      util.render('title', 'project-title', app.dbInfo);
+    getDbInfo(app.dbPath).then(function( dbInfo ) {
+      util.render( 'tableContainer', app.container );
       util.render( 'generating', 'project-actions' );    
-      
-      updateDocCount(app.dbInfo.doc_count);
-      
+            
       couch.session().then(function(session) {
         if ( session.userCtx.name ) {
           var text = "Sign out";
@@ -197,6 +193,10 @@ var recline = function() {
         util.render('controls', 'project-controls', {text: text});
       })
       
+      couch.request({url: app.baseURL + "api/" + id}).then(function(datasetInfo) {
+        util.render('title', 'project-title', datasetInfo);
+      })
+
       initializeTable();
     })
   }
@@ -205,7 +205,7 @@ var recline = function() {
     showDialog('busy');
     couch.request({url: app.dbPath + '/headers'}).then(function ( headers ) {
       util.hide('dialog');
-      getDbInfo().then(function(dbInfo) { 
+      getDbInfo(app.dbPath).then(function(dbInfo) { 
         updateDocCount(dbInfo.doc_count);
       });
       app.headers = headers;

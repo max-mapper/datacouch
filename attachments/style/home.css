@@ -45,54 +45,58 @@ ul#landing_nav {
   overflow: auto;
   margin: 0 auto;
   padding: 5% 0;}
+  .settings p.welcome {overflow: auto}
+  .settings .available {background-color: #AEFFA8 !important}
+  .settings .notAvailable {background-color: #FFC1BF !important}
+  .settings .loading {background-image:url('images/loader.gif'); background-repeat: no-repeat; background-position: 97% center;}
+  .settings img {float: left}
+  .settings .welcome-text {line-height: 37px;height: 37px;display: block;float: left;margin-left: 10px}
+  .settings .labelContainer {clear: both}
+  .settings .username-message {height: 38px; line-height: 38px; padding-left: 10px;display: inline;}
   .settings input:not(.button),
   .settings textarea {
-    font-family: "Arial", "Helvetica", sans-serif;
-    padding: 0.3em;
+    width: 60%;
     display: block;
-    width: 95%;
-    border: 1px solid #cccccc;
-    height: auto;
-    -webkit-border-radius: 3px;
-    -moz-border-radius: 3px;
-    border-radius: 3px; }
+    padding:8px 10px 5px 10px;
+    font-size:22px;
+    border-bottom:1px solid rgba(255,255,255,0.99);
+    background-color:#f8f7f3;
+    -moz-border-radius:3px;
+    -webkit-border-radius:3px;
+    -o-border-radius:3px;
+    -ms-border-radius:3px;
+    -khtml-border-radius:3px;
+    border-radius:3px;
+    -moz-box-shadow:rgba(0,0,0,0.21) 0 2px 2px 0px inset;
+    -webkit-box-shadow:rgba(0,0,0,0.21) 0 2px 2px 0px inset;
+    -o-box-shadow:rgba(0,0,0,0.21) 0 2px 2px 0px inset;
+    box-shadow:rgba(0,0,0,0.21) 0 2px 2px 0px inset }
   .settings .cancel {margin-left: 5px; line-height: 40px; float: left}
   .settings .cancel:hover { text-decoration: underline; cursor: pointer; cursor: hand; }
   .settings input[type='hidden'] {
     display: none; }
   .settings input, .settings p {
+    float: left;
     margin-bottom: 10px },
-  .settings label {
-    margin-top: 15px;
-    font-weight: normal;
-    color: #999999;
-    text-shadow: 0 1px 1px #eeeeee; }
-  .settings form input,
-  .settings form label {
+  .settings form input {
     font-size: 21px; }
-  .settings form label {
-    top: 13px;
-    text-shadow: 0 1px 1px #cccccc; }
-  .settings form input[type='text'],
-  .settings form input[type='password'] {
-    -webkit-box-shadow: 0 1px 0px white, 0 -1px 0px #888888;
-    -moz-box-shadow: 0 1px 0px white, 0 -1px 0px #888888;
-    box-shadow: 0 1px 0px white, 0 -1px 0px #888888;}
-    .settings form p:last-child {
-      margin-left: 3px; }
-    .settings form p span.pod_location {
-      color: #888888; }
     .settings .button {
+      clear: left;
       float: left;
-      width: auto;
-      height: 40px;
-      border: 1px solid #ddd;
-      padding: 5px;
-      color: #666666;}
+    	padding: 7px 10px;
+    	font-size:22px;
+    	font-weight:normal;
+    	color:#FAFAF0;
+    	background-color:#a69567;
+    	-moz-border-radius:3px;
+    	-webkit-border-radius:3px;
+    	-o-border-radius:3px;
+    	-ms-border-radius:3px;
+    	-khtml-border-radius:3px;
+    	border-radius:3px;
+    	text-shadow:rgba(0,0,0,0.3) 0 -1px 1px}
       .settings .button:hover {
-        cursor: pointer; cursor: hand;
-        border-color: #000;
-        color: #444444; }
+      	background-color:#3e3e3e;cursor: pointer; cursor: hand; }
 
 /*Copyright (c), Development Seed  
 All rights reserved.

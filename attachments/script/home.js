@@ -17,7 +17,7 @@ app.handler = function(route) {
 };
 
 app.showDatasets = function(name) {
-  return couch.request({url: app.baseURL + "/api/datasets/" + name}).then(function(resp) {
+  return couch.request({url: app.baseURL + "api/datasets/" + name}).then(function(resp) {
     var datasets = _.map(resp.rows, function(row) {
       row.url = app.baseURL + 'edit#/' + row.id;
       return row;
@@ -75,7 +75,25 @@ app.after = {
       util.hide('dialog');
       app.sammy.setLocation("#");
     })
-    $( '.profile_setup' ).submit( function( e ) {
+    $(".profile_setup input[name='username']").keyup(function() {
+      var input = $(this);
+      input.removeClass('available').removeClass('notAvailable').addClass('loading');
+      $('.username-message').text('');
+      util.delay(function() {
+        var username = input.val();
+        couch.get( "users/search/" + username).then(function(response) {
+          input.removeClass('loading');
+          if ( response.rows.length > 0 ) {
+            input.addClass('notAvailable');
+            $('.username-message').text('username taken!')
+          } else {
+            input.addClass('available');
+            $('.username-message').text('username available!')
+          }
+        })
+      }, 500)();
+    });
+    $('.profile_setup').submit( function( e ) {
       monocles.generateProfile( $( e.target ) );
       e.preventDefault();
       util.hide('dialog');
@@ -88,7 +106,7 @@ app.after = {
       app.sammy.setLocation("#");
     })
     $( '.profile_setup' ).submit( function( e ) {
-      monocles.updateProfile(app.profile.name, $( e.target ).serializeObject());
+      monocles.updateProfile($( e.target ).serializeObject());
       e.preventDefault();
       util.hide('dialog');
       app.sammy.setLocation("#");
@@ -105,10 +123,10 @@ app.after = {
     $( '.dataset_setup' ).submit( function( e ) {
       var form = $( e.target ).serializeObject();
       var doc = {
-        _id: "dc"+docID,
+        _id: "dc" + docID,
         name: form.name,
         type: "database",
-        user: app.session.userCtx.name,
+        user: app.profile._id,
         createdAt: new Date()
       }
       couch.request({url: app.baseURL + "api/" + doc._id, type: "PUT", data: JSON.stringify(doc)}).then(function(resp) {

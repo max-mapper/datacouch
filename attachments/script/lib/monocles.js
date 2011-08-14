@@ -45,10 +45,10 @@ $(function(){
       if ( session.userCtx.name ) {
         fetchProfile( session ).then( function( profile ) {
           util.render( 'loggedIn', 'account', {
-            nickname : profile.nickname,
+            username : profile._id,
             gravatar_url : profile.gravatar_url
           });
-          app.emitter.emit(profile.name, 'login');
+          app.emitter.emit(profile._id, 'login');
           util.render('userActions', 'user_actions')
         });
       } else if ( util.isAdminParty( session.userCtx ) ) {
@@ -89,24 +89,15 @@ $(function(){
     // asks them to fill out a form if it's their first login
     function fetchProfile(session) {
       var dfd = $.Deferred();
-      couch.userDb().then(function(userDb) {
-        userDb.get( "org.couchdb.user:" + session.userCtx.name).then(
-          function( userDoc ) {
-            var profile = userDoc[ "couch.app.profile" ];
-            if ( profile ) {
-              // we copy the name to the profile so it can be used later
-              // without publishing the entire userdoc (roles, pass, etc)
-              profile.name = userDoc.name;
-              profile.base_url = app.baseURL;
-              app.profile = profile;
-              $( '#header' ).data( 'profile', profile );
-              dfd.resolve( profile );
-            } else {
-              util.show('dialog');
-              util.render( 'newProfileForm', 'dialog-content', session.userCtx );
-            }
-          }
-        )
+      couch.get( "users/by_email/" + session.userCtx.name ).then(function(resp) {
+        if (resp.rows.length > 0) {
+          var profile = resp.rows[0].doc;
+          app.profile = profile;
+          dfd.resolve( profile );
+        } else {
+          util.show('dialog');
+          util.render( 'newProfileForm', 'dialog-content', session.userCtx );
+        }
       })
       return dfd.promise();
     }
@@ -115,35 +106,48 @@ $(function(){
       return 'http://www.gravatar.com/avatar/' + md5.hex( uuid ) + '.jpg?s=50&d=identicon';
     }
 
-    function updateProfile(username, profile) {
+    function updateProfile(profileDoc) {
       var dfd = $.Deferred();
-      couch.userDb().then( function( userDb ) {
-        var userDocId = "org.couchdb.user:" + encodeURIComponent(username);
-        userDb.get( userDocId ).then(
-          function( userDoc ) {
-            if (!userDoc["couch.app.profile"]) userDoc["couch.app.profile"] = {};
-            profile.gravatar_url = gravatarURL(profile.email || profile.rand);
-            $.extend(userDoc["couch.app.profile"], profile);
-            userDb.save( userDoc ).then(function(resp) {
-              fetchProfile(app.session).then(function(updatedProfile) {
-                dfd.resolve(updatedProfile);
-              })
-            });
+      profileDoc.gravatar_url = gravatarURL(profileDoc.email || profileDoc.rand);
+      
+      function upload(updatedDoc) {
+        couch.request({url: app.baseURL + "api/users", data: JSON.stringify(updatedDoc), type: "POST"}).then(function(resp) {
+          updatedDoc._rev = resp.rev;
+          dfd.resolve(updatedDoc);
+          couch.userDb().then(function(userDb) {
+            userDb.get( "org.couchdb.user:" + app.session.userCtx.name).then(
+              function( userDoc ) {              
+                userDoc.username = updatedDoc._id;
+                userDb.save(userDoc);
+              }
+            )
+          })
+        });
+      }
+      
+      couch.get( "users/" + profileDoc._id ).then(
+        function( profile ) {
+          $.extend(profile, profileDoc);
+          upload(profile);
+        },
+        function(err) {
+          if (err.status === 404) {
+            upload(profileDoc);
           }
-        )
-      });
+        }
+      )
       return dfd.promise();
-    }
+    };
 
     function generateProfile(form) {
       var newProfile = form.serializeObject();
-      var name = newProfile.userCtxName;
-      delete newProfile.userCtxName;
+      newProfile._id = newProfile.username;
+      delete newProfile.username;
       newProfile.rand = Math.random().toString(); 
-      updateProfile(name, newProfile).then(
+      updateProfile(newProfile).then(
         function(resp) {
           util.render( 'loggedIn', 'account', {
-            nickname : newProfile.nickname,
+            username : newProfile._id,
             gravatar_url : newProfile.gravatar_url
           });
         }
