@@ -35,7 +35,11 @@ app.showDatasets = function(name) {
 
 app.routes = {
   home: function() {
-    var user = $.url(window.location.pathname).segment()[0];
+    if (window.location.pathname.indexOf('_rewrite') > -1) {
+      var user = window.location.pathname.split('_rewrite')[1].replace('/', '');
+    } else {
+      var user = $.url(window.location.pathname).segment()[0];
+    }
     if (user.length > 0) {
       app.showDatasets(user);
     } else {

@@ -118,7 +118,7 @@ var costco = function() {
           url: app.dbPath + "/_bulk_docs", // todo more robust url composition
           data: event.target.result
         };
-        var worker = new Worker('script/lib/costco-csv-worker.js');
+        var worker = new Worker('script/costco-csv-worker.js');
         worker.onmessage = function(message) {
            // console.log("MESSAGE", message.data)
            message = JSON.parse(message.data);

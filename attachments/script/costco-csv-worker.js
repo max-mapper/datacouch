@@ -1,4 +1,4 @@
-importScripts('underscore.js'); 
+importScripts('lib/underscore.js'); 
 
 onmessage = function(message) {
   function parseCSVLine(line) {
