@@ -15,6 +15,7 @@ app.handler = function(route) {
 
 app.routes = {
   recline: function(id) {
+    $('.homeButton').attr('href', app.baseURL);
     recline.bootstrap(id);
   },
   noID: function() {

@@ -17,6 +17,19 @@
 
 .datasets { margin: 0px auto; width: 750px; }
 
+#loading-message {
+  text-align: center;
+  font-size: 200%;
+  color: #999;
+  padding: 3em .5em;
+}
+
+#loading-message img {
+  position: relative;
+  top: 5px;
+}
+
+
 ul#landing_nav {
   margin: 0;
   padding: 0;

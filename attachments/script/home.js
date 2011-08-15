@@ -146,7 +146,7 @@ app.after = {
             }
           )
         }
-        $('.dialog-content').html('Creating dataset...')
+        util.render('creatingDataset', 'dialog-content');
         waitForDB(couch.rootPath + dbName);
       })
       e.preventDefault();
