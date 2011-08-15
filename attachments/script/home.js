@@ -22,17 +22,21 @@ app.showDatasets = function(name) {
       row.url = app.baseURL + 'edit#/' + row.id;
       return row;
     })
-    util.render('datasets','datasets', {name: name, datasets: datasets});
+    if (datasets.length > 0) {
+      util.render('datasets', 'datasets', {name: name, datasets: datasets});      
+    } else {
+      couch.request({url: app.baseURL + "api/users/" + name}).then(
+        function(res) { util.render('datasets', 'datasets', {name: name}) }
+      , function(err) { util.render('noUser', 'datasets', {name: name}) }
+      )
+    }
   })
 }
 
 app.routes = {
   home: function() {
-    var path = window.location.pathname;
-    if (util.inURL(path, '_rewrite')) path = path.split('_rewrite')[1]
-    if (path === "") path = "/";
-    if (path !== "/") {
-      var user = path.split('/')[1];
+    var user = $.url(window.location.pathname).segment()[0];
+    if (user.length > 0) {
       app.showDatasets(user);
     } else {
       app.emitter.on('login', function(name) {
