@@ -174,10 +174,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. -->
     {{#datasets}}
       <a class='download' href='{{url}}'>
         <li>
-          <h3>{{value}}</h3>
+          <h3>{{name}}</h3>
             <span class='icon osx'></span>
-            <strong>this is a dataset</strong>
-            <span class='size'>it has a size</span>
+            <span class='count'>{{count}} documents</span>
+            <span class='size'>{{size}}</span>
+            <span class='date'>Created &nbsp;<span class="timeago" title="{{date}}"></span></span>
             {{#description}}<span class='description'>{{description}}</span>{{/description}}
         </li>
       </a>

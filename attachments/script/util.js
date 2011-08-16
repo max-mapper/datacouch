@@ -15,6 +15,15 @@ var util = function() {
     });
     return o;
   };
+  
+  function formatDiskSize(bytes) {
+    var size = (parseFloat(bytes)/1024/1024).toString().substr(0,4);
+    if (size < 1) {
+      return "less than 1MB";
+    } else {
+      return size + "MB";
+    }
+  }
 
   function inURL(url, str) {
     var exists = false;
@@ -360,6 +369,7 @@ var util = function() {
   
   return {
     inURL: inURL,
+    formatDiskSize: formatDiskSize,
     emailToDB: emailToDB,
     isAdminParty: isAdminParty,
     registerEmitter: registerEmitter,

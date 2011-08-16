@@ -19,8 +19,13 @@ app.handler = function(route) {
 app.showDatasets = function(name) {
   return couch.request({url: app.baseURL + "api/datasets/" + name}).then(function(resp) {
     var datasets = _.map(resp.rows, function(row) {
-      row.url = app.baseURL + 'edit#/' + row.id;
-      return row;
+      return {
+        url: app.baseURL + 'edit#/' + row.id,
+        size: util.formatDiskSize(row.doc.data_size),
+        name: row.value,
+        date: row.doc.createdAt,
+        count: row.doc.doc_count - 1 // TODO calculate this programatically
+      };
     })
     if (datasets.length > 0) {
       util.render('datasets', 'datasets', {name: name, datasets: datasets});      
@@ -383,6 +388,9 @@ app.after = {
         } 
       }
     })
+  },
+  datasets: function() {
+    $('.timeago').timeago();
   }
 }
 
