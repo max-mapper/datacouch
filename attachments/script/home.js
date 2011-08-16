@@ -17,10 +17,12 @@ app.handler = function(route) {
 };
 
 app.showDatasets = function(name) {
+  if (!name) name = "";
   return couch.request({url: app.baseURL + "api/datasets/" + name}).then(function(resp) {
     var datasets = _.map(resp.rows, function(row) {
       return {
         url: app.baseURL + 'edit#/' + row.id,
+        user: row.doc.user,
         size: util.formatDiskSize(row.doc.disk_size),
         name: row.value,
         date: row.doc.createdAt,
@@ -51,6 +53,9 @@ app.routes = {
       app.emitter.on('login', function(name) {
         app.showDatasets(name);
         app.emitter.clear('login');
+      })
+      app.emitter.on('session', function(session) {
+        if(!session.userCtx.name) app.showDatasets();
       })
     }
     

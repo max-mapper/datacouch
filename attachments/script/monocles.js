@@ -78,6 +78,7 @@ $(function(){
       couch.session().then(
         function( session ) {
           app.session = session;
+          app.emitter.emit(app.session, 'session');
           showSessionStatus();
           dfd.resolve(session);
         }
