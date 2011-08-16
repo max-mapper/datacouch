@@ -21,7 +21,7 @@ app.showDatasets = function(name) {
     var datasets = _.map(resp.rows, function(row) {
       return {
         url: app.baseURL + 'edit#/' + row.id,
-        size: util.formatDiskSize(row.doc.data_size),
+        size: util.formatDiskSize(row.doc.disk_size),
         name: row.value,
         date: row.doc.createdAt,
         count: row.doc.doc_count - 1 // TODO calculate this programatically

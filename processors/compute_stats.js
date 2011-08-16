@@ -16,7 +16,7 @@ request({uri: datasets, headers: h}, function(err, resp, body) {
   _.each(JSON.parse(body).rows, function(db) {
     request({uri: couch + "/" + db.id, headers: h}, function(err, resp, body) {
       var dbInfo = JSON.parse(body)
-        , important = {doc_count: dbInfo.doc_count, data_size: dbInfo.data_size}
+        , important = {doc_count: dbInfo.doc_count, disk_size: dbInfo.disk_size}
         , changed = false
         ;
       _.each(_.keys(important), function(prop) {
