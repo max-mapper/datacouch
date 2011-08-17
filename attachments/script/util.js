@@ -53,6 +53,33 @@ var util = function() {
     return new Emitter();
   }
   
+  function lookupIcon(word) {
+    var params = {
+      resource: "http://thenounproject.com/search",
+      q: word
+    }
+    var ajaxOpts = {
+      url: "http://jsonpify.heroku.com?" + $.param(params),
+      dataType: "jsonp"
+    }
+    return cachedRequest(ajaxOpts);
+  }
+  
+  function cachedRequest(opts) {
+    var dfd = $.Deferred();
+    var key = JSON.stringify(opts);
+    if (app.cache[key]) {
+      dfd.resolve(jQuery.extend(true, {}, app.cache[key]));
+    } else {
+      var ajaxOpts = $.extend({}, opts);
+      $.ajax(ajaxOpts).then(function(data) {
+        app.cache[key] = data;
+        dfd.resolve(data);
+      })
+    }
+    return dfd.promise();
+  }
+  
   function listenFor(keys) {
     var shortcuts = { // from jquery.hotkeys.js
 			8: "backspace", 9: "tab", 13: "return", 16: "shift", 17: "ctrl", 18: "alt", 19: "pause",
@@ -363,7 +390,7 @@ var util = function() {
       d.append(field);
     }
 
-    $('div.doc-key-base').width(largestWidth('div.doc-key-base'))
+    $('div.doc-key-base').width(largestWidth('div.doc-key-base'));
   }
   
   
@@ -373,6 +400,8 @@ var util = function() {
     emailToDB: emailToDB,
     isAdminParty: isAdminParty,
     registerEmitter: registerEmitter,
+    cachedRequest: cachedRequest,
+    lookupIcon: lookupIcon,
     listenFor: listenFor,
     show: show,
     hide: hide,

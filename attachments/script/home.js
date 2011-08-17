@@ -1,7 +1,8 @@
 var app = {
 	baseURL: util.getBaseURL(window.location.href),
 	container: 'main_content',
-	emitter: util.registerEmitter()
+	emitter: util.registerEmitter(),
+	cache: {}
 };
 
 couch.dbPath = app.baseURL + "api/";
@@ -138,6 +139,28 @@ app.after = {
       util.hide('dialog');
       app.sammy.setLocation("#");
     })
+    $(".dataset_setup textarea[name='description'], .dataset_setup input[name='name']").keyup(function() {
+      var textarea = $(this);
+      app.cache.words = {};
+      util.delay(function() {
+        var words = textarea.val().replace(/[^\w\s]|_/g, "").replace(/\s+/g, ' ').split(' ');
+        _.each(words, function(word) {
+          util.lookupIcon(word).then(function(resp) {
+            var matches = _.map(_.keys(resp.svg), function(match) {
+              return {
+                noun: match.toLowerCase(),
+                svg: resp.svg[match]
+              };
+            })
+            matches = _.select(matches, function(match){ return word === match.noun });
+            _.each(matches, function(match) {
+              app.cache.words[match.noun] = match;
+            })
+            util.render('nouns', 'nounContainer', {nouns: _.map(app.cache.words, function(word) {return word})});
+          })
+        })
+      }, 2000)();
+    });
     $( '.dataset_setup' ).submit( function( e ) {
       var form = $( e.target ).serializeObject();
       var doc = {
@@ -396,6 +419,9 @@ app.after = {
   },
   datasets: function() {
     $('.timeago').timeago();
+  },
+  nouns: function() {
+    $('svg').height('30px').width('50px');
   }
 }
 

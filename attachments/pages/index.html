@@ -204,13 +204,25 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. -->
     <div class="settings">
       <form class="dataset_setup">
         <h1>Create a new dataset</h1>
-        <h4>Dataset name:</h4>
+        <h4>Name:</h4>
         <input type="text" name="name" value="">
-        <input type="submit" class="button" value="Create">
-        <div class="cancel">or Cancel</div>
+        <h4>Description:</h4>
+        <textarea name="description" rows=5 value=""></textarea>
+        <div class="nounContainer"></div>
+        <div class="submitContainer">
+          <input type="submit" class="button" value="Create">
+          <div class="cancel">or Cancel</div>
+        </div>
       </form>
     </div>
   </script>
+
+   <script type="text/mustache" class="nounsTemplate">
+     <h4>Visual tags:</h4>
+     {{#nouns}}
+       <a href="http://thenounproject.com/noun/{{noun}}/">{{{svg}}}</a>
+     {{/nouns}}
+   </script>
   
   <script type="text/mustache" class="formLoadingTemplate">
     <h1>Loading! Please hold on...</h1>

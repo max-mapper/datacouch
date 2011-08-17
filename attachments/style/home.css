@@ -66,6 +66,8 @@ ul#landing_nav {
   .settings .welcome-text {line-height: 37px;height: 37px;display: block;float: left;margin-left: 10px}
   .settings .labelContainer {clear: both}
   .settings .username-message {height: 38px; line-height: 38px; padding-left: 10px;display: inline;}
+  .settings h4 {clear: left; margin-bottom: 5px}
+  .settings .submitContainer {margin-top: 10px}
   .settings input:not(.button),
   .settings textarea {
     width: 60%;
@@ -79,6 +81,7 @@ ul#landing_nav {
     -o-border-radius:3px;
     -ms-border-radius:3px;
     -khtml-border-radius:3px;
+    margin-bottom: 15px;
     border-radius:3px;
     -moz-box-shadow:rgba(0,0,0,0.21) 0 2px 2px 0px inset;
     -webkit-box-shadow:rgba(0,0,0,0.21) 0 2px 2px 0px inset;
