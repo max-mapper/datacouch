@@ -180,6 +180,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. -->
             <span class='size'>{{size}}</span>
             <span class='date'>Created &nbsp;<span class="timeago" title="{{date}}"></span></span>
             {{#description}}<span class='description'>{{description}}</span>{{/description}}
+            {{#nouns}}
+              <a href="http://thenounproject.com/noun/{{noun}}/">{{{svg}}}</a>
+            {{/nouns}}
         </li>
       </a>
     {{/datasets}}
@@ -218,7 +221,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. -->
   </script>
 
    <script type="text/mustache" class="nounsTemplate">
-     {{#nounsExist}}<h4>Visual tags:</h4>{{/nounsExist}}
+     {{#nounsExist}}{{title}}{{/nounsExist}}
      {{#nouns}}
        <a href="http://thenounproject.com/noun/{{noun}}/">{{{svg}}}</a>
      {{/nouns}}

@@ -27,6 +27,7 @@ app.showDatasets = function(name) {
         size: util.formatDiskSize(row.doc.disk_size),
         name: row.value,
         date: row.doc.createdAt,
+        nouns: row.doc.nouns,
         count: row.doc.doc_count - 1 // TODO calculate this programatically
       };
     })
@@ -129,7 +130,7 @@ app.after = {
     });
   },
   newDatasetForm: function() {
-    var docID;
+    var doc = {}, docID;
     couch.request({url: couch.rootPath + "_uuids"}).then( function( data ) { docID = data.uuids[ 0 ] });
     $('.cancel').click(function(e) {
       util.hide('dialog');
@@ -154,8 +155,8 @@ app.after = {
             _.each(matches, function(match) {
               app.cache.words[match.noun] = match;
             })
-            var nouns = _.map(app.cache.words, function(word) {return word});
-            util.render('nouns', 'nounContainer', {nouns: nouns, nounsExist: function() {return nouns.length > 0}});
+            doc.nouns = _.map(app.cache.words, function(word) {return word});
+            util.render('nouns', 'nounContainer', {nouns: doc.nouns, nounsExist: function() {return doc.nouns.length > 0}});
           })
           return request.promise();
         })
@@ -164,13 +165,13 @@ app.after = {
     inputs.keyup(renderIcons);
     $( '.dataset_setup' ).submit( function( e ) {
       var form = $( e.target ).serializeObject();
-      var doc = {
+      $.extend(doc, {
         _id: "dc" + docID,
         name: form.name,
         type: "database",
         user: app.profile._id,
         createdAt: new Date()
-      }
+      });
       couch.request({url: app.baseURL + "api/" + doc._id, type: "PUT", data: JSON.stringify(doc)}).then(function(resp) {
         var dbID = resp.id
           , dbName = dbID + "/_design/recline"
