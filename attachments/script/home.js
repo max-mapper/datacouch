@@ -62,10 +62,6 @@ app.routes = {
     
     monocles.fetchSession();
   },
-  recline: function(id) {
-    console.log("recline id", id);
-    // recline.bootstrap();
-  },
   new: function() {
     monocles.ensureProfile().then(function(profile) {
       util.show('dialog');
@@ -139,13 +135,15 @@ app.after = {
       util.hide('dialog');
       app.sammy.setLocation("#");
     })
-    $(".dataset_setup textarea[name='description'], .dataset_setup input[name='name']").keyup(function() {
-      var textarea = $(this);
-      app.cache.words = {};
-      util.delay(function() {
-        var words = textarea.val().replace(/[^\w\s]|_/g, "").replace(/\s+/g, ' ').split(' ');
-        _.each(words, function(word) {
-          util.lookupIcon(word).then(function(resp) {
+    var inputs = $(".dataset_setup textarea[name='description'], .dataset_setup input[name='name']");
+    var renderIcons = _.throttle(function() {
+        var input = $(this);
+        input.addClass('loading');
+        app.cache.words = {};
+        var words = _.reduce(inputs, function(memo, el){ return memo + " " + $(el).val() }, "").replace(/[^\w\s]|_/g, "").replace(/\s+/g, ' ').trim().split(' ');
+        var requests = _.map(words, function(word) {
+          var request = util.lookupIcon(word);
+          request.then(function(resp) {
             var matches = _.map(_.keys(resp.svg), function(match) {
               return {
                 noun: match.toLowerCase(),
@@ -156,11 +154,14 @@ app.after = {
             _.each(matches, function(match) {
               app.cache.words[match.noun] = match;
             })
-            util.render('nouns', 'nounContainer', {nouns: _.map(app.cache.words, function(word) {return word})});
+            var nouns = _.map(app.cache.words, function(word) {return word});
+            util.render('nouns', 'nounContainer', {nouns: nouns, nounsExist: function() {return nouns.length > 0}});
           })
+          return request.promise();
         })
-      }, 2000)();
-    });
+        $.when.apply(null, requests).then(function() { inputs.removeClass('loading') })
+      }, 1000);
+    inputs.keyup(renderIcons);
     $( '.dataset_setup' ).submit( function( e ) {
       var form = $( e.target ).serializeObject();
       var doc = {

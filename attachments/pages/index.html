@@ -218,7 +218,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. -->
   </script>
 
    <script type="text/mustache" class="nounsTemplate">
-     <h4>Visual tags:</h4>
+     {{#nounsExist}}<h4>Visual tags:</h4>{{/nounsExist}}
      {{#nouns}}
        <a href="http://thenounproject.com/noun/{{noun}}/">{{{svg}}}</a>
      {{/nouns}}
