@@ -1,60 +1,51 @@
 importScripts('lib/underscore.js'); 
 
 onmessage = function(message) {
-  function parseCSVLine(line) {
-  	line = line.split(',');
+  
+  function parseCSV(rawCSV) {
+    var patterns = new RegExp((
+      // Delimiters.
+      "(\\,|\\r?\\n|\\r|^)" +
+      // Quoted fields.
+      "(?:\"([^\"]*(?:\"\"[^\"]*)*)\"|" +
+      // Standard fields.
+      "([^\"\\,\\r\\n]*))"
+    ), "gi");
 
-  	// check for splits performed inside quoted strings and correct if needed
-  	for (var i = 0; i < line.length; i++) {
-  		var chunk = line[i].replace(/^[\s]*|[\s]*$/g, "");
-  		var quote = "";
-  		if (chunk.charAt(0) == '"' || chunk.charAt(0) == "'") quote = chunk.charAt(0);
-  		if (quote != "" && chunk.charAt(chunk.length - 1) == quote) quote = "";
+    var rows = [[]], matches = null;
 
-  		if (quote != "") {
-  			var j = i + 1;
+    while (matches = patterns.exec(rawCSV)) {
+      var delimiter = matches[1];
 
-  			if (j < line.length) chunk = line[j].replace(/^[\s]*|[\s]*$/g, "");
+      if (delimiter.length && (delimiter !== ",")) rows.push([]);
 
-  			while (j < line.length && chunk.charAt(chunk.length - 1) != quote) {
-  				line[i] += ',' + line[j];
-  				line.splice(j, 1);
-  				chunk = line[j].replace(/[\s]*$/g, "");
-  			}
+      if (matches[2]) {
+        var value = matches[2].replace(new RegExp("\"\"", "g"), "\"");
+      } else {
+        var value = matches[3];
+      }
+      rows[rows.length - 1].push(value);
+    }
 
-  			if (j < line.length) {
-  				line[i] += ',' + line[j];
-  				line.splice(j, 1);
-  			}
-  		}
-  	}
+    if(_.isEqual(rows[rows.length -1], [""])) rows.pop();
 
-  	for (var i = 0; i < line.length; i++) {
-  		// remove leading/trailing whitespace
-  		line[i] = line[i].replace(/^[\s]*|[\s]*$/g, "");
+    var docs = [];
+    var headers = _.first(rows);
+    _.each(_.rest(rows), function(row, rowIDX) {
+      var doc = {};
+      _.each(row, function(cell, idx) {      
+        doc[headers[idx]] = cell;
+      })
+      docs.push(doc);
+    })
 
-  		// remove leading/trailing quotes
-  		if (line[i].charAt(0) == '"') line[i] = line[i].replace(/^"|"$/g, "");
-  		else if (line[i].charAt(0) == "'") line[i] = line[i].replace(/^'|'$/g, "");
-  	}
-
-  	return line;
+    return docs;
   }
   
-  var rows = message.data.data.split('\n');
-  var docs = [];
-  var headers = parseCSVLine(_.first(rows));
-  _.each(_.rest(rows), function(row, rowIDX) {
-    row = parseCSVLine(row);    
-    var doc = {};
-    _.each(row, function(cell, idx) {      
-      doc[headers[idx]] = cell;
-    })
-    docs.push(doc);
-  })
-
+  var docs = parseCSV(message.data.data);
+  
   var req = new XMLHttpRequest();
-
+  
   req.onprogress = req.upload.onprogress = function(e) {
     if(e.lengthComputable) postMessage(JSON.stringify({ percent: (e.loaded / e.total) * 100 }));
   };
