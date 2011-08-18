@@ -15,7 +15,28 @@
 .account .logout .icon { background: url('images/logout.png') center center no-repeat; }
 .account .username { float: left; margin-right: 4px; font-style: normal; color: #6D6D6C; line-height: 35px; }
 
-.datasets { margin: 0px auto; width: 750px; }
+.datasetsContainer{width:750px;margin:0 auto;}
+.datasetsContainer h2 {
+  padding-left: 22px;
+  margin-top: 15px;
+  margin-bottom: 0;
+  padding-bottom: 5px;
+  font-size: 16px;
+  color: #333;
+  border-bottom: 1px solid #DDD!important;
+}
+.datasets > li{position:relative;min-height:41px;overflow:auto;-webkit-transition:background .2s linear;padding:10px 10px 10px 61px;}
+.datasets dt{position:absolute;left:-9999px;}
+.datasets dd.name{float:left;font-size:16px;line-height:18px;color:#999;}
+.datasets dd.name a:first-child{color:inherit;}
+.datasets dd.name a:hover{text-decoration:none;}
+.datasets dd.metadata{display:block;clear:left;float:left;color:#999;}
+.datasets dd.metadata a{font-weight:700;color:inherit;}
+.datasets dd.avatar{position:absolute;left:10px;top:10px;width:auto;height:auto;background:#fff;}
+.datasets dd.avatar a{display:block;}
+.datasets dd.avatar img{display:block;width:35px;height:35px;}
+.datasets .detailed p{clear:left;float:left;margin-top:6px;line-height:16px;}
+.datasets .subtitle{clear:both;font-size:11px;line-height:20px;}
 
 #loading-message {
   text-align: center;

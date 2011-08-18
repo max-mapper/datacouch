@@ -64,7 +64,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. -->
     </ul>
   </div>
   
-  <div class="datasets"></div>
+  <div class="datasetsContainer"></div>
   
   <div class="dialog-overlay" style="display: none; z-index: 101; ">&nbsp;</div>
   <div class="dialog ui-draggable" style="display: none; z-index: 102; top: 101px; ">
@@ -170,24 +170,31 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. -->
   
   
   <script type="text/mustache" class="datasetsTemplate">
-    <ul class='download clearfix'>
+    {{^datasets}}<center><h1>{{name}} doesn't have any datasets yet!</h1></center>{{/datasets}}
+    <h2>{{name}}</h2>
+    <ol class="datasets detailed">
     {{#datasets}}
-      <a class='download' href='{{url}}'>
-        <li>
-          <h3>{{user}}/{{name}}</h3>
-            <span class='icon osx'></span>
-            <span class='count'>{{count}} documents</span>
-            <span class='size'>{{size}}</span>
-            <span class='date'>Created &nbsp;<span class="timeago" title="{{date}}"></span></span>
-            {{#description}}<span class='description'>{{description}}</span>{{/description}}
+      <li>
+        <dl>
+          <dt>Owner</dt>
+          <dd class="name"><a class="owner" href="#/{{user}}">{{user}}</a>&nbsp;/ <a href="{{url}}">{{name}}</a></dd>
+          <dt>Details</dt>
+          <dd class="metadata subtitle">Created <span class="timeago" title="{{date}}"></span>, {{count}} documents, {{size}}</dd>
+          <dt>Avatar</dt>
+          <dd class="avatar"><a href="#/{{user}}"><img width="32" height="32" src="{{gravatar_url}}"></a></dd>
+          <dt>Description</dt>
+          <dd>
+          <p>
+            {{description}}
             {{#nouns}}
               <a href="http://thenounproject.com/noun/{{noun}}/">{{{svg}}}</a>
             {{/nouns}}
-        </li>
-      </a>
-    {{/datasets}}
-    </ul>
-    {{^datasets}}<center><h1>{{name}} doesn't have any datasets yet!</h1></center>{{/datasets}}
+          </p>
+          </dd>
+        </dl>
+      </li>
+  	{{/datasets}}
+    </ol>
   </script>
   
   <script type="text/mustache" class="noUserTemplate">

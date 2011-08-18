@@ -18,12 +18,18 @@ app.handler = function(route) {
 };
 
 app.showDatasets = function(name) {
-  if (!name) name = "";
-  return couch.request({url: app.baseURL + "api/datasets/" + name}).then(function(resp) {
+  var url = app.baseURL + "api/datasets/";
+  if (name) {
+    url += name;
+  } else {
+    name = "Recent Datasets";
+  }
+  return couch.request({url: url}).then(function(resp) {
     var datasets = _.map(resp.rows, function(row) {
       return {
         url: app.baseURL + 'edit#/' + row.id,
         user: row.doc.user,
+        gravatar_url: row.doc.gravatar_url,
         size: util.formatDiskSize(row.doc.disk_size),
         name: row.value,
         date: row.doc.createdAt,
@@ -32,11 +38,11 @@ app.showDatasets = function(name) {
       };
     })
     if (datasets.length > 0) {
-      util.render('datasets', 'datasets', {name: name, datasets: datasets});      
+      util.render('datasets', 'datasetsContainer', {name: name, datasets: datasets});      
     } else {
       couch.request({url: app.baseURL + "api/users/" + name}).then(
-        function(res) { util.render('datasets', 'datasets', {name: name}) }
-      , function(err) { util.render('noUser', 'datasets', {name: name}) }
+        function(res) { util.render('datasets', 'datasetsContainer', {name: name}) }
+      , function(err) { util.render('noUser', 'datasetsContainer', {name: name}) }
       )
     }
   })
@@ -170,6 +176,7 @@ app.after = {
         name: form.name,
         type: "database",
         user: app.profile._id,
+        gravatar_url: app.profile.gravatar_url,
         createdAt: new Date()
       });
       couch.request({url: app.baseURL + "api/" + doc._id, type: "PUT", data: JSON.stringify(doc)}).then(function(resp) {
@@ -421,6 +428,7 @@ app.after = {
   },
   datasets: function() {
     $('.timeago').timeago();
+    $('svg').height('15px').width('25px');
   },
   nouns: function() {
     $('svg').height('30px').width('50px');
