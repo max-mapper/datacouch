@@ -251,6 +251,5 @@ app.sammy = $.sammy(function () {
 });
 
 $(function() {
-  util.traverse = require('traverse');
   app.sammy.run();  
 })
