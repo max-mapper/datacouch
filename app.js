@@ -7,8 +7,8 @@ ddoc =
   , rewrites :
     [ {from:"/", to:'pages/index.html'}
     , {from:"/edit", to:"pages/recline.html"}
-    , {from:"/api/datasets/:user", to:"_view/by_user", query:{startkey:":user", endkey:":user", include_docs:"true", descending: "true"}}
-    , {from:"/api/datasets", to:"_view/by_user", query:{include_docs:"true"}}
+    , {from:"/api/datasets/:user", to:"_view/by_user", query:{endkey: [":user",null], startkey:[":user",{}], include_docs:"true", descending: "true"}}
+    , {from:"/api/datasets", to:"_view/by_date", query:{include_docs:"true", descending: "true"}}
     , {from:"/api/profile/all", to:"../../../datacouch-users/_design/users/_list/all/users"}
     , {from:"/api/users/search/:user", to:"../../../datacouch-users/_design/users/_view/users", query:{startkey:":user", endkey:":user", include_docs: "true"}}
     , {from:"/api/users/by_email/:user", to:"../../../datacouch-users/_design/users/_view/by_email", query:{startkey:":user", endkey:":user", include_docs: "true"}}
@@ -56,12 +56,12 @@ ddoc.views = {
   },
   by_user: {
     map: function(doc) {
-      if(doc.type === "database") emit(doc.user, doc.name);
+      if(doc.type === "database") emit([doc.user, doc.createdAt] , doc.name);
     }
   },
   by_date: {
     map: function(doc) {
-      if(doc.type === "database") emit(doc.created_at, doc.name);
+      if(doc.type === "database") emit(doc.createdAt, doc.name);
     }
   }
 };
