@@ -28,6 +28,7 @@ app.showDatasets = function(name) {
     var datasets = _.map(resp.rows, function(row) {
       return {
         url: app.baseURL + 'edit#/' + row.id,
+        id: row.id,
         user: row.doc.user,
         gravatar_url: row.doc.gravatar_url,
         size: util.formatDiskSize(row.doc.disk_size),
@@ -38,7 +39,11 @@ app.showDatasets = function(name) {
       };
     })
     if (datasets.length > 0) {
-      util.render('datasets', 'datasetsContainer', {name: name, datasets: datasets});      
+      util.render('datasets', 'datasetsContainer', {
+        loggedIn: function() { return app.session.userCtx.name },
+        name: name,
+        datasets: datasets
+      });      
     } else {
       couch.request({url: app.baseURL + "api/users/" + name}).then(
         function(res) { util.render('datasets', 'datasetsContainer', {name: name}) }
@@ -66,13 +71,52 @@ app.routes = {
         if(!session.userCtx.name) app.showDatasets();
       })
     }
-    
     monocles.fetchSession();
   },
   "new": function() {
     monocles.ensureProfile().then(function(profile) {
       util.show('dialog');
       util.render( 'newDatasetForm', 'dialog-content' );
+    })
+  },
+  fork: function(id) {
+    monocles.ensureProfile().then(function(profile) {
+      util.show('dialog');
+      util.render('loadingMessage', 'dialog-content', {message: "Forking to your account..."});
+      couch.request({url: app.baseURL + "api/" + id }).then( function( dataset ) { 
+        couch.request({url: couch.rootPath + "_uuids"}).then( function( data ) { 
+          var docID = data.uuids[ 0 ];
+          var doc = {
+            forkedFrom: dataset._id,
+            _id: "dc" + docID,
+            type: "database",
+            description: dataset.description,
+            name: dataset.name,
+            user: app.profile._id,
+            gravatar_url: app.profile.gravatar_url,
+            createdAt: new Date()
+          };
+          couch.request({url: app.baseURL + "api/" + doc._id, type: "PUT", data: JSON.stringify(doc)}).then(function(resp) {
+            var dbID = resp.id
+              , dbName = dbID + "/_design/recline"
+              ;
+            function waitForDB(url) {
+              couch.request({url: url, type: "HEAD"}).then(
+                function(resp, status){
+                  app.sammy.setLocation(app.baseURL + 'edit#/' + dbID);
+                },
+                function(resp, status){
+                  console.log("not created yet...", resp, status);
+                  setTimeout(function() {
+                    waitForDB(url);
+                  }, 500);
+                }
+              )
+            }
+            waitForDB(couch.rootPath + dbName);
+          });
+        });
+      });
     })
   },
   settings: function() {
@@ -196,7 +240,7 @@ app.after = {
             }
           )
         }
-        util.render('creatingDataset', 'dialog-content');
+        util.render('loadingMessage', 'dialog-content', {message: "Creating dataset..."});
         waitForDB(couch.rootPath + dbName);
       })
       e.preventDefault();

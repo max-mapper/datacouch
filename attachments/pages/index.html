@@ -43,6 +43,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. -->
 <body>
   <div class='header limiter'>
     <a href='' class='logo'></a>
+    <a href="http://www.github.com/maxogden/datacouch"><img class="notification-banner" src="style/images/ribbon.png"></a>
   </div>
   
   <div class="userControls"></div>
@@ -177,7 +178,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. -->
       <li>
         <dl>
           <dt>Owner</dt>
-          <dd class="name"><a class="owner" href="#/{{user}}">{{user}}</a>&nbsp;/ <a href="{{url}}">{{name}}</a></dd>
+          <dd class="name"><a class="owner" href="{{user}}">{{user}}</a>&nbsp;/ <a class="dataset" href="{{url}}">{{name}}</a></dd>
           <dt>Details</dt>
           <dd class="metadata subtitle">Created <span class="timeago" title="{{date}}"></span>, {{count}} documents, {{size}}</dd>
           <dt>Avatar</dt>
@@ -190,6 +191,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. -->
               <a href="http://thenounproject.com/noun/{{noun}}/">{{{svg}}}</a>
             {{/nouns}}
           </p>
+          </dd>
+          <dt>Actions</dt>
+          <dd class="actions">
+            {{#loggedIn}}<a href="#fork/{{id}}" class="button"><span class="fork icon"></span>Fork dataset</a>{{/loggedIn}}
           </dd>
         </dl>
       </li>
@@ -238,10 +243,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. -->
     <h1>Loading! Please hold on...</h1>
   </script>
   
-  <script type="text/mustache" class="creatingDatasetTemplate">
+  <script type="text/mustache" class="loadingMessageTemplate">
     <div id="loading-message">
       <img src="images/large-spinner.gif">
-      <span> Creating dataset...</span>
+      <span>{{message}}</span>
     </div>
   </script>
   </body>

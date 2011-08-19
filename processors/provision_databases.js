@@ -29,14 +29,30 @@ follow({db:db, include_docs:true}, function(error, change) {
       console.log('creating ' + dbName);
       var start_time = new Date();
       createDB(dbPath).then(function(response) {
-        copyCouchapp("_design/recline", "apps", dbName).then(function(created) {
-          console.log("created " + dbName + " in " + (new Date() - start_time) + "ms");
-        });
+        function done() { console.log("created " + dbName + " in " + (new Date() - start_time) + "ms") }
+        if (doc.forkedFrom) {
+          replicate(doc.forkedFrom, dbName).then(done);
+        } else {
+          replicate("apps", dbName, "_design/recline").then(done);
+        }
         setAdmin(dbName, doc.user); 
       })
     }
   })
 })
+
+function replicate(source, target, ddoc) {
+  var dfd = deferred();
+  var reqData = {"source": source,"target": target};
+  if (ddoc) reqData["doc_ids"] = [ddoc];
+  request({uri: couch + "/_replicate", method: "POST", headers: h, body: JSON.stringify(reqData)}, function (err, resp, body) {
+    if (err) throw new Error('ahh!! ' + err);
+    var response = JSON.parse(body);
+    if (response.doc_write_failures > 0) throw new Error('error creating: ' + body);
+    dfd.resolve(response);
+  })
+  return dfd.promise();
+}
 
 function checkForDB(url) {
   var dfd = deferred();
@@ -57,18 +73,6 @@ function createDB(url) {
     }
     if (!response.ok) throw new Error(url + " - " + body);
     dfd.resolve(resp.statusCode);
-  })
-  return dfd.promise();
-}
-
-function copyCouchapp(ddoc, source, target) {
-  var dfd = deferred();
-  var reqData = {"source": source,"target": target, "doc_ids":[ddoc]};
-  request({uri: couch + "/_replicate", method: "POST", headers: h, body: JSON.stringify(reqData)}, function (err, resp, body) {
-    if (err) throw new Error('ahh!! ' + err);
-    var response = JSON.parse(body);
-    if (response.docs_written !== 1) throw new Error('error creating: ' + body);
-    dfd.resolve(response);
   })
   return dfd.promise();
 }
