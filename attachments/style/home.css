@@ -2,17 +2,17 @@
 .navIcon { opacity: 0.4; float: left; width: 35px; height: 35px; line-height: 35px; }
 
 .new_dataset { line-height: 35px; padding-right: 10px; margin-right: 25px}
-.new_dataset .icon { background: url('images/add.png') center center no-repeat; }
+.new_dataset .navIcon { background: url('images/add.png') center center no-repeat; }
 .session_actions, .user_actions { float: left; }
 .account .option:hover { background: #DCF0F4; }
 .userControls .option {float: left; min-width: 35px; height: 35px;}
 .userControls .option:hover { background: #DCF0F4; }
 
 .account {cursor: pointer; -moz-border-radius: 2px; -webkit-border-radius: 2px; border-radius: 2px;}
-.account .user_settings .icon { background: url('images/settings.png') center center no-repeat; }
+.account .user_settings .navIcon { background: url('images/settings.png') center center no-repeat; }
 .account .gravatar {float: left}
 .account .gravatar img {margin: 4px; border: 1px solid #D0E8F0}
-.account .logout .icon { background: url('images/logout.png') center center no-repeat; }
+.account .logout .navIcon { background: url('images/logout.png') center center no-repeat; }
 .account .username { float: left; margin-right: 4px; font-style: normal; color: #6D6D6C; line-height: 35px; }
 
 .datasetsContainer{width:750px;margin:0 auto;}

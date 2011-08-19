@@ -217,19 +217,6 @@ app.after = {
       recline.handleMenuClick();
     });
   },
-  controls: function() {
-    $('#logged-in-status').click(function(e) { 
-      if ($(e.target).text() === "Sign in") {
-        recline.showDialog("signIn");
-      } else if ($(e.target).text() === "Sign out") {
-        util.notify("Signing you out...", {persist: true, loader: true});
-        couch.logout().then(function(response) {
-          util.notify("Signed out");
-          util.render('controls', 'project-controls', {text: "Sign in"});
-        })
-      }
-    });
-  },
   datasets: function() {
     $('.timeago').timeago();
     $('svg').height('15px').width('25px');

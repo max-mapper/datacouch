@@ -12,51 +12,22 @@ $(function(){
     function userProfile() {
       return app.profile;
     }
+    
+    function loginFail() { alert('oh noes! an error occurred whilst logging you in') };
 
     // binds UX interaction and form submit event handlers to the signup/login forms
     function showLogin() {
-      function loginFail() { alert('oh noes! an error occurred whilst logging you in')};
       navigator.id.getVerifiedEmail(function(assertion) {
         if (assertion) {
           var verificationURL = couch.rootPath + '_browserid';
           var verification = { 'assertion': encodeURIComponent(assertion)
                              , 'audience' : encodeURIComponent(document.domain)
                              };
-          couch.request({url: verificationURL, type: "POST", data: JSON.stringify(verification)}).then(
-            function(response) { 
-              fetchSession();
-            },
-            loginFail
-          );
+          couch.request({url: verificationURL, type: "POST", data: JSON.stringify(verification)}).then(fetchSession, loginFail);
         } else {
           loginFail();
         }
       });
-    }
-
-    function showSessionStatus() {
-      if (!app.session) {
-        monocles.fetchSession();
-        return;
-      }
-
-      util.render('userControls', 'userControls');
-      var session = app.session;
-      if ( session.userCtx.name ) {
-        fetchProfile( session ).then( function( profile ) {
-          util.render( 'loggedIn', 'account', {
-            username : profile._id,
-            gravatar_url : profile.gravatar_url
-          });
-          app.emitter.emit(profile._id, 'login');
-          util.render('userActions', 'user_actions')
-        });
-      } else if ( util.isAdminParty( session.userCtx ) ) {
-        util.render( 'adminParty', 'account' );
-      } else {
-        util.render( 'loginButton', 'account' );
-        util.render( 'loggedOut', 'session_status' );
-      }
     }
 
     function ensureProfile() {
@@ -75,14 +46,27 @@ $(function(){
 
     function fetchSession() {
       var dfd = $.Deferred();
-      couch.session().then(
-        function( session ) {
-          app.session = session;
-          app.emitter.emit(app.session, 'session');
-          showSessionStatus();
-          dfd.resolve(session);
+      couch.session().then(function( session ) {
+        app.session = session;
+        app.emitter.emit(app.session, 'session');
+        util.render('userControls', 'userControls');
+        if ( session.userCtx.name ) {
+          fetchProfile( session ).then( function( profile ) {
+            util.render( 'loggedIn', 'account', {
+              username : profile._id,
+              gravatar_url : profile.gravatar_url
+            });
+            app.emitter.emit(profile._id, 'login');
+            util.render('userActions', 'user_actions')
+          });
+        } else if ( util.isAdminParty( session.userCtx ) ) {
+          util.render( 'adminParty', 'account' );
+        } else {
+          util.render( 'loginButton', 'account' );
+          util.render( 'loggedOut', 'session_status' );
         }
-      );
+        dfd.resolve(session);
+      });
       return dfd.promise();
     }
 
@@ -145,14 +129,7 @@ $(function(){
       newProfile._id = newProfile.username;
       delete newProfile.username;
       newProfile.rand = Math.random().toString(); 
-      updateProfile(newProfile).then(
-        function(resp) {
-          util.render( 'loggedIn', 'account', {
-            username : newProfile._id,
-            gravatar_url : newProfile.gravatar_url
-          });
-        }
-      );
+      updateProfile(newProfile).then(fetchSession);
     }
 
     function switchNav(route) {
@@ -561,7 +538,6 @@ $(function(){
       db: db,
       userProfile: userProfile,
       showLogin: showLogin,
-      showSessionStatus: showSessionStatus,
       ensureProfile: ensureProfile,
       fetchSession: fetchSession,
       fetchProfile: fetchProfile,
