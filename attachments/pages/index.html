@@ -178,7 +178,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. -->
       <li>
         <dl>
           <dt>Owner</dt>
-          <dd class="name"><a class="owner" href="{{user}}">{{user}}</a>&nbsp;/ <a class="dataset" href="{{url}}">{{name}}</a></dd>
+          <dd class="name">
+            <a class="owner" href="{{user}}">{{user}}</a>&nbsp;/ <a class="dataset" href="{{baseURL}}{{id}}">{{name}}</a>
+            {{#forkedFrom}}
+              <span class="forkedFrom"><span class="fork icon"></span>forked from <a href="{{forkedFromUser}}">{{forkedFromUser}}</a>&nbsp;/ <a class="dataset" href="{{baseURL}}{{forkedFrom}}">{{name}}</a></span>
+            {{/forkedFrom}}
+            {{#nouns}}
+              <a href="http://thenounproject.com/noun/{{noun}}/">{{{svg}}}</a>
+            {{/nouns}}
+          </dd>
           <dt>Details</dt>
           <dd class="metadata subtitle">Created <span class="timeago" title="{{date}}"></span>, {{count}} documents, {{size}}</dd>
           <dt>Avatar</dt>
@@ -187,9 +195,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. -->
           <dd>
           <p>
             {{description}}
-            {{#nouns}}
-              <a href="http://thenounproject.com/noun/{{noun}}/">{{{svg}}}</a>
-            {{/nouns}}
           </p>
           </dd>
           <dt>Actions</dt>

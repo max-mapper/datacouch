@@ -27,7 +27,7 @@ app.showDatasets = function(name) {
   return couch.request({url: url}).then(function(resp) {
     var datasets = _.map(resp.rows, function(row) {
       return {
-        url: app.baseURL + 'edit#/' + row.id,
+        baseURL: app.baseURL + 'edit#/',
         id: row.id,
         user: row.doc.user,
         gravatar_url: row.doc.gravatar_url,
@@ -35,6 +35,8 @@ app.showDatasets = function(name) {
         name: row.value,
         date: row.doc.createdAt,
         nouns: row.doc.nouns,
+        forkedFrom: row.doc.forkedFrom,
+        forkedFromUser: row.doc.forkedFromUser,
         count: row.doc.doc_count - 1 // TODO calculate this programatically
       };
     })
@@ -88,6 +90,7 @@ app.routes = {
           var docID = data.uuids[ 0 ];
           var doc = {
             forkedFrom: dataset._id,
+            forkedFromUser: dataset.user,
             _id: "dc" + docID,
             type: "database",
             description: dataset.description,
