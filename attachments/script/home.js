@@ -194,7 +194,13 @@ app.after = {
         var input = $(this);
         input.addClass('loading');
         app.cache.words = {};
-        var words = _.reduce(inputs, function(memo, el){ return memo + " " + $(el).val() }, "").replace(/[^\w\s]|_/g, "").replace(/\s+/g, ' ').trim().split(' ');
+        var words = _.reduce(inputs, function(memo, el) { 
+          return memo + " " + $(el).val()
+        }, "")
+          .replace(/[^\w\s]|_/g, "")
+          .replace(/\s+/g, ' ')
+          .trim()
+          .split(' ');
         var requests = _.map(words, function(word) {
           var request = util.lookupIcon(word);
           request.then(function(resp) {

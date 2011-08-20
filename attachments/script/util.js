@@ -136,7 +136,7 @@ var util = function() {
     if (target instanceof jQuery) {
       var targetDom = target;
     } else {
-      var targetDom = $( "." + target + ":first" );      
+      var targetDom = $( "." + target + ":first" );
     }
     if( options.append ) {
       targetDom.append( html );
