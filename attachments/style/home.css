@@ -2,7 +2,7 @@
 .navIcon { float: left; width: 35px; height: 35px; line-height: 35px; }
 
 .notification-banner {position: relative;bottom: 63px;left: 53px;}
-.forkedFrom { font-size: 10px; position: relative; top: -1px; display:block;}
+.forkedFrom { font-size: 10px; clear: both; display:block;}
 .new_dataset { line-height: 35px; padding-right: 10px; margin-right: 25px}
 .new_dataset .navIcon { background: url('images/add.png') center center no-repeat; }
 .session_actions, .user_actions { float: left; }
@@ -27,7 +27,7 @@
 }
 .datasets > li{position:relative;min-height:41px;overflow:auto;-webkit-transition:background .2s linear;padding:10px 10px 10px 61px;}
 .datasets dt{position:absolute;left:-9999px;}
-.datasets dd.name{float:left;font-size:16px;line-height:18px;color:#999;}
+.datasets dd.name{float:left;font-size:16px;line-height:1;color:#999; }
 .datasets dd.name a:first-child{color:inherit;}
 .datasets dd.name a:hover{text-decoration:none;}
 .datasets dd.metadata{display:block;clear:left;float:left;color:#999;}
@@ -36,7 +36,7 @@
 .datasets dd.avatar a{display:block;}
 .datasets dd.avatar img{display:block;width:35px;height:35px;}
 .datasets .detailed p{clear:left;float:left;margin-top:6px;line-height:16px;}
-.datasets .subtitle{clear:both;font-size:11px;line-height:20px;}
+.datasets .subtitle{clear:both;font-size:11px;line-height:1;}
 .datasets .actions {display: none; margin-top:-12px;}
 .datasets li:hover .actions {display: block; position: absolute; top: 17px; right: 10px;}
 .datasets li:hover {background-color: #EEEEEE;}
