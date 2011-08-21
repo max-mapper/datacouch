@@ -485,6 +485,33 @@ var util = function() {
     })
   }
   
+  function routeViews( route ){
+
+    // If we've made it this far, then the ID (if one exists) will be
+    // what comes after the slash
+    id = route.split('/')[1];
+    
+    // If "#" is in the route, and it's the first char, then we are dealing with
+    // a modal, we're going to route it through the views modals object
+    if( route.indexOf( '#' ) === 0 ) {
+
+      route = route.replace('#', '');
+      app.routes.modals[ route ]( id );
+
+    // Otherwise, it's a page, and we're going to route it through the
+    // views pages object, and pushState
+    } else {
+      
+      if( route === "/" ) {
+        history.pushState({}, "", '/'); 
+        app.routes.pages[ 'home' ]();
+      }
+
+      history.pushState({}, "", '/' + route); 
+      app.routes.pages[ 'user' ]( id );
+      
+    }
+  }
   
   return {
     inURL: inURL,
@@ -510,6 +537,7 @@ var util = function() {
     selectedTreePath: selectedTreePath,
     renderTree: renderTree,
     showDatasets: showDatasets,
-    showTrendingsets: showTrendingsets
+    showTrendingsets: showTrendingsets,
+    routeViews: routeViews,
   };
 }();

@@ -3,14 +3,14 @@
 <head> 
 	<meta charset="utf-8"> 
 	<title>DataCouch Editor</title> 
-  <link rel="stylesheet" href="style/reset.css" media="screen">
-	<link rel="stylesheet" href="style/data-table.css" media="screen"> 
-	<link rel="stylesheet" href="style/recline.css" media="screen">
-	<script type="text/javascript" src="script/deps-min.js"></script>	
-	<script type="text/javascript" src="script/util.js"></script>
-	<script type="text/javascript" src="script/costco.js"></script>
-	<script type="text/javascript" src="script/recline.js"></script>
-	<script type="text/javascript" src="script/edit.js"></script>
+  <link rel="stylesheet" href="/style/reset.css" media="screen">
+	<link rel="stylesheet" href="/style/data-table.css" media="screen"> 
+	<link rel="stylesheet" href="/style/recline.css" media="screen">
+	<script type="text/javascript" src="/script/deps-min.js"></script>	
+	<script type="text/javascript" src="/script/util.js"></script>
+	<script type="text/javascript" src="/script/costco.js"></script>
+	<script type="text/javascript" src="/script/recline.js"></script>
+	<script type="text/javascript" src="/script/edit.js"></script>
 </head> 
 <body class="bod">
 	<div class="container">
@@ -18,7 +18,7 @@
     <ul class="menu">
     </ul>
     <div id="header">
-      <a class="homeButton" href="#/"><img id="couchLogo" src="images/fancycouch-small.png"/></a>
+      <a class="homeButton" href="#/"><img id="couchLogo" src="/images/fancycouch-small.png"/></a>
       <div class="project-title"></div>
       <div class="project-actions"></div>
       <div class="project-controls"></div>
@@ -28,7 +28,7 @@
 	
 	<div id="notification-container">
   	<div id="notification">
-  		<img src="images/small-spinner.gif" class="notification-loader"><span id="notification-message">Loading...</span>
+  		<img src="/images/small-spinner.gif" class="notification-loader"><span id="notification-message">Loading...</span>
   	</div>
   </div>
     
@@ -41,7 +41,7 @@
   
   <script type='text/mustache' class="busyTemplate">
     <div id="loading-message">
-      <img src="images/large-spinner.gif">
+      <img src="/images/large-spinner.gif">
       <span> Working...</span>
     </div>
   </script>
@@ -160,7 +160,7 @@
               <h1>Hello there!</h1>
               <p>You haven't uploaded any data yet. Check out the Import menu up top to get started.</p>
             </div>
-            <img class="bigCouch" src="images/couch-big.png">
+            <img class="bigCouch" src="/images/couch-big.png">
             
           </div>
         {{/rows}}
