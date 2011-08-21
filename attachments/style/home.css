@@ -483,7 +483,7 @@ a.download .icon {
   margin:10px auto;
   width:80px;
   height:80px;
-  background:url(images/sprite.png) 80px 80px no-repeat;
+  background:url(images/buttonsprite.png) 0px 80px no-repeat;
   }
 
 a.download .icon { background-position:0px -80px; }
@@ -515,29 +515,18 @@ a.download span.size { color:#666; }
  */
 .header {
   padding:40px 0px 20px;
-  height:80px;
+  height:125px;
   margin:0px auto;
   position:relative;
   }
 
 .logo {
   display:block;
-  width:340px;
-  height:80px;
+  width:380px;
+  height:140px;
   overflow:hidden;
   text-indent:-9999px;
-  background:url(images/sprite.png) 0px 0px no-repeat;
-  }
-
-.mapbox {
-  position:absolute;
-  right:0px;
-  top:0px;
-  height:60px;
-  width:120px;
-  overflow:hidden;
-  text-indent:-9999px;
-  background:url(images/sprite.png) -160px -80px no-repeat;
+  background:url(images/logo.png) 0px 0px no-repeat;
   }
 
 .menu {
