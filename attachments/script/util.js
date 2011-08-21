@@ -422,7 +422,6 @@ var util = function() {
         };
       })
       
-      console.log('imahera')
       if (datasets.length > 0) {
         util.render('datasets', 'datasetsContainer', {
           loggedIn: function() { 

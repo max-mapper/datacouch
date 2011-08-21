@@ -18,32 +18,31 @@ app.routes = {
         util.render( 'banner', 'bannerContainer' );
       }
       
-      // If we're using the full path to the design doc
-      // then split on _rewrite, and the user name will be the first thing
-      // after that
-      if (window.location.pathname.indexOf('_rewrite') > -1) {
-        user = window.location.pathname.split('_rewrite')[1].replace('/', '');
+      // Otherwise, show the global data feed
+      //util.showDatasets();
 
-      // Otherwise, it's the first thing adter the TLD
-      } else {
-        user = $.url(window.location.pathname).segment()[0];
-      }
-
-      // If username exists
-      if (user.length > 0) {
-        // Render the users' data
-        util.showDatasets(user);
-      } else {
-        // Otherwise, show the global data feed
-        util.showDatasets();
-      }
     });
     
     app.emitter.on('login', function(name) {
       $('.banner').slideUp();
-      util.showDatasets(user);
-      
+      util.showDatasets();      
     })
+  },
+  user: function(){
+    var username;
+
+    // If we're using the full path to the design doc
+    // then split on _rewrite, and the user name will be the first thing
+    // after that
+    if (window.location.pathname.indexOf('_rewrite') > -1) {
+      username = window.location.pathname.split('_rewrite')[1].replace('/', '');
+
+    // Otherwise, it's the first thing adter the TLD
+    } else {
+      username = $.url(window.location.pathname).segment()[0];
+    }
+
+    util.showDatasets( username );
   },
   "new": function() {
     monocles.ensureProfile().then(function(profile) {
@@ -251,24 +250,31 @@ app.after = {
   }
 }
 
+function routeTemplate( route ){
+  if( route.split('')[0] === '#' ){
+    app.routes[ route.replace('#', '') ]();
+  } else {
+    app.routes.user();      
+  }  
+}
+
 $(function() {  
   app.routes['home']();
   
   $('a').live('click', function( event ) {
-    var href = $(this).attr('href');
+    event.preventDefault();
     
-    if(href.split('')[0] === '#'){
-      event.preventDefault();
-      var route = $(this).attr('href').replace('#', '');
+    var route =  $(this).attr('href');
 
-      app.routes[route]();      
-    }    
-  })
+    history.pushState({}, "", route);
+
+    routeTemplate( route );
+  });
 
   $(window).bind('popstate', function() {
 
     event.preventDefault();
-    console.log(location.pathname);
 
-  })
+    routeTemplate( $.url(window.location.pathname).segment()[0] );
+  });
 })
