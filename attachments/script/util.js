@@ -486,6 +486,10 @@ var util = function() {
   }
   
   function routeViews( route ){
+    
+    if( !route.length ) {
+      app.routes.pages[ 'home' ]();
+    }
 
     // If we've made it this far, then the ID (if one exists) will be
     // what comes after the slash
