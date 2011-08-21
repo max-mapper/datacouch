@@ -14,12 +14,14 @@ app.handler = function(route) {
 };
 
 app.routes = {
-  recline: function(id) {
-    $('.homeButton').attr('href', app.baseURL);
-    recline.bootstrap(id);
-  },
-  noID: function() {
-    alert('you have to specify an id!');
+  pages: {
+    user: function(id) {
+      $('.homeButton').attr('href', app.baseURL);
+      recline.bootstrap(id);
+    },
+    noID: function() {
+      alert('you have to specify an id!');
+    }
   }
 }
 
@@ -245,12 +247,10 @@ app.after = {
 }
 
 $(function() {  
-  id = window.location.hash.replace('#', '')
-  
-  if( id.length ){
-    app.routes['recline']( id );        
-  } else {
-    app.routes['noID']();
-  }
+
+  // set the route as the pathname, but loose the leading slash
+  var route = window.location.pathname.replace('/', '');
+
+  util.routeViews( route );
   
 })
