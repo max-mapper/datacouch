@@ -118,11 +118,11 @@ ddoc.lists = {
 ddoc.validate_doc_update = function (newDoc, oldDoc, userCtx) {
   if (userCtx.roles.indexOf('_admin') > -1) return;
 
-  if (newDoc._deleted === true && userCtx.roles.indexOf('_admin') === -1) {
+  if (newDoc._deleted === true && userCtx.roles.indexOf('browserid') === -1) {
     throw({forbidden : "Only dataset owners can delete documents."});;
   }
   
-  if (newDoc && userCtx.roles.indexOf('_admin') === -1) {
+  if (newDoc && userCtx.roles.indexOf('browserid') === -1) {
     throw({forbidden : "Only dataset owners can add or edit documents."});;
   }
 };

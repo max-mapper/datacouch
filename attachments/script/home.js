@@ -96,6 +96,7 @@ app.routes = {
             description: dataset.description,
             name: dataset.name,
             user: app.profile._id,
+            couch_user: app.session.userCtx.name,
             gravatar_url: app.profile.gravatar_url,
             createdAt: new Date()
           };
