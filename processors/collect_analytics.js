@@ -1,5 +1,7 @@
-var http = require('http');
-var request = require('request');
+var http = require('http')
+  , request = require('request')
+  , crypto = require('crypto')
+  ;
 
 var opts = {
   host: "0.0.0.0",
@@ -41,29 +43,49 @@ function startPingHost() {
     res.writeHead(200, pingHeaders);
     res.write(buf);
     res.end();
-
+    
+    
+    if (!req.headers.referer) return;
     writeStats(req.connection.remoteAddress, req.headers);
 
   }).listen(opts.ping_port, opts.host);
   console.log('Ping server running at http://' + opts.host + ':' + opts.ping_port);
 };
 
-function writeStats(ip, headers) {
+function getDay() {
+  var currentTime = new Date()
+    , month = currentTime.getMonth() + 1
+    , day = currentTime.getDate()
+    , year = currentTime.getFullYear()
+    ;
+  return month + "/" + day + "/" + year;
+}
 
+function writeStats(ip, headers) {
   var stats = {
-    date: JSON.stringify(new Date()),
-    ip: ip,
+    day: getDay(),
     page: headers.referer
   };
+  
+  var id = crypto.createHash('md5').update(ip + JSON.stringify(stats)).digest("hex");
 
   request({
-    method: 'POST',
+    method: 'HEAD',
     headers: {'Content-Type': 'application/json'},
-    uri: opts.couch,
-    body: JSON.stringify(stats)
+    uri: opts.couch + "/" + id,
   }, function(err, resp, body) {
-    console.log(body);
+    if (resp.statusCode === 404) {
+      request({
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json'},
+        uri: opts.couch + "/" + id,
+        body: JSON.stringify(stats)
+      }, function(err, resp, body) {
+        console.log(body);
+      });
+    }
   });
+
 }
 
 init();

@@ -11,7 +11,7 @@ ddoc.validate_doc_update = function (newDoc, oldDoc, userCtx) {
 
 ddoc.views = {
   uniques: {
-    map: function(doc) { emit([doc.ip, doc.page], 1)},
+    map: function(doc) { emit([doc.page, doc.ip], 1)},
     reduce: "_sum"
   }
 }
