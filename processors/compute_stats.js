@@ -34,8 +34,8 @@ function computeStats(couch, datasetsURL, callback) {
   })
 }
 
-var couch = "http://admin:admin@localhost:5984"
-  , datasets = couch + "/datacouch/_design/datacouch/_view/by_user?include_docs=true"
+var couch = process.argv[2]
+  , datasets = couch + "/" + process.argv[3]  
   ;
 
 function loop() {

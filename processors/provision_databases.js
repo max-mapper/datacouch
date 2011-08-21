@@ -11,8 +11,8 @@ var follow = require('follow')
   , path = require('path')
   ;
 
-var couch = "http://admin:admin@localhost:5984"
-  , db = couch + "/datacouch"
+var couch = process.argv[2]
+  , db = couch + "/" + process.argv[3]
   , h = {"Content-type": "application/json", "Accept": "application/json"}
   ;
 
