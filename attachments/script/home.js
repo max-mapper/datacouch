@@ -2,112 +2,132 @@ var app = {
 	baseURL: util.getBaseURL(window.location.href),
 	container: 'main_content',
 	emitter: util.registerEmitter(),
-	cache: {}
+	cache: {},
+	reservedPages: ['edit']
 };
 
 couch.dbPath = app.baseURL + "api/";
 couch.rootPath = couch.dbPath + "couch/";
 
+/*
+ App.routes
+   pages
+    home
+    user
+  modals
+    new
+    settings
+    logout
+  actions
+    fork
+*/
 app.routes = {
-  home: function() {
-    
-    util.showDatasets();      
-    util.showTrendingsets();      
-    
-    var user;
-    // If we are not logged in, show the banner
-    monocles.fetchSession().then( function( session ) {
+  pages: {
+    home: function() {
+
+      util.showDatasets();      
+      util.showTrendingsets();      
+
+      var user;
+      // If we are not logged in, show the banner
+      monocles.fetchSession().then( function( session ) {
+
+        if( !session.userCtx.name ){
+          util.render( 'banner', 'bannerContainer' );
+        }
+
+      });
+
+      app.emitter.on('login', function(name) {
+        $('.banner').slideUp();
+      })
+    },
+    user: function(){
+      monocles.fetchSession();
       
-      if( !session.userCtx.name ){
-        util.render( 'banner', 'bannerContainer' );
+      var username;
+
+      // If we're using the full path to the design doc
+      // then split on _rewrite, and the user name will be the first thing
+      // after that
+      if (window.location.pathname.indexOf('_rewrite') > -1) {
+        username = window.location.pathname.split('_rewrite')[1].replace('/', '');
+
+      // Otherwise, it's the first thing adter the TLD
+      } else {
+        username = $.url(window.location.pathname).segment()[0];
       }
 
-    });
-    
-    app.emitter.on('login', function(name) {
-      $('.banner').slideUp();
-    })
+      util.showDatasets( username );
+    },
   },
-  user: function(){
-    var username;
+  modals: {
+    "new": function() {
+      monocles.ensureProfile().then(function(profile) {
+        util.show('dialog');
+        util.render( 'newDatasetForm', 'modal' );
+      })
+    },    
+    settings: function() {
+      monocles.ensureProfile().then(function(profile) {
+        util.show('dialog');
+        util.render( 'editProfileForm', 'modal', profile );
+      })    
+    },
+    logout: function() {
+      couch.logout().then(function() {
+        util.render('userControls', 'userControls');
+        delete app.session;
+        $( '#header' ).data( 'profile', null );
+        app.routes.pages['home']();
+        history.pushState({}, "", "/");
 
-    // If we're using the full path to the design doc
-    // then split on _rewrite, and the user name will be the first thing
-    // after that
-    if (window.location.pathname.indexOf('_rewrite') > -1) {
-      username = window.location.pathname.split('_rewrite')[1].replace('/', '');
-
-    // Otherwise, it's the first thing adter the TLD
-    } else {
-      username = $.url(window.location.pathname).segment()[0];
+      })
     }
-
-    util.showDatasets( username );
-    util.showTrendingsets( username );      
   },
-  "new": function() {
-    monocles.ensureProfile().then(function(profile) {
-      util.show('dialog');
-      util.render( 'newDatasetForm', 'modal' );
-    })
-  },
-  fork: function(id) {
-    monocles.ensureProfile().then(function(profile) {
-      util.show('dialog');
-      util.render('loadingMessage', 'modal', {message: "Forking to your account..."});
-      couch.request({url: app.baseURL + "api/" + id }).then( function( dataset ) { 
-        couch.request({url: couch.rootPath + "_uuids"}).then( function( data ) { 
-          var docID = data.uuids[ 0 ];
-          var doc = {
-            forkedFrom: dataset._id,
-            forkedFromUser: dataset.user,
-            _id: "dc" + docID,
-            type: "database",
-            description: dataset.description,
-            name: dataset.name,
-            user: app.profile._id,
-            couch_user: app.session.userCtx.name,
-            gravatar_url: app.profile.gravatar_url,
-            createdAt: new Date()
-          };
-          couch.request({url: app.baseURL + "api/" + doc._id, type: "PUT", data: JSON.stringify(doc)}).then(function(resp) {
-            var dbID = resp.id
-              , dbName = dbID + "/_design/recline"
-              ;
-            function waitForDB(url) {
-              couch.request({url: url, type: "HEAD"}).then(
-                function(resp, status) {
-                  window.location = app.baseURL + 'edit#/' + dbID;
-                },
-                function(resp, status){
-                  console.log("not created yet...", resp, status);
-                  setTimeout(function() {
-                    waitForDB(url);
-                  }, 500);
-                }
-              )
-            }
-            waitForDB(couch.rootPath + dbName);
+  actions: {
+    fork: function(id) {
+      monocles.ensureProfile().then(function(profile) {
+        util.show('dialog');
+        util.render('loadingMessage', 'modal', {message: "Forking to your account..."});
+        couch.request({url: app.baseURL + "api/" + id }).then( function( dataset ) { 
+          couch.request({url: couch.rootPath + "_uuids"}).then( function( data ) { 
+            var docID = data.uuids[ 0 ];
+            var doc = {
+              forkedFrom: dataset._id,
+              forkedFromUser: dataset.user,
+              _id: "dc" + docID,
+              type: "database",
+              description: dataset.description,
+              name: dataset.name,
+              user: app.profile._id,
+              couch_user: app.session.userCtx.name,
+              gravatar_url: app.profile.gravatar_url,
+              createdAt: new Date()
+            };
+            couch.request({url: app.baseURL + "api/" + doc._id, type: "PUT", data: JSON.stringify(doc)}).then(function(resp) {
+              var dbID = resp.id
+                , dbName = dbID + "/_design/recline"
+                ;
+              function waitForDB(url) {
+                couch.request({url: url, type: "HEAD"}).then(
+                  function(resp, status) {
+                    window.location = app.baseURL + 'edit#/' + dbID;
+                  },
+                  function(resp, status){
+                    console.log("not created yet...", resp, status);
+                    setTimeout(function() {
+                      waitForDB(url);
+                    }, 500);
+                  }
+                )
+              }
+              waitForDB(couch.rootPath + dbName);
+            });
           });
         });
-      });
-    })
-  },
-  settings: function() {
-    monocles.ensureProfile().then(function(profile) {
-      util.show('dialog');
-      util.render( 'editProfileForm', 'modal', profile );
-    })    
-  },
-  logout: function() {
-    couch.logout().then(function() {
-      util.render('userControls', 'userControls');
-      delete app.session;
-      $( '#header' ).data( 'profile', null );
-      app.routes['home']();
-      history.pushState({}, "", "/");
-      
-    })
+      })
+    }
   }
 }
 
@@ -151,7 +171,7 @@ app.after = {
       monocles.updateProfile($( e.target ).serializeObject());
       e.preventDefault();
       util.hide('dialog');
-      app.routes['home']();
+      app.routes.pages['home']();
       return false;
     });
   },
@@ -160,7 +180,7 @@ app.after = {
     couch.request({url: couch.rootPath + "_uuids"}).then( function( data ) { docID = data.uuids[ 0 ] });
     $('.cancel').click(function(e) {
       util.hide('dialog');
-      app.routes['home']();
+      app.routes.pages['home']();
     })
     var inputs = $(".dataset_setup textarea[name='description'], .dataset_setup input[name='name']");
     var renderIcons = _.throttle(function() {
@@ -256,51 +276,63 @@ app.after = {
 var routeTemplate = function( route ){
   
   if( route.split('')[0] === '#' ){
-
-    route = route.replace('#', '').split('/');
-    
     var id = '';
+    route = route.replace('#', '').split('/');
     
     if( route.indexOf('/') ) {
       id = route[1]
-    }
+    }    
     
     route = route[0]
-  
-    console.log(id)
-    
-    app.routes[ route ]( id );
- 
+    app.routes[ route ]( id ); 
  
   } else {
- 
-    app.routes.user();      
- 
+    app.routes.pages['user']();      
   }  
 }
 
 $(function() {  
-  app.routes['home']();    
+  // set the route as the pathname, but loose the leading slash
+  var route = window.location.pathname.replace('/', '');
 
-  if( $.url(window.location.pathname).segment()[0].length ){
-    app.routes['user']();
-  }
+  util.routeViews( route );
   
   $('a').live('click', function( event ) {
-    var route =  $(this).attr('href');
+    /*
+      Basic rules of this router:
+        We are going to let the following types of hrefs through
+         * links off domain (contains http://)
+         * point to elements in app.reservedKeywords through
+         
+        If it's not one of these things, then we are going to prevent default and
+          * If there is a hash in the href, we're going to launch a modal
+          * Otherwise, we're going to pushState and render a page view
+    */
     
-    if( route.indexOf('http://') && route.split('#')[0] != 'edit') {
-      event.preventDefault();
-      history.pushState({}, "", route);
-      routeTemplate( route );
+    var route =  $(this).attr('href')
+
+    // If "http://" is in the route, we're going to let it through, and this function is over
+    if( route.indexOf( 'http://' ) > -1) {
+      return;
+    }
+    
+    console.log(route)
+
+    // If the route contains one of our reserved pages, let it through
+    if( route.split('/')[0].indexOf(app.reservedPages) > -1){
+      return;
     }
 
+    // If it's not off tld or if it's not going to start with a reserved page,
+    // then we're going to prevent default and handle everything with javascript
+    event.preventDefault();
+    util.routeViews( route )
   });
 
   $(window).bind('popstate', function() {
 
     event.preventDefault();
 
-    routeTemplate( $.url(window.location.pathname).segment()[0] );
+    util.routeViews( $.url(window.location.pathname).segment()[0] );
   });
 })
