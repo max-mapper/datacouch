@@ -49,13 +49,13 @@ app.routes = {
   "new": function() {
     monocles.ensureProfile().then(function(profile) {
       util.show('dialog');
-      util.render( 'newDatasetForm', 'dialog-content' );
+      util.render( 'newDatasetForm', 'modal' );
     })
   },
   fork: function(id) {
     monocles.ensureProfile().then(function(profile) {
       util.show('dialog');
-      util.render('loadingMessage', 'dialog-content', {message: "Forking to your account..."});
+      util.render('loadingMessage', 'modal', {message: "Forking to your account..."});
       couch.request({url: app.baseURL + "api/" + id }).then( function( dataset ) { 
         couch.request({url: couch.rootPath + "_uuids"}).then( function( data ) { 
           var docID = data.uuids[ 0 ];
@@ -97,7 +97,7 @@ app.routes = {
   settings: function() {
     monocles.ensureProfile().then(function(profile) {
       util.show('dialog');
-      util.render( 'editProfileForm', 'dialog-content', profile );
+      util.render( 'editProfileForm', 'modal', profile );
     })    
   },
   logout: function() {
@@ -128,10 +128,10 @@ app.after = {
           input.removeClass('loading');
           if ( response.rows.length > 0 ) {
             input.addClass('notAvailable');
-            $('.username-message').text('username taken!')
+            $('.username-message').text('unavailable!')
           } else {
             input.addClass('available');
-            $('.username-message').text('username available!')
+            $('.username-message').text('available!')
           }
         })
       }, 500)();
@@ -224,7 +224,7 @@ app.after = {
             }
           )
         }
-        util.render('loadingMessage', 'dialog-content', {message: "Creating dataset..."});
+        util.render('loadingMessage', 'modal', {message: "Creating dataset..."});
         waitForDB(couch.rootPath + dbName);
       })
       e.preventDefault();
