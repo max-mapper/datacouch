@@ -53,7 +53,7 @@ function writeStats(ip, headers) {
   var stats = {
     date: JSON.stringify(new Date()),
     ip: ip,
-    headers: headers
+    page: headers.referer
   };
 
   request({
