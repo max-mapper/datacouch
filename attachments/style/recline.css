@@ -43,6 +43,12 @@ a.button:hover span.icon.loading { background-image: url(images/loader-blue.gif)
 .chosen {border: 1px solid green}
 .info { padding: 0px 0px 10px 0px}
 .large-loader { position: relative; }
+
+.gettingStarted { width: 809px; margin: 50px auto}
+.gettingStarted .bigCouch {float: right}
+.gettingStarted .welcomeMessage { float: left; width: 220px}
+.gettingStarted h1 {font-size: 3.3em}
+.gettingStarted p {font-size: 13px; color: gray}
 .menu-overlay {
   position: fixed;
   top: 0;
