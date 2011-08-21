@@ -12,6 +12,7 @@ app.routes = {
   home: function() {
     
     util.showDatasets();      
+    util.showTrendingsets();      
     
     var user;
     // If we are not logged in, show the banner
@@ -20,9 +21,6 @@ app.routes = {
       if( !session.userCtx.name ){
         util.render( 'banner', 'bannerContainer' );
       }
-      
-      // Otherwise, show the global data feed
-      //util.showDatasets();
 
     });
     
@@ -45,6 +43,7 @@ app.routes = {
     }
 
     util.showDatasets( username );
+    util.showTrendingsets( username );      
   },
   "new": function() {
     monocles.ensureProfile().then(function(profile) {
@@ -258,9 +257,20 @@ var routeTemplate = function( route ){
   
   if( route.split('')[0] === '#' ){
 
-    route = route.replace('#', '')
+    route = route.replace('#', '').split('/');
     
-    app.routes[ route ]();
+    var id = '';
+    
+    if( route.indexOf('/') ) {
+      id = route[1]
+    }
+    
+    route = route[0]
+  
+    console.log(id)
+    
+    app.routes[ route ]( id );
+ 
  
   } else {
  
@@ -278,8 +288,8 @@ $(function() {
   
   $('a').live('click', function( event ) {
     var route =  $(this).attr('href');
-
-    if( route.split('#')[0] != 'edit') {
+    
+    if( route.indexOf('http://') && route.split('#')[0] != 'edit') {
       event.preventDefault();
       history.pushState({}, "", route);
       routeTemplate( route );
