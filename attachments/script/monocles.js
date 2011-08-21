@@ -81,7 +81,7 @@ $(function(){
           dfd.resolve( profile );
         } else {
           util.show('dialog');
-          util.render( 'newProfileForm', 'dialog-content', session.userCtx );
+          util.render( 'newProfileForm', 'modal', session.userCtx );
         }
       })
       return dfd.promise();
