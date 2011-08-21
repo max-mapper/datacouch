@@ -393,6 +393,52 @@ var util = function() {
     $('div.doc-key-base').width(largestWidth('div.doc-key-base'));
   }
   
+  function showDatasets(name) {
+    var url = app.baseURL + "api/datasets/";
+
+    // If a name is passed in, then add it to the url
+    if (name) {
+      url += name;
+    
+    // No name was passed in, so we're looking at the global
+    // data sets feed
+    } else {
+      name = "Recent Datasets";
+    }
+    return couch.request({url: url}).then(function(resp) {
+      var datasets = _.map(resp.rows, function(row) {
+        return {
+          baseURL: app.baseURL + 'edit#/',
+          id: row.id,
+          user: row.doc.user,
+          gravatar_url: row.doc.gravatar_url,
+          size: util.formatDiskSize(row.doc.disk_size),
+          name: row.value,
+          date: row.doc.createdAt,
+          nouns: row.doc.nouns,
+          forkedFrom: row.doc.forkedFrom,
+          forkedFromUser: row.doc.forkedFromUser,
+          count: row.doc.doc_count - 1 // TODO calculate this programatically
+        };
+      })
+      
+      if (datasets.length > 0) {
+        util.render('datasets', 'datasetsContainer', {
+          loggedIn: function() { 
+            return app.session && app.session.userCtx.name 
+          },
+          name: name,
+          datasets: datasets
+        });      
+      } else {
+        couch.request({url: app.baseURL + "api/users/" + name}).then(
+          function(res) { util.render('datasets', 'datasetsContainer', {name: name}) }
+        , function(err) { util.render('noUser', 'datasetsContainer', {name: name}) }
+        )
+      }
+    })
+  }
+  
   
   return {
     inURL: inURL,
@@ -416,6 +462,7 @@ var util = function() {
     persist: persist,
     lookupPath: lookupPath,
     selectedTreePath: selectedTreePath,
-    renderTree: renderTree
+    renderTree: renderTree,
+    showDatasets: showDatasets
   };
 }();
