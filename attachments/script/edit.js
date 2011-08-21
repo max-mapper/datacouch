@@ -244,12 +244,13 @@ app.after = {
   }
 }
 
-app.sammy = $.sammy(function () {
-  this.get('', app.handler);
-  this.get("#/", app.handler);
-  this.get("#/:id", app.handler);
-});
-
-$(function() {
-  app.sammy.run();  
+$(function() {  
+  id = window.location.hash.replace('#', '')
+  
+  if( id.length ){
+    app.routes['recline']( id );        
+  } else {
+    app.routes['noID']();
+  }
+  
 })
