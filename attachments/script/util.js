@@ -421,9 +421,13 @@ var util = function() {
           count: row.doc.doc_count - 1 // TODO calculate this programatically
         };
       })
+      
+      console.log('imahera')
       if (datasets.length > 0) {
         util.render('datasets', 'datasetsContainer', {
-          loggedIn: function() { return app.session && app.session.userCtx.name },
+          loggedIn: function() { 
+            return app.session && app.session.userCtx.name 
+          },
           name: name,
           datasets: datasets
         });      

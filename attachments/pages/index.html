@@ -47,22 +47,7 @@
   
   <div class="userControls"></div>
 
-  <div class='banner'>
-    <ul class='limiter clearfix'>
-      <li class='first'>
-        <strong>Open Data</strong><br/>
-        Turn spreadsheets into APIs and share them with anyone in the world
-      </li>
-      <li>
-        <span class="fork icon"></span><strong>Dataset Forking</strong><br/>
-        Let others fork, edit and send you back enhanced versions of your data
-      </li>
-      <li class='last'>
-        <strong>Free for public data</strong><br/>
-        As long as you share your data we will host it for free (until we run out of money). Our entire platform is open source so you can even run your own DataCouch
-      </li>
-    </ul>
-  </div>
+  <div class='bannerContainer'></div>
   
   <div class="datasetsContainer"></div>
   
@@ -72,7 +57,26 @@
   		<div class="dialog-content dialog-border"></div>
   	</div>
   </div>
-  
+
+  <script type="text/mustache" class="bannerTemplate">
+    <div class="banner">
+      <ul class='limiter clearfix'>
+        <li class='first'>
+          <strong>Open Data</strong><br/>
+          Turn spreadsheets into APIs and share them with anyone in the world
+        </li>
+        <li>
+          <span class="fork icon"></span><strong>Dataset Forking</strong><br/>
+          Let others fork, edit and send you back enhanced versions of your data
+        </li>
+        <li class='last'>
+          <strong>Free for public data</strong><br/>
+          As long as you share your data we will host it for free (until we run out of money). Our entire platform is open source so you can even run your own DataCouch
+        </li>
+      </ul>
+    </div>
+  </script>
+
   <script type="text/mustache" class="userControlsTemplate">
     <div class="user_actions"></div>
     <div class="session_actions">
@@ -89,7 +93,7 @@
 
   <script type="text/mustache" class="loggedInTemplate">
     <div class="option user_profile">
-      <a href="#">
+      <a href="{{username}}">
         <div class="gravatar"><img src="{{gravatar_url}}" height="25" width="25"/></div>
         <div class="username"><span>{{username}}</span></div>
       </a>

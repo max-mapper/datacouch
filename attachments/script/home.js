@@ -10,28 +10,40 @@ couch.rootPath = couch.dbPath + "couch/";
 
 app.routes = {
   home: function() {
-    // If we're using the full path to the design doc
-    // then split on _rewrite, and the user name will be the first thing
-    // after that
-    if (window.location.pathname.indexOf('_rewrite') > -1) {
-      var user = window.location.pathname.split('_rewrite')[1].replace('/', '');
+    var user;
+    // If we are not logged in, show the banner
+    monocles.fetchSession().then( function( session ) {
       
-    // Otherwise, it's the first thing adter the TLD
-    } else {
-      var user = $.url(window.location.pathname).segment()[0];
-    }
-    if (user.length > 0) {
-      util.showDatasets(user);
-    } else {
-      app.emitter.on('login', function(name) {
+      if( !session.userCtx.name ){
+        util.render( 'banner', 'bannerContainer' );
+      }
+      
+      // If we're using the full path to the design doc
+      // then split on _rewrite, and the user name will be the first thing
+      // after that
+      if (window.location.pathname.indexOf('_rewrite') > -1) {
+        user = window.location.pathname.split('_rewrite')[1].replace('/', '');
+
+      // Otherwise, it's the first thing adter the TLD
+      } else {
+        user = $.url(window.location.pathname).segment()[0];
+      }
+
+      // If username exists
+      if (user.length > 0) {
+        // Render the users' data
+        util.showDatasets(user);
+      } else {
+        // Otherwise, show the global data feed
         util.showDatasets();
-        app.emitter.clear('login');
-      })
-      app.emitter.on('session', function(session) {
-        if(!session.userCtx.name) util.showDatasets();
-      })
-    }
-    monocles.fetchSession();
+      }
+    });
+    
+    app.emitter.on('login', function(name) {
+      $('.banner').slideUp();
+      util.showDatasets(user);
+      
+    })
   },
   "new": function() {
     monocles.ensureProfile().then(function(profile) {
