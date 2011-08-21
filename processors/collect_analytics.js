@@ -2,7 +2,7 @@ var http = require('http');
 var request = require('request');
 
 var opts = {
-  host: "127.0.0.1",
+  host: "0.0.0.0",
   couch: process.argv[2],
   ping_port: 9876,
   couch_port: 5984
@@ -42,19 +42,18 @@ function startPingHost() {
     res.write(buf);
     res.end();
 
-    writeStats(req.headers);
+    writeStats(req.connection.remoteAddress, req.headers);
 
   }).listen(opts.ping_port, opts.host);
   console.log('Ping server running at http://' + opts.host + ':' + opts.ping_port);
 };
 
-function writeStats(headers) {
+function writeStats(ip, headers) {
 
   var stats = {
     date: JSON.stringify(new Date()),
-    headers: {
-      'user-agent' : headers['user-agent']
-    }
+    ip: ip,
+    headers: headers
   };
 
   request({
