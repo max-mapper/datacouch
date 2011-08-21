@@ -33,6 +33,7 @@
   <link rel='shortcut icon' href='images/favicon.ico' type='image/x-icon' />
   <link rel='stylesheet' media='all' href='style/reset.css' />
   <link rel='stylesheet' media='all' href='style/home.css' />
+  <link rel="stylesheet" href="http://twitter.github.com/bootstrap/assets/css/bootstrap-1.0.0.min.css">
   <script src="https://browserid.org/include.js" type="text/javascript"></script>
   <script type='text/javascript' src='script/deps-min.js'></script>
   <script type='text/javascript' src='script/util.js'></script>
@@ -52,11 +53,16 @@
   <div class="datasetsContainer"></div>
   
   <div class="dialog-overlay" style="display: none; z-index: 101; ">&nbsp;</div>
-  <div class="dialog ui-draggable" style="display: none; z-index: 102; top: 101px; ">
-  	<div class="dialog-frame" style="width: 700px; visibility: visible; ">
-  		<div class="dialog-content dialog-border"></div>
-  	</div>
+  <div class="dialog" style="display: none">
+    <div class="modal" style="position: relative; top: auto; left: auto; margin: 0 auto; z-index: 102"></div>
   </div>
+
+  <!-- <div class="dialog ui-draggable" style="display: none; z-index: 102; top: 101px; ">
+    <div class="dialog-frame" style="width: 700px; visibility: visible; ">
+      <div class="dialog-content dialog-border"></div>
+    </div>
+  </div> -->
+
 
   <script type="text/mustache" class="bannerTemplate">
     <div class="banner">
@@ -94,8 +100,9 @@
   <script type="text/mustache" class="loggedInTemplate">
     <div class="option user_profile">
       <a href="{{username}}">
-        <div class="gravatar"><img src="{{gravatar_url}}" height="25" width="25"/></div>
-        <div class="username"><span>{{username}}</span></div>
+        <div class="username">
+        <img width="16px" src="{{gravatar_url}}">
+        <span>{{username}}</span></div>
       </a>
     </div>
     <div class="option user_settings">
@@ -122,55 +129,79 @@
   <script type="text/mustache" class="newProfileFormTemplate">
     <div class="settings">
       <form class="profile_setup">
-      
-        <p class="welcome">
-          <img src="images/user.png">
-          <span class="welcome-text">Hello {{name}}, Please setup your user profile.</span>
-        </p>
-        
-        <div class="labelContainer"><label for="username">Username</label></div>
-        <input type="text" name="username" value="">
-        <div class="username-message"></div>
-        
-        <div class="labelContainer"><label for="email">Email (<em>for <a href="http://gravatar.com">Gravatar</a></em>)</label></div>
-        <input type="text" name="email" value="{{name}}">
-        
-        <div class="labelContainer"><label for="url">URL (<em>for shameless self promotion</em>)</label></div>
-        <input type="text" name="url" value="">
-        
-        <input type="submit" class="button" value="Save">
-        <div class="cancel">or Cancel</div>
-        
-        <input type="hidden" name="user" value="{{name}}">
+    
+        <div class="modal-header">
+          <h3>Hello {{name}}, Please setup your user profile.</h3>
+          <a href="#" class="close cancel">×</a>
+        </div>
+        <div class="modal-body">
+          <div class="clearfix">
+            <label for="username">Username</label>
+            <div class="input">
+              <input class="xlarge" id="xlInput" name="username" size="30" type="text">
+              <div class="username-message"></div>
+            </div>
+          </div>
+          
+          <div class="clearfix">
+            <label for="email">Email</label>
+            <div class="input">
+              <input class="xlarge" id="xlInput" name="email" size="30" type="text"  value="{{name}}">
+            </div>
+          </div>
+          
+          <div class="clearfix">
+            <label for="url">URL (<em>for shameless self promotion</em>)</label>
+            <div class="input">
+              <input class="xlarge" id="xlInput" name="url" size="30" type="text">
+            </div>
+          </div>        
+        </div>
+        <div class="modal-footer">          
+          <input type="submit" class="btn primary" value="Save">
+          <input type="button" class="btn secondary cancel" value="Cancel">
+          <input type="hidden" name="user" value="{{name}}">
+        </div>              
       </form>
     </div>
   </script>
   
   <script type="text/mustache" class="editProfileFormTemplate">
-    <div class="settings">
-      <form class="profile_setup">
-      
-        <p class="welcome">
-          <img src="images/user.png">
-          <span class="welcome-text">Editing {{_id}}'s profile.</span>
-        </p>
+    <form class="profile_setup">
+      <div class="modal-header">
+        <h3>Editing {{_id}}'s profile.</h3>
+        <a href="#" class="close cancel">×</a>
+      </div>
+      <div class="modal-body">
+        <div class="clearfix">
+          <label for="_id">Username</label>
+          <div class="input">
+            <input class="xlarge" id="xlInput" name="_id" size="30" type="text" value="{{_id}}">
+            <div class="username-message"></div>
+          </div>
+        </div>
         
-        <div class="labelContainer"><label for="_id">Username</label></div>
-        <input type="text" name="_id" value="{{_id}}">
-        <div class="username-message"></div>
         
-        <div class="labelContainer"><label for="email">Email (<em>for <a href="http://gravatar.com">Gravatar</a></em>)</label></div>
-        <input type="text" name="email" value="{{email}}">
+        <div class="clearfix">
+          <label for="email">Email (<em>for <a href="http://gravatar.com">Gravatar</a></em>)</label>
+          <div class="input">
+            <input class="xlarge" id="xlInput" name="email" size="30" type="text" value="{{email}}">
+          </div>
+        </div>
         
-        <div class="labelContainer"><label for="url">URL (<em>for shameless self promotion</em>)</label></div>
-        <input type="text" name="url" value="{{url}}">
-        
-        <input type="submit" class="button" value="Save">
-        <div class="cancel">or Cancel</div>
-        
+        <div class="clearfix">
+          <label for="url">URL (<em>for shameless self promotion</em>)</label>
+          <div class="input">
+            <input class="xlarge" id="xlInput" name="url" size="30" type="text" value="{{url}}">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <input type="submit" class="btn primary" value="Save">
+        <a href="#" class="btn secondary cancel">Cancel</a>
         <input type="hidden" name="user" value="{{user}}">
-      </form>
-    </div>
+      </div>              
+    </form>
   </script>
   
   
@@ -203,7 +234,7 @@
           </dd>
           <dt>Actions</dt>
           <dd class="actions">
-            {{#loggedIn}}<a href="#fork/{{id}}" class="button"><span class="fork icon"></span>Fork dataset</a>{{/loggedIn}}
+            {{#loggedIn}}<a href="#fork/{{id}}" class="btn primary"><span class="fork icon"></span>Fork dataset</a>{{/loggedIn}}
           </dd>
         </dl>
       </li>
@@ -216,29 +247,29 @@
   </script>
   
   <script type="text/mustache" class="userActionsTemplate">
-    <a href="#new">
-      <div class="option new_dataset">
-        <div class="navIcon"></div>
-        New Dataset
-      </div>
+    <a href="#new" class="btn primary">
+        + New Dataset
     </a>
   </script>
   
   <script type="text/mustache" class="newDatasetFormTemplate">
-    <div class="settings">
-      <form class="dataset_setup">
-        <h1>Create a new dataset</h1>
+    <form class="dataset_setup">
+      <div class="modal-header">
+        <h3>Create a new dataset</h3>
+        <a href="#" class="close cancel">×</a>
+      </div>
+      <div class="modal-body">
         <h4>Name:</h4>
         <input type="text" name="name" value="">
         <h4>Description:</h4>
         <textarea name="description" rows=5 value=""></textarea>
         <div class="nounContainer"></div>
-        <div class="submitContainer">
-          <input type="submit" class="button" value="Create">
-          <div class="cancel">or Cancel</div>
-        </div>
-      </form>
-    </div>
+      </div>
+      <div class="modal-footer">
+        <input type="submit" class="btn primary" value="Save">
+        <input type="button" class="btn secondary cancel" value="Cancel">
+      </div>              
+    </form>
   </script>
 
    <script type="text/mustache" class="nounsTemplate">
