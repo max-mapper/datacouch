@@ -10,6 +10,7 @@ ddoc =
     , {from:"/api/datasets/:user", to:"_view/by_user", query:{endkey: [":user",null], startkey:[":user",{}], include_docs:"true", descending: "true"}}
     , {from:"/api/datasets", to:"_view/by_date", query:{include_docs:"true", descending: "true"}}
     , {from:"/api/profile/all", to:"../../../datacouch-users/_design/users/_list/all/users"}
+    , {from:"/api/trending", to:"_view/trending", query:{group: "true"}}
     , {from:"/api/users/search/:user", to:"../../../datacouch-users/_design/users/_view/users", query:{startkey:":user", endkey:":user", include_docs: "true"}}
     , {from:"/api/users/by_email/:user", to:"../../../datacouch-users/_design/users/_view/by_email", query:{startkey:":user", endkey:":user", include_docs: "true"}}
     , {from:"/api/users", to:'../../../datacouch-users/'}
@@ -63,6 +64,16 @@ ddoc.views = {
     map: function(doc) {
       if(doc.type === "database") emit(doc.createdAt, doc.name);
     }
+  },
+  trending: {
+    map: function(doc) {
+      if(doc.type === "database" && doc.forkedFrom){
+        log(doc._id + '____' + doc.forkedFrom);
+        
+        emit(doc.forkedFrom, 1);
+      }
+    },
+    reduce: '_sum'
   }
 };
 

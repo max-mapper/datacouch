@@ -50,18 +50,19 @@
 
   <div class='bannerContainer'></div>
   
-  <div class="datasetsContainer"></div>
+  <div class="container">
+    <div class="row">
+      <div class="span10 columns datasetsContainer">
+      </div>
+      <div class="span6 columns trendingSetsContainer">
+      </div>
+    </div>
+  </div>
   
   <div class="dialog-overlay" style="display: none; z-index: 101; ">&nbsp;</div>
   <div class="dialog" style="display: none">
     <div class="modal" style="position: relative; top: auto; left: auto; margin: 0 auto; z-index: 102"></div>
   </div>
-
-  <!-- <div class="dialog ui-draggable" style="display: none; z-index: 102; top: 101px; ">
-    <div class="dialog-frame" style="width: 700px; visibility: visible; ">
-      <div class="dialog-content dialog-border"></div>
-    </div>
-  </div> -->
 
 
   <script type="text/mustache" class="bannerTemplate">
@@ -116,7 +117,7 @@
   <script type="text/mustache" class="loginButtonTemplate">
     <div class="right">
       <ul id="landing_nav">
-        <li><a href="#login" class="login">Log in with BrowserID&nbsp;<span class="rightarrow icon"></span></a></li>
+        <li><a href="#login" class="btn secondary login">Log in with BrowserID&nbsp;<span class="rightarrow icon"></span></a></li>
         <li class="disclaimer">Your email address will be publicly viewable by other users</li>
       </ul>
     </div>
@@ -234,7 +235,7 @@
           </dd>
           <dt>Actions</dt>
           <dd class="actions">
-            {{#loggedIn}}<a href="#fork/{{id}}" class="btn primary"><span class="fork icon"></span>Fork dataset</a>{{/loggedIn}}
+            {{#loggedIn}}<a href="#fork/{{id}}" class="btn secondary small"><span class="fork icon"></span>Fork dataset</a>{{/loggedIn}}
           </dd>
         </dl>
       </li>
