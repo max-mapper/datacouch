@@ -8,69 +8,27 @@ var app = {
 couch.dbPath = app.baseURL + "api/";
 couch.rootPath = couch.dbPath + "couch/";
 
-app.handler = function(route) {
-  if (route.params && route.params.route) {
-    var path = route.params.route;
-    app.routes[path](route.params.id);
-  } else {    
-    app.routes['home']();
-  }  
-};
-
-app.showDatasets = function(name) {
-  var url = app.baseURL + "api/datasets/";
-  if (name) {
-    url += name;
-  } else {
-    name = "Recent Datasets";
-  }
-  return couch.request({url: url}).then(function(resp) {
-    var datasets = _.map(resp.rows, function(row) {
-      return {
-        baseURL: app.baseURL + 'edit#/',
-        id: row.id,
-        user: row.doc.user,
-        gravatar_url: row.doc.gravatar_url,
-        size: util.formatDiskSize(row.doc.disk_size),
-        name: row.value,
-        date: row.doc.createdAt,
-        nouns: row.doc.nouns,
-        forkedFrom: row.doc.forkedFrom,
-        forkedFromUser: row.doc.forkedFromUser,
-        count: row.doc.doc_count - 1 // TODO calculate this programatically
-      };
-    })
-    if (datasets.length > 0) {
-      util.render('datasets', 'datasetsContainer', {
-        loggedIn: function() { return app.session && app.session.userCtx.name },
-        name: name,
-        datasets: datasets
-      });      
-    } else {
-      couch.request({url: app.baseURL + "api/users/" + name}).then(
-        function(res) { util.render('datasets', 'datasetsContainer', {name: name}) }
-      , function(err) { util.render('noUser', 'datasetsContainer', {name: name}) }
-      )
-    }
-  })
-}
-
 app.routes = {
   home: function() {
+    // If we're using the full path to the design doc
+    // then split on _rewrite, and the user name will be the first thing
+    // after that
     if (window.location.pathname.indexOf('_rewrite') > -1) {
       var user = window.location.pathname.split('_rewrite')[1].replace('/', '');
+      
+    // Otherwise, it's the first thing adter the TLD
     } else {
       var user = $.url(window.location.pathname).segment()[0];
     }
     if (user.length > 0) {
-      app.showDatasets();
+      util.showDatasets(user);
     } else {
       app.emitter.on('login', function(name) {
-        app.showDatasets();
+        util.showDatasets();
         app.emitter.clear('login');
       })
       app.emitter.on('session', function(session) {
-        if(!session.userCtx.name) app.showDatasets();
+        if(!session.userCtx.name) util.showDatasets();
       })
     }
     monocles.fetchSession();
@@ -107,7 +65,7 @@ app.routes = {
             function waitForDB(url) {
               couch.request({url: url, type: "HEAD"}).then(
                 function(resp, status) {
-                  app.sammy.setLocation(app.baseURL + 'edit#/' + dbID);
+                  window.location = app.baseURL + 'edit#/' + dbID;
                 },
                 function(resp, status){
                   console.log("not created yet...", resp, status);
@@ -134,7 +92,7 @@ app.routes = {
       util.render('userControls', 'userControls');
       delete app.session;
       $( '#header' ).data( 'profile', null );
-      app.sammy.setLocation("#");
+      app.routes['home']();
     })
   }
 }
@@ -143,7 +101,7 @@ app.after = {
   newProfileForm: function() {
     $('.cancel').click(function(e) {
       util.hide('dialog');
-      app.sammy.setLocation("#");
+      app.routes['home']();
     })
     $(".profile_setup input[name='username']").keyup(function() {
       var input = $(this);
@@ -173,13 +131,13 @@ app.after = {
   editProfileForm: function() {
     $('.cancel').click(function(e) {
       util.hide('dialog');
-      app.sammy.setLocation("#");
+      app.routes['home']();
     })
     $( '.profile_setup' ).submit( function( e ) {
       monocles.updateProfile($( e.target ).serializeObject());
       e.preventDefault();
       util.hide('dialog');
-      app.sammy.setLocation("#");
+      app.routes['home']();
       return false;
     });
   },
@@ -188,7 +146,7 @@ app.after = {
     couch.request({url: couch.rootPath + "_uuids"}).then( function( data ) { docID = data.uuids[ 0 ] });
     $('.cancel').click(function(e) {
       util.hide('dialog');
-      app.sammy.setLocation("#");
+      app.routes['home']();
     })
     var inputs = $(".dataset_setup textarea[name='description'], .dataset_setup input[name='name']");
     var renderIcons = _.throttle(function() {
@@ -241,7 +199,7 @@ app.after = {
         function waitForDB(url) {
           couch.request({url: url, type: "HEAD"}).then(
             function(resp, status){
-              app.sammy.setLocation(app.baseURL + 'edit#/' + dbID);
+              window.location = app.baseURL + 'edit#/' + dbID;
             },
             function(resp, status){
               console.log("not created yet...", resp, status);
@@ -281,13 +239,24 @@ app.after = {
   }
 }
 
-app.sammy = $.sammy(function () {
-  this.get('', app.handler);
-  this.get("#/", app.handler);
-  this.get("#:route", app.handler);
-  this.get("#:route/:id", app.handler);
-});
-
 $(function() {  
-  app.sammy.run();  
+  app.routes['home']();
+  
+  $('a').live('click', function( event ) {
+    var href = $(this).attr('href');
+    
+    if(href.split('')[0] === '#'){
+      event.preventDefault();
+      var route = $(this).attr('href').replace('#', '');
+
+      app.routes[route]();      
+    }    
+  })
+
+  $(window).bind('popstate', function() {
+
+    event.preventDefault();
+    console.log(location.pathname);
+
+  })
 })
