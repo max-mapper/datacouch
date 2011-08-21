@@ -3,38 +3,19 @@ var couchapp = require('couchapp')
   ;
 
 ddoc =
-  { _id:'_design/datacouch'
+  { _id:'_design/recline'
   , rewrites :
     [ {from:"/", to:'pages/index.html'}
-    , {from:"/edit", to:"pages/recline.html"}
-    , {from:"/api/datasets/:user", to:"_view/by_user", query:{endkey: [":user",null], startkey:[":user",{}], include_docs:"true", descending: "true"}}
-    , {from:"/api/datasets", to:"_view/by_date", query:{include_docs:"true", descending: "true"}}
-    , {from:"/api/profile/all", to:"../../../datacouch-users/_design/users/_list/all/users"}
-    , {from:"/api/users/search/:user", to:"../../../datacouch-users/_design/users/_view/users", query:{startkey:":user", endkey:":user", include_docs: "true"}}
-    , {from:"/api/users/by_email/:user", to:"../../../datacouch-users/_design/users/_view/by_email", query:{startkey:":user", endkey:":user", include_docs: "true"}}
-    , {from:"/api/users", to:'../../../datacouch-users/'}
-    , {from:"/api/users/*", to:'../../../datacouch-users/*'}
-    , {from:"/api/couch", to:"../../../"}
-    , {from:"/api/couch/*", to:"../../../*"}
-    , {from:"/api", to:"../../"}
-    , {from:"/api/*", to:"../../*"}
-    , {from:"/db/:id/csv", to:'../../../:id/_design/recline/_list/csv/all'}
-    , {from:"/db/:id/json", to:'../../../:id/_design/recline/_list/bulkDocs/all'}
-    , {from:"/db/:id/headers", to:'../../../:id/_design/recline/_list/array/headers', query: {group: "true"}}
-    , {from:"/db/:id/rows", to:'../../../:id/_design/recline/_view/all'}
-    , {from:"/db/:id", to:"../../../:id/"}
-    , {from:"/db/:id/*", to:"../../../:id/*"}
-    , {from:"/:user", to:"pages/index.html"}
+    , {from:"/api/csv", to:'_list/csv/all'}
+    , {from:"/api/json", to:'_list/bulkDocs/all'}
+    , {from:"/api/headers", to:'_list/array/headers', query: {group: "true"}}
+    , {from:"/api/rows", to:'_view/all'}
+    , {from:"/api", to:'../../'}
+    , {from:"/api/*", to:'../../*'}
     , {from:"/*", to:'*'}
     ]
   }
   ;
-
-ddoc.validate_doc_update = function (newDoc, oldDoc, userCtx) {
-  if (newDoc._deleted === true && userCtx.roles.indexOf('_admin') === -1) {
-    throw "Only admin can delete documents on this database.";
-  }
-};
 
 ddoc.views = {
   /**
@@ -53,16 +34,6 @@ ddoc.views = {
       }
     },
     reduce: "_sum"
-  },
-  by_user: {
-    map: function(doc) {
-      if(doc.type === "database") emit([doc.user, doc.createdAt] , doc.name);
-    }
-  },
-  by_date: {
-    map: function(doc) {
-      if(doc.type === "database") emit(doc.createdAt, doc.name);
-    }
   }
 };
 
@@ -146,9 +117,14 @@ ddoc.lists = {
 
 ddoc.validate_doc_update = function (newDoc, oldDoc, userCtx) {
   if (userCtx.roles.indexOf('_admin') > -1) return;
-  if ( (newDoc.type !== "database") || (newDoc.couch_user !== userCtx.name) ) throw({forbidden : "You can't create datasets for other users."});
-};
 
-couchapp.loadAttachments(ddoc, path.join(__dirname, 'attachments'));
+  if (newDoc._deleted === true && userCtx.roles.indexOf('_admin') === -1) {
+    throw({forbidden : "Only dataset owners can delete documents."});;
+  }
+  
+  if (newDoc && userCtx.roles.indexOf('_admin') === -1) {
+    throw({forbidden : "Only dataset owners can add or edit documents."});;
+  }
+};
 
 module.exports = ddoc;

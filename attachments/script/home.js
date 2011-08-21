@@ -63,10 +63,10 @@ app.routes = {
       var user = $.url(window.location.pathname).segment()[0];
     }
     if (user.length > 0) {
-      app.showDatasets(user);
+      app.showDatasets();
     } else {
       app.emitter.on('login', function(name) {
-        app.showDatasets(name);
+        app.showDatasets();
         app.emitter.clear('login');
       })
       app.emitter.on('session', function(session) {
@@ -105,7 +105,7 @@ app.routes = {
               ;
             function waitForDB(url) {
               couch.request({url: url, type: "HEAD"}).then(
-                function(resp, status){
+                function(resp, status) {
                   app.sammy.setLocation(app.baseURL + 'edit#/' + dbID);
                 },
                 function(resp, status){
@@ -229,6 +229,7 @@ app.after = {
         name: form.name,
         type: "database",
         user: app.profile._id,
+        couch_user: app.session.userCtx.name,
         gravatar_url: app.profile.gravatar_url,
         createdAt: new Date()
       });

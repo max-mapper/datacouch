@@ -5,8 +5,10 @@
 
 var follow = require('follow')
   , request = require('request')
+  , couchapp = require('couchapp')
   , deferred = require('deferred')
   , http = require('http')
+  , path = require('path')
   ;
 
 var couch = "http://admin:admin@localhost:5984"
@@ -33,13 +35,25 @@ follow({db:db, include_docs:true}, function(error, change) {
         if (doc.forkedFrom) {
           replicate(doc.forkedFrom, dbName).then(done);
         } else {
-          replicate("apps", dbName, "_design/recline").then(done);
+          pushCouchapp("../db.js", couch + "/" + dbName).then(done);
+          // replicate("apps", dbName, "_design/recline").then(done);
         }
-        setAdmin(dbName, doc.user); 
+        setAdmin(dbName, doc.couch_user); 
       })
     }
   })
 })
+
+function absolutePath(pathname) {
+  if (pathname[0] === '/') return pathname
+  return path.join(process.env.PWD, path.normalize(pathname));
+}
+
+function pushCouchapp(app, target) {
+  var dfd = deferred();
+  couchapp.createApp(require(absolutePath(app)), target, function (app) { app.push(function(resp) { dfd.resolve() }) })
+  return dfd.promise();
+}
 
 function replicate(source, target, ddoc) {
   var dfd = deferred();
