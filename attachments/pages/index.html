@@ -182,9 +182,9 @@
         <dl>
           <dt>Owner</dt>
           <dd class="name">
-            <a class="owner" href="{{user}}">{{user}}</a>&nbsp;/ <a class="dataset" href="{{baseURL}}{{id}}">{{name}}</a>
+            <a class="owner" href="{{user}}">{{user}}</a>&nbsp;/ <a class="dataset" href="edit#{{id}}">{{name}}</a>
             {{#forkedFrom}}
-              <span class="forkedFrom"><span class="fork icon"></span>forked from <a href="{{forkedFromUser}}">{{forkedFromUser}}</a>&nbsp;/ <a class="dataset" href="{{baseURL}}{{forkedFrom}}">{{name}}</a></span>
+              <span class="forkedFrom"><span class="fork icon"></span>forked from <a href="{{forkedFromUser}}">{{forkedFromUser}}</a>&nbsp;/ <a class="dataset" href="{{forkedFrom}}">{{name}}</a></span>
             {{/forkedFrom}}
             {{#nouns}}
               <a href="http://thenounproject.com/noun/{{noun}}/">{{{svg}}}</a>

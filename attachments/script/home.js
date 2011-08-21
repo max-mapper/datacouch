@@ -10,6 +10,9 @@ couch.rootPath = couch.dbPath + "couch/";
 
 app.routes = {
   home: function() {
+    
+    util.showDatasets();      
+    
     var user;
     // If we are not logged in, show the banner
     monocles.fetchSession().then( function( session ) {
@@ -25,7 +28,6 @@ app.routes = {
     
     app.emitter.on('login', function(name) {
       $('.banner').slideUp();
-      util.showDatasets();      
     })
   },
   user: function(){
@@ -104,6 +106,8 @@ app.routes = {
       delete app.session;
       $( '#header' ).data( 'profile', null );
       app.routes['home']();
+      history.pushState({}, "", "/");
+      
     })
   }
 }
@@ -250,25 +254,37 @@ app.after = {
   }
 }
 
-function routeTemplate( route ){
+var routeTemplate = function( route ){
+  
   if( route.split('')[0] === '#' ){
-    app.routes[ route.replace('#', '') ]();
+
+    route = route.replace('#', '')
+    
+    app.routes[ route ]();
+ 
   } else {
+ 
     app.routes.user();      
+ 
   }  
 }
 
 $(function() {  
-  app.routes['home']();
+  app.routes['home']();    
+
+  if( $.url(window.location.pathname).segment()[0].length ){
+    app.routes['user']();
+  }
   
   $('a').live('click', function( event ) {
-    event.preventDefault();
-    
     var route =  $(this).attr('href');
 
-    history.pushState({}, "", route);
+    if( route.split('#')[0] != 'edit') {
+      event.preventDefault();
+      history.pushState({}, "", route);
+      routeTemplate( route );
+    }
 
-    routeTemplate( route );
   });
 
   $(window).bind('popstate', function() {
