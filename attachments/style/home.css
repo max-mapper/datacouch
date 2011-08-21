@@ -1,7 +1,7 @@
 .userControls {position: absolute; right: 50px; top: 50px;}
 .navIcon { opacity: 0.4; float: left; width: 35px; height: 35px; line-height: 35px; }
 
-.notification-banner {position: absolute; top: 50px; right: 0}
+.notification-banner {position: relative;bottom: 63px;left: 53px;}
 .forkedFrom { font-size: 10px; position: relative; top: -1px; }
 .new_dataset { line-height: 35px; padding-right: 10px; margin-right: 25px}
 .new_dataset .navIcon { background: url('images/add.png') center center no-repeat; }
