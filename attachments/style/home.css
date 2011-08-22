@@ -26,19 +26,14 @@
   border-bottom: 1px solid #DDD!important;
 }
 .datasets > li{position:relative;min-height:41px;overflow:auto;-webkit-transition:background .2s linear;padding:10px 10px 10px 61px;}
-.datasets dt{position:absolute;left:-9999px;}
-.datasets dd.name{float:left;font-size:16px;line-height:1;color:#999; }
-.datasets dd.name a:first-child{color:inherit;}
-.datasets dd.name a:hover{text-decoration:none;}
-.datasets dd.metadata{display:block;clear:left;float:left;color:#999;}
-.datasets dd.metadata a{font-weight:700;color:inherit;}
-.datasets dd.avatar{position:absolute;left:10px;top:10px;width:auto;height:auto;background:#fff;}
-.datasets dd.avatar a{display:block;}
-.datasets dd.avatar img{display:block;width:35px;height:35px;}
-.datasets .detailed p{clear:left;float:left;margin-top:6px;line-height:16px;}
+.datasets .name{float:left;font-size:16px;line-height:1;color:#999; }
+.datasets .name a:first-child{color:inherit;}
+.datasets .name a:hover{text-decoration:none;}
 .datasets .subtitle{clear:both;font-size:11px;line-height:1;}
-.datasets .actions {display: none; margin-top:-12px;}
-.datasets li:hover .actions {display: block; position: absolute; top: 17px; right: 10px;}
+.datasets .avatar { position: absolute; left: 10px; top: 10px}
+.datasets .avatar img {width: 35px; height: 35px; background: #fff}
+.datasets .datasetActions {display: none; margin-top:-12px;}
+.datasets li:hover .datasetActions {display: block; position: absolute; top: 17px; right: 10px;}
 .datasets li:hover {background-color: #EEEEEE;}
 .datasets li:hover .dataset {color: #2B547D}
 

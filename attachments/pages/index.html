@@ -212,34 +212,23 @@
     <ol class="datasets detailed">
     {{#datasets}}
       <li>
-        <dl>
-          <dt>Owner</dt>
-          <dd class="name">
-            <a class="owner" href="{{user}}">{{user}}</a>&nbsp;/ <a class="dataset" href="edit/{{id}}">{{name}}</a>
-            {{#nouns}}
-              <a href="http://thenounproject.com/noun/{{noun}}/">{{{svg}}}</a>
-            {{/nouns}}
-          </dd>
-          <dt>Details</dt>
-          <dd class="forkedFrom">
-            {{#forkedFrom}}
-              <span><span class="fork icon"></span>forked from <a href="{{forkedFromUser}}">{{forkedFromUser}}</a>&nbsp;/ <a class="dataset" href="{{forkedFrom}}">{{name}}</a></span>
-            {{/forkedFrom}}
-          </dd>
-          <dd class="metadata subtitle">Created <span class="timeago" title="{{date}}"></span>, {{count}} documents, {{size}}</dd>
-          <dt>Avatar</dt>
-          <dd class="avatar"><a href="#/{{user}}"><img width="32" height="32" src="{{gravatar_url}}"></a></dd>
-          <dt>Description</dt>
-          <dd>
-          <p>
-            {{description}}
-          </p>
-          </dd>
-          <dt>Actions</dt>
-          <dd class="actions">
-            {{#loggedIn}}<a href="#fork/{{id}}" class="btn secondary small"><span class="fork icon"></span>Fork dataset</a>{{/loggedIn}}
-          </dd>
-        </dl>
+        <div class="name">
+          <a class="owner" href="{{user}}">{{user}}</a>&nbsp;/ <a class="dataset" href="edit/{{id}}">{{name}}</a>
+          {{#nouns}}
+            <a href="http://thenounproject.com/noun/{{noun}}/">{{{svg}}}</a>
+          {{/nouns}}
+        </div>
+        <div class="forkedFrom">
+          {{#forkedFrom}}
+            <span><span class="fork icon"></span>forked from <a href="{{forkedFromUser}}">{{forkedFromUser}}</a>&nbsp;/ <a class="dataset" href="{{forkedFrom}}">{{name}}</a></span>
+          {{/forkedFrom}}
+        </div>
+        <div class="metadata subtitle">Created <span class="timeago" title="{{date}}"></span>, {{count}} documents, {{size}}</div>
+        <div class="avatar"><a href="#/{{user}}"><img src="{{gravatar_url}}"></a></div>
+        {{#description}}<div><p>{{description}}</p></div>{{/description}}
+        <div class="datasetActions">
+          {{#loggedIn}}<a href="#fork/{{id}}" class="btn secondary small"><span class="fork icon"></span>Fork dataset</a>{{/loggedIn}}
+        </div>
       </li>
   	{{/datasets}}
     </ol>
