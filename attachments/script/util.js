@@ -440,17 +440,8 @@ var util = function() {
   }
 
   function showTrendingsets(name) {
-    var url = app.baseURL + "api/trending/";
+    var url = app.baseURL + "api/trending";
 
-    // If a name is passed in, then add it to the url
-    if (name) {
-      url += name;
-    
-    // No name was passed in, so we're looking at the global
-    // data sets feed
-    } else {
-      name = "Trending Datasets";
-    }
     return couch.request({url: url}).then(function(resp) {
       var datasets = _.map(resp.rows, function(row) {
         return {
@@ -459,7 +450,7 @@ var util = function() {
           user: row.doc.user,
           gravatar_url: row.doc.gravatar_url,
           size: util.formatDiskSize(row.doc.disk_size),
-          name: row.value,
+          name: row.doc.name,
           date: row.doc.createdAt,
           nouns: row.doc.nouns,
           forkedFrom: row.doc.forkedFrom,
@@ -470,17 +461,10 @@ var util = function() {
       
       if (datasets.length > 0) {
         util.render('datasets', 'trendingSetsContainer', {
-          loggedIn: function() { 
-            return app.session && app.session.userCtx.name 
-          },
-          name: name,
-          datasets: datasets
+          loggedIn: function() {return app.session && app.session.userCtx.name },
+          datasets: datasets,
+          name: "Trending Datasets"
         });      
-      } else {
-        couch.request({url: app.baseURL + "api/users/" + name}).then(
-          function(res) { util.render('trendingSets', 'trendingSetsContainer', {name: name}) }
-        , function(err) { util.render('noUser', 'trendingSetsContainer', {name: name}) }
-        )
       }
     })
   }

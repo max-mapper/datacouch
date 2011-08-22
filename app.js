@@ -10,7 +10,7 @@ ddoc =
     , {from:"/api/datasets/:user", to:"_view/by_user", query:{endkey: [":user",null], startkey:[":user",{}], include_docs:"true", descending: "true"}}
     , {from:"/api/datasets", to:"_view/by_date", query:{include_docs:"true", descending: "true"}}
     , {from:"/api/profile/all", to:"../../../datacouch-users/_design/users/_list/all/users"}
-    , {from:"/api/trending", to:"_view/trending", query:{group: "true"}}
+    , {from:"/api/trending", to:"_view/popular", query:{include_docs: "true", descending: "true"}}
     , {from:"/api/users/search/:user", to:"../../../datacouch-users/_design/users/_view/users", query:{startkey:":user", endkey:":user", include_docs: "true"}}
     , {from:"/api/users/by_email/:user", to:"../../../datacouch-users/_design/users/_view/by_email", query:{startkey:":user", endkey:":user", include_docs: "true"}}
     , {from:"/api/users", to:'../../../datacouch-users/'}
@@ -19,6 +19,7 @@ ddoc =
     , {from:"/api/couch/*", to:"../../../*"}
     , {from:"/api", to:"../../"}
     , {from:"/api/*", to:"../../*"}
+    , {from:"/analytics.gif", to:"../../../_analytics/spacer.gif"}
     , {from:"/db/:id/csv", to:'../../../:id/_design/recline/_list/csv/all'}
     , {from:"/db/:id/json", to:'../../../:id/_design/recline/_list/bulkDocs/all'}
     , {from:"/db/:id/headers", to:'../../../:id/_design/recline/_list/array/headers', query: {group: "true"}}
@@ -65,15 +66,10 @@ ddoc.views = {
       if(doc.type === "database") emit(doc.createdAt, doc.name);
     }
   },
-  trending: {
+  popular: {
     map: function(doc) {
-      if(doc.type === "database" && doc.forkedFrom){
-        log(doc._id + '____' + doc.forkedFrom);
-        
-        emit(doc.forkedFrom, 1);
-      }
-    },
-    reduce: '_sum'
+      if(doc.hits) emit(doc.hits);
+    }
   }
 };
 

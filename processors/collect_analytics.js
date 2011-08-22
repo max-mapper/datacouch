@@ -44,7 +44,6 @@ function startPingHost() {
     res.write(buf);
     res.end();
     
-    
     if (!req.headers.referer) return;
     writeStats(req.connection.remoteAddress, req.headers);
 

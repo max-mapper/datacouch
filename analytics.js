@@ -10,8 +10,10 @@ ddoc.validate_doc_update = function (newDoc, oldDoc, userCtx) {
 };
 
 ddoc.views = {
-  uniques: {
-    map: function(doc) { emit([doc.page, doc.ip], 1)},
+  popular_datasets: {
+    map: function(doc) { 
+      if(doc.page.indexOf('edit/') > -1) emit([doc.page.split('edit/')[1], doc.ip], 1)
+    },
     reduce: "_sum"
   }
 }
