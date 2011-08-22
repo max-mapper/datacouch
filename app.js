@@ -10,7 +10,7 @@ ddoc =
     , {from:"/api/datasets/:user", to:"_view/by_user", query:{endkey: [":user",null], startkey:[":user",{}], include_docs:"true", descending: "true"}}
     , {from:"/api/datasets", to:"_view/by_date", query:{include_docs:"true", descending: "true"}}
     , {from:"/api/profile/all", to:"../../../datacouch-users/_design/users/_list/all/users"}
-    , {from:"/api/trending", to:"_view/popular", query:{include_docs: "true", descending: "true"}}
+    , {from:"/api/trending", to:"_view/popular", query:{include_docs: "true", descending: "true", limit: "10"}}
     , {from:"/api/users/search/:user", to:"../../../datacouch-users/_design/users/_view/users", query:{startkey:":user", endkey:":user", include_docs: "true"}}
     , {from:"/api/users/by_email/:user", to:"../../../datacouch-users/_design/users/_view/by_email", query:{startkey:":user", endkey:":user", include_docs: "true"}}
     , {from:"/api/users", to:'../../../datacouch-users/'}
