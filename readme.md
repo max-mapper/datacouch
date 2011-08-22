@@ -49,16 +49,16 @@ install the required npm modules
     npm install couchapp
     npm install couchapp -g
     cd processors/
-    npm install request crypto deferred underscore follow
+    npm install couchapp request crypto deferred underscore follow
   
-deploy the various couchapps to your Couch:
+deploy the various couchapps to your Couch. these mostly set data permissions and database views:
 
     cd datacouch/
     couchapp push app.js http://admin:pass@localhost:5984/datacouch
     couchapp push users.js http://admin:pass@localhost:5984/datacouch-users
     couchapp push analytics.js http://admin:pass@localhost:5984/datacouch-analytics
   
-start the various node async processes (these should always be running somewhere)
+start the various node async processes. these should always be running somewhere. think of them like async job workers
 
     node provision_databases.js http://admin:pass@localhost:5984 datacouch
     node compute_stats.js http://admin:pass@localhost:5984
