@@ -471,6 +471,8 @@ var util = function() {
   
   function routeViews( route ){
     
+    var fullRoute = route;
+    
     if( !route.length ) {
       app.routes.pages[ 'home' ]();
     }
@@ -478,6 +480,11 @@ var util = function() {
     // If we've made it this far, then the ID (if one exists) will be
     // what comes after the slash
     id = route.split('/')[1];
+    
+    // If there is an Id, then we have to trim it off the route
+    if(id){
+      route = route.split('/')[0];
+    }
     
     // If "#" is in the route, and it's the first char, then we are dealing with
     // a modal, we're going to route it through the views modals object
@@ -493,9 +500,10 @@ var util = function() {
       if( route === "/" ) {
         history.pushState({}, "", '/'); 
         app.routes.pages[ 'home' ]();
+        return;
       }
 
-      history.pushState({}, "", '/' + route); 
+      history.pushState({}, "", '/' + fullRoute); 
       app.routes.pages[ 'user' ]( id );
       
     }

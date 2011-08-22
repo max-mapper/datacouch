@@ -83,9 +83,7 @@ app.routes = {
         history.pushState({}, "", "/");
 
       })
-    }
-  },
-  actions: {
+    },
     fork: function(id) {
       monocles.ensureProfile().then(function(profile) {
         util.show('dialog');
@@ -112,7 +110,7 @@ app.routes = {
               function waitForDB(url) {
                 couch.request({url: url, type: "HEAD"}).then(
                   function(resp, status) {
-                    window.location = app.baseURL + 'edit#/' + dbID;
+                    window.location = app.baseURL + 'edit/' + dbID;
                   },
                   function(resp, status){
                     console.log("not created yet...", resp, status);
@@ -233,7 +231,7 @@ app.after = {
         function waitForDB(url) {
           couch.request({url: url, type: "HEAD"}).then(
             function(resp, status){
-              window.location = app.baseURL + 'edit#/' + dbID;
+              window.location = app.baseURL + 'edit/' + dbID;
             },
             function(resp, status){
               console.log("not created yet...", resp, status);
@@ -315,8 +313,6 @@ $(function() {
     if( route.indexOf( 'http://' ) > -1) {
       return;
     }
-    
-    console.log(route)
 
     // If the route contains one of our reserved pages, let it through
     if( route.split('/')[0].indexOf(app.reservedPages) > -1){
