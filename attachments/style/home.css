@@ -1,20 +1,24 @@
-.userControls {position: absolute; right: 50px; top: 50px;}
+.userControls {position: absolute; right: 25px; top: 2px}
+.userButtons {position: absolute; right: 50px; top: 50px;}
 .navIcon { float: left; width: 35px; height: 35px; line-height: 35px; }
 
-.notification-banner {position: relative;bottom: 63px;left: 53px;}
+.notification-banner {position: absolute; top: -14px; left: 51px; z-index: 10001;}
 .forkedFrom { font-size: 10px; clear: both; display:block;}
 .new_dataset { line-height: 35px; padding-right: 10px; margin-right: 25px}
 .new_dataset .navIcon { background: url('images/add.png') center center no-repeat; }
 .session_actions, .user_actions { float: left; }
 .userControls .option {float: left; min-width: 35px; height: 35px;}
-.account .option, .userControls .option { opacity: .5; -webkit-transition: .5s all; -moz-transition: .5s all; transition: .5s all; }
-.account .option:hover, .userControls .option:hover { opacity: 1; text-decoration: none;}
 .account {cursor: pointer; -moz-border-radius: 2px; -webkit-border-radius: 2px; border-radius: 2px;}
-.account .user_settings .navIcon { background: url('images/settings.png') center center no-repeat; }
-.account .gravatar {float: left}
-.account .gravatar img {margin: 4px; border: 1px solid #D0E8F0}
-.account .logout .navIcon { background: url('images/logout.png') center center no-repeat; }
-.account .username { float: left; margin-right: 4px; font-style: normal; color: #6D6D6C; line-height: 35px; }
+
+.option, .userControls .option { opacity: .5; -webkit-transition: .5s all; -moz-transition: .5s all; transition: .5s all; }
+.option:hover, .userControls .option:hover { opacity: 1; text-decoration: none;}
+.gravatar {float: left}
+.gravatar img {margin: 4px; border: 1px solid #D0E8F0}
+.user_settings .navIcon { background: url('images/settings.png') center center no-repeat; }
+.logout .navIcon { background: url('images/logout.png') center center no-repeat; }
+.user_profile .username { float: left; font-style: normal; color: #FFF; width: 35px; height: 35px; line-height: 35px;}
+.user_profile .label {float: left; margin-right: 8px; font-style: normal; color: #6D6D6C; line-height: 35px;}
+.user_profile .username img { padding: 8px }
 
 .datasetsContainer h2, .trendingSetsContainer h2 {
   padding-left: 22px;
@@ -458,18 +462,18 @@ a.download span.size { color:#666; }
  */
 .header {
   padding:40px 0px 20px;
-  height:125px;
-  margin:0px auto;
+  margin: 20px auto 0px auto;
   position:relative;
   }
 
 .logo {
   display:block;
   width:380px;
-  height:140px;
+  height:81px;
   overflow:hidden;
   text-indent:-9999px;
   background:url(images/logo.png) 0px 0px no-repeat;
+  margin-top: 10px;
   }
 
 .menu {

@@ -76,12 +76,12 @@ app.routes = {
     },
     logout: function() {
       couch.logout().then(function() {
+        util.render('empty', 'userButtons');
         util.render('userControls', 'userControls');
         delete app.session;
         $( '#header' ).data( 'profile', null );
         app.routes.pages['home']();
         history.pushState({}, "", "/");
-
       })
     },
     fork: function(id) {

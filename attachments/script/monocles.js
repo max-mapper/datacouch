@@ -52,17 +52,17 @@ $(function(){
         util.render('userControls', 'userControls');
         if ( session.userCtx.name ) {
           fetchProfile( session ).then( function( profile ) {
-            util.render( 'loggedIn', 'account', {
+            util.render( 'loggedIn', 'session_status', {
               username : profile._id,
               gravatar_url : profile.gravatar_url
             });
             app.emitter.emit(profile._id, 'login');
-            util.render('userActions', 'user_actions')
+            util.render('userActions', 'userButtons')
           });
         } else if ( util.isAdminParty( session.userCtx ) ) {
-          util.render( 'adminParty', 'account' );
+          util.render( 'adminParty', 'userButtons' );
         } else {
-          util.render( 'loginButton', 'account' );
+          util.render( 'loginButton', 'userButtons' );
           util.render( 'loggedOut', 'session_status' );
         }
         dfd.resolve(session);

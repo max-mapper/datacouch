@@ -41,12 +41,23 @@
   <script type='text/javascript' src='script/home.js'></script>
 </head>
 <body style="margin: 0">
+
   <div class='header limiter'>
     <a href="/" class='logo'></a>
-    <a href="http://www.github.com/maxogden/datacouch"><img class="notification-banner" src="style/images/ribbon.png"></a>
+    <a href="http://www.github.com/maxogden/datacouch">
+      <img class="notification-banner" src="style/images/ribbon.png">
+    </a>
   </div>
   
-  <div class="userControls"></div>
+  <div class="topbar-wrapper" style="z-index: 5;">
+    <div class="topbar">
+      <div class="fill">
+        <div class="userControls"></div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="userButtons"></div>
 
   <div class='bannerContainer'></div>
   
@@ -61,9 +72,11 @@
   
   <div class="dialog-overlay" style="display: none; z-index: 101; ">&nbsp;</div>
   <div class="dialog" style="display: none">
-    <div class="modal" style="position: relative; top: auto; left: auto; margin: 0 auto; z-index: 102"></div>
+    <div class="modal" style="position: relative; top: 50px; left: auto; margin: 0 auto; z-index: 102"></div>
   </div>
-
+  
+  <script type="text/mustache" class="emptyTemplate">
+  </script>
 
   <script type="text/mustache" class="bannerTemplate">
     <div class="banner">
@@ -83,13 +96,22 @@
       </ul>
     </div>
   </script>
-
+  
+  <script type="text/mustache" class="topBarTemplate">
+    <div class="container">
+      {{#name}}<h3><a href="#">{{name}}</a></h3>{{/name}}
+      <ul>
+        {{#nav}}<li><a href="{{href}}">{{name}}</a></li>{{/nav}}
+      </ul>
+      <form action="">
+        <input type="text" placeholder="Search">
+      </form>
+    </div>
+  </script>
+  
   <script type="text/mustache" class="userControlsTemplate">
-    <div class="user_actions"></div>
     <div class="session_actions">
       <div class="session_status"></div>
-      <ul class="account">
-      </ul>
     </div>
   </script>
   
@@ -102,8 +124,11 @@
     <div class="option user_profile">
       <a href="{{username}}">
         <div class="username">
-        <img width="16px" src="{{gravatar_url}}">
-        <span>{{username}}</span></div>
+          <img width="16px" src="{{gravatar_url}}">
+        </div>
+        <div class="label">
+          <span>{{username}}</span>
+        </div>
       </a>
     </div>
     <div class="option user_settings">
@@ -240,7 +265,7 @@
   
   <script type="text/mustache" class="userActionsTemplate">
     <a href="#new" class="btn primary">
-        + New Dataset
+      + New Dataset
     </a>
   </script>
   
