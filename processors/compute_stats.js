@@ -1,7 +1,9 @@
 /**  Computes and stores database metadatas
-  *  Usage: change settings then "node compute_stats.js"
+  *  Usage: export DATACOUCH_STATS="http://admin:admin@yourcouch" then run "node compute_stats.js"
   *  Author: Max Ogden (@maxogden)
  **/
+
+ if(!process.env['DATACOUCH_STATS']) throw ("OMGZ YOU HAVE TO SET $DATACOUCH_STATS");
 
 var request = require('request')
   , _ = require('underscore')
@@ -51,7 +53,7 @@ function getHits(id) {
   return dfd.promise();
 }
 
-var couch = process.argv[2]
+var couch = process.env['DATACOUCH_STATS']
   , datasets = couch + "/" + "datacouch/_design/datacouch/_view/by_user?include_docs=true"
   , h = {"Content-type": "application/json", "Accept": "application/json"}
   ;

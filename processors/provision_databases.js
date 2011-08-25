@@ -1,7 +1,9 @@
 /**  Creates databases for users
-  *  Usage: change settings then "node provision_databases.js"
+  *  Usage: export DATACOUCH_DATABASE="http://admin:admin@yourcouch/datacouch"  then "node provision_databases.js"
   *  Author: Max Ogden (@maxogden)
  **/
+ 
+if(!process.env['DATACOUCH_DATABASE']) throw ("OMGZ YOU HAVE TO SET $DATACOUCH_DATABASE");
 
 var follow = require('follow')
   , request = require('request')
@@ -9,10 +11,12 @@ var follow = require('follow')
   , deferred = require('deferred')
   , http = require('http')
   , path = require('path')
+  , url = require('url')
   ;
 
-var couch = process.argv[2]
-  , db = couch + "/" + process.argv[3]
+var configURL = url.parse(process.env['DATACOUCH_DATABASE'])
+var couch = configURL.protocol + "//" + configURL.host
+  , db = couch + configURL.pathname
   , h = {"Content-type": "application/json", "Accept": "application/json"}
   ;
 
