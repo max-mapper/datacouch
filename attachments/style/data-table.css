@@ -1,3 +1,24 @@
+/*custom styles up top*/
+
+.sidebar {height:100%;width:299px;background-color:#F0FFFD;position:relative;overflow-x: hidden}
+.sidebar .title{font-family:"Lucida Grande", "Geneva";font-size:20px;line-height:22px; font-weight: 400; color: #084354; width: 240px; max-height: 44px; overflow: hidden}
+.sidebar .timestamp{opacity:0.3;font-family:"Geneva";font-size:10px;line-height:16px;width: 240px}
+.sidebar .edit{opacity:0.3;font-family:"Geneva";font-size:10px;line-height:18px;padding-left:12px;background-image:url('images/edit.png');background-position:0 4px;background-repeat:no-repeat;}
+.sidebar .close{position:absolute;right:10px;top:15px;width:16px;height:16px;opacity:0.2;background-image:url('images/close.png');}
+.sidebar .close:hover,.sidebar .edit:hover{opacity:1;}
+.sidebar .top{background-color:#DCF0F4;border-bottom:1px solid #E1EEEC;padding:12px 16px 11px 16px;}
+.sidebar .description {font-family: "Lucida Grande"; font-size: 12px; font-style: italic; color: #707070; margin-top: 10px}
+.sidebar .datasource {height: 10px; background: url('images/tiny-triangle.png') no-repeat 0px 5px;padding-left: 7px; font-family: "Lucida Grande"; font-size: 10px; color: #959595; margin-top: 10px}
+.strong {font-weight: bold; margin-right: 5px}
+.sidebar .bottom{width: 100%; overflow-x: hidden}
+.sidebar .property {padding: 10px 16px; border-bottom: 1px solid #DDEFEC; overflow: auto}
+.sidebar .key{width: 90px; float: left; font-family: "Lucida Grande"; font-size: 13px; font-weight: bold; color: #464646}
+.sidebar .value{width: 170px; float: left; color: #707070; }
+.sidebar .link{text-decoration: underline}
+.sidebar p{font-family:"Geneva";font-size:11px;line-height:12px;padding-bottom:10px;color:#252525;}
+
+/*end custom styles*/
+
 /*
 
 Copyright 2010, Google Inc.
@@ -450,32 +471,35 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   font-size: 11px;
 }
 
-#left-panel {
+.left-panel {
   position: fixed;
   overflow: hidden;
   padding: 0px;
-  padding-top: 5px;
   font-size: 1.3em;
-  background: #e3e9ff;
+  background: #DCF0F4;
+  top: 40px;
+  left: 0px;
+  width: 300px;
+  bottom: 0px;
 }
 
-#left-panel .ui-tabs .ui-tabs-panel {
+.left-panel .ui-tabs .ui-tabs-panel {
   border-left: none;
   border-right: none;
   border-bottom: none;
   padding: 0;
 }
 
-#right-panel {
+.right-panel {
   position: fixed;
   top: 40px;
-  left: 0px;
+  left: 300px;
   bottom: 0px;
   right: 0px;
   overflow: auto;
   padding: 0px;
   padding-left: 5px;
-  background: #BCF;
+  background: #D0E8F0;
 }
 
 #tool-panel {
@@ -554,7 +578,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 .viewpanel-header {
   position: relative;
-  background: #e3e9ff;
+  background: #DCF0F4;
   font-size: 1.3em;
   padding: 7px;
   overflow: hidden;
@@ -564,7 +588,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 .viewpanel-rowrecord, .viewpanel-pagesize, .viewpanel-sorting {
   position: absolute;
   top: 7px;
-  background: #e3e9ff;
+  background: #DCF0F4;
   padding: 0 10px 0 0;
 }
 
@@ -575,14 +599,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 .data-table-container {
   display: block;
-  border-top: 1px solid #BCF;
+  border-top: 1px solid #E1EEEC;
   overflow: auto;
   position: absolute;
   top: 73px;
   bottom: 0px;
   left: 5px;
   right: 0px;
-  background: white;
+  background: url('images/grid-bg.png');
   }
 }
 
@@ -591,6 +615,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   padding: 0;
   font-size: 1.1em;
   border-collapse: collapse;
+}
+
+.data-table tr {
+  background: #fff;
 }
 
 .data-table td {
@@ -614,16 +642,16 @@ table.data-table > tbody > tr.contextual > td > div {
 table.data-table td.column-header {
   vertical-align: top;
   white-space: nowrap;
-  background: #f2f2f2;
+  background: #ffe;
   cursor: pointer;
-  padding: 4px 6px 4px 4px;
+  padding: 2px 6px 2px 4px;
   border-right: 1px solid #ddd;
   font-weight: bold;
 }
 
 .column-header-name {
   margin: 0 0 0 21px;
-  padding: 4px 0 0 0;
+  padding: 2px 0 0 0;
   display: block;
 }
 
@@ -802,8 +830,8 @@ a.data-table-flag-off {
 
 .data-table-cell-editor, .data-table-topic-popup {
   overflow: auto;
-  border: 1px solid #bcf;
-  background: #e3e9ff;
+  border: 1px solid #E1EEEC;
+  background: #DCF0F4;
   padding: 5px;
   -moz-border-radius: 5px;
   -webkit-border-radius: 5px;
@@ -923,11 +951,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 .dialog-border {
-  border: 4px solid #c1d9ff;
+  border: 4px solid #D0E8F0;
 }
 
 .dialog-header {
-  background: #e0edfe;
+  background: #DCF0F4;
   padding: 10px;
   font-weight: bold;
   font-size: 1.6em;

@@ -44,6 +44,8 @@ a.button:hover span.icon.loading { background-image: url(images/loader-blue.gif)
 .info { padding: 0px 0px 10px 0px}
 .large-loader { position: relative; }
 
+#docCount {font-family: Lucida Grande;font-size: 17px; color: #084354}
+
 .gettingStarted { width: 809px; margin: 50px auto}
 .gettingStarted .bigCouch {float: right}
 .gettingStarted .welcomeMessage { float: left; width: 220px}

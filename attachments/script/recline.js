@@ -181,7 +181,7 @@ var recline = function() {
     util.listenFor(['esc', 'return']);
     
     getDbInfo(app.dbPath).then(function( dbInfo ) {
-      util.render( 'tableContainer', app.container );
+      util.render( 'tableContainer', 'right-panel' );
       util.render( 'generating', 'project-actions' );    
             
       couch.session().then(function(session) {
@@ -194,7 +194,8 @@ var recline = function() {
       })
       
       couch.request({url: app.baseURL + "api/" + id}).then(function(datasetInfo) {
-        util.render('title', 'project-title', datasetInfo);
+        util.render('title', 'project-title', datasetInfo);        
+        util.render('sidebar', 'left-panel', util.formatProperties(datasetInfo));
       })
 
       initializeTable();

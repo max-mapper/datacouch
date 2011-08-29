@@ -24,6 +24,10 @@ var util = function() {
       return size + "MB";
     }
   }
+  
+  function capitalize(str) {
+    return str.charAt(0).toUpperCase() + str.substring(1).toLowerCase();
+  }
 
   function inURL(url, str) {
     var exists = false;
@@ -509,9 +513,23 @@ var util = function() {
     }
   }
   
+  function formatProperties( properties ) {
+    var data = {properties: []};
+    _.each(_.keys(properties), function(prop) {
+      if (_.include(["name", "description", "source"], prop)) {
+        data[prop] = properties[prop];
+      }
+    }) 
+    if(properties.hits) data.properties.push({key:'Unique Visitors', value: properties.hits});
+    if(properties.createdAt) data.properties.push({key:'Created', value: properties.createdAt});
+    if(properties.statsGenerated) data.properties.push({key:'Updated', value: properties.statsGenerated});
+    return data;
+  }
+  
   return {
     inURL: inURL,
     formatDiskSize: formatDiskSize,
+    capitalize: capitalize,
     emailToDB: emailToDB,
     isAdminParty: isAdminParty,
     registerEmitter: registerEmitter,
@@ -535,5 +553,6 @@ var util = function() {
     showDatasets: showDatasets,
     showTrendingsets: showTrendingsets,
     routeViews: routeViews,
+    formatProperties: formatProperties
   };
 }();

@@ -218,6 +218,7 @@ app.after = {
       $.extend(doc, {
         _id: "dc" + docID,
         name: form.name,
+        description: form.description,
         type: "database",
         user: app.profile._id,
         couch_user: app.session.userCtx.name,
