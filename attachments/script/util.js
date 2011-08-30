@@ -516,10 +516,11 @@ var util = function() {
   function formatProperties( properties ) {
     var data = {properties: []};
     _.each(_.keys(properties), function(prop) {
-      if (_.include(["name", "description", "source"], prop)) {
+      if (_.include(["name", "description", "source", "nouns"], prop)) {
         data[prop] = properties[prop];
       }
     }) 
+    if(properties.nouns) data.hasNouns = true;
     if(properties.hits) data.properties.push({key:'Unique Visitors', value: properties.hits});
     if(properties.createdAt) data.properties.push({key:'Created', value: properties.createdAt});
     if(properties.statsGenerated) data.properties.push({key:'Updated', value: properties.statsGenerated});

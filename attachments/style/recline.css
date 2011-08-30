@@ -45,7 +45,8 @@ a.button:hover span.icon.loading { background-image: url(images/loader-blue.gif)
 .large-loader { position: relative; }
 
 #docCount {font-family: Lucida Grande;font-size: 17px; color: #084354}
-
+.nounContainer { margin: 10px 0 }
+.project-title {background-color: #FEE9CC;color: rgba(0, 0, 0, 0.75);padding: 1px 3px;font-family: Monaco, Andale Mono, Courier New, monospace;font-size: 17px;-webkit-border-radius: 3px;-moz-border-radius: 3px;border-radius: 3px;}
 .gettingStarted { width: 809px; margin: 50px auto}
 .gettingStarted .bigCouch {float: right}
 .gettingStarted .welcomeMessage { float: left; width: 220px}

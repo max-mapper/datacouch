@@ -7,7 +7,7 @@
 .sidebar .close{position:absolute;right:10px;top:15px;width:16px;height:16px;opacity:0.2;background-image:url('images/close.png');}
 .sidebar .close:hover,.sidebar .edit:hover{opacity:1;}
 .sidebar .top{background-color:#DCF0F4;border-bottom:1px solid #E1EEEC;padding:12px 16px 11px 16px;}
-.sidebar .description {font-family: "Lucida Grande"; font-size: 12px; font-style: italic; color: #707070; margin-top: 10px}
+.sidebar .description {font-family: "Lucida Grande"; font-size: 12px; font-style: italic; color: #707070; margin: 10px 0px}
 .sidebar .datasource {height: 10px; background: url('images/tiny-triangle.png') no-repeat 0px 5px;padding-left: 7px; font-family: "Lucida Grande"; font-size: 10px; color: #959595; margin-top: 10px}
 .strong {font-weight: bold; margin-right: 5px}
 .sidebar .bottom{width: 100%; overflow-x: hidden}
@@ -232,6 +232,7 @@ a img {
   padding: 6px;
   position: relative;
   overflow: hidden;
+  background: url('images/grid-bg.png');
 }
 
 #app-home-button {

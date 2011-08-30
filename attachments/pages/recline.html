@@ -86,8 +86,14 @@
   <script type='text/mustache' class="sidebarTemplate">
     <div class="sidebar">
       <div class="top">        
-        {{#name}}<div class="title">{{name}}</div>{{/name}}
         {{#description}}<div class="description">{{description}}</div>{{/description}}
+        {{#hasNouns}}
+          <div class="nounContainer">
+          {{#nouns}}
+            <a href="http://thenounproject.com/noun/{{noun}}/">{{{svg}}}</a>
+          {{/nouns}}
+          </div>
+        {{/hasNouns}}
         {{#source}}<div class="datasource"><span class="strong">DATASOURCE:</span>{{source}}</div>{{/source}}
       </div>
       <div class="bottom">
@@ -100,7 +106,7 @@
       </div>
     </div>
   </script>
-  <script type='text/mustache' class="titleTemplate"><span id="project-name-button" class="app-path-section">{{user}}&nbsp;/ {{name}}</span></script>
+  <script type='text/mustache' class="titleTemplate">{{user}}&nbsp;/ {{name}}</script>
   <script type='text/mustache' class="bulkTemplate">http://{{host}}/{{db_name}}/_bulk_docs</script>
   <script type='text/mustache' class="generatingTemplate"><div class="loading">Loading...</div></script>
   
