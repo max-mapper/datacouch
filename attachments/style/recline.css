@@ -292,3 +292,45 @@ span.tooltip-status {
 	font-size: 8pt;
 	color: #444;
 }
+
+
+.code-editor {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: auto;
+    background: #eee;
+    z-index: 100;
+}
+
+.code-editor.windowed {
+    border-radius: 5px;
+    border: 5px solid rgba(0,0,0,0.5);
+    box-shadow: 0 0 10px rgba(255,255,255,0.5);
+    background-clip: padding-box;
+}
+
+.right-panel .actions {
+    padding: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.right-panel .code-editor {
+  font-size: 12px;
+}
+
+.right-panel .CodeMirror {
+    background: white;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    line-height: 1.5em;
+}
+
+.right-panel .CodeMirror-scroll {
+    height: auto;
+    overflow-y: hidden;
+    overflow-x: auto;
+    width: 100%;
+}

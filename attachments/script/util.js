@@ -638,7 +638,6 @@ var util = function() {
     actionsBar.appendChild(renameButton)
     editor.appendChild(actionsBar)
     editor.className = 'code-editor'
-    console.log('requesting... ' + app.dbPath + entry.path)
     $.ajax({dataType: "text", url: app.dbPath + entry.path}).then(
       function(file) {
         codeMirror = CodeMirror(editor, {
