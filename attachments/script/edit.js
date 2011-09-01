@@ -1,7 +1,7 @@
 var app = {
-	baseURL: util.getBaseURL(window.location.href),
-	container: 'main_content',
-	emitter: util.registerEmitter()
+  baseURL: util.getBaseURL(window.location.href),
+  container: 'main_content',
+  emitter: util.registerEmitter()
 };
 
 app.handler = function(route) {
@@ -21,6 +21,17 @@ app.routes = {
     },
     noID: function() {
       alert('you have to specify an id!');
+    }
+  },
+  tabs: {
+    data: function() {
+      util.render('dataTab', 'sidebar', util.formatProperties(app.datasetInfo))
+    },
+    apps: function() {
+      util.render('appsTab', 'sidebar', util.formatProperties(app.datasetInfo))
+    },
+    history: function() {
+      util.render('historyTab', 'sidebar')
     }
   }
 }
@@ -242,6 +253,39 @@ app.after = {
           util.notify("Error: JSON must be an array of objects");
         } 
       }
+    })
+  },
+  sidebar: function() {
+    var tabs = $('.ui-tabs-nav li');
+    tabs.find('a').click(function(e) {
+      var clicked = $(e.target)
+        , tab = clicked.attr('data-tab')
+        ;
+      tabs.removeClass('ui-state-active');
+      clicked.parents('li').addClass('ui-state-active');
+      app.routes.tabs[tab]();
+      e.preventDefault();
+    })
+    tabs.find('a').first().click();
+  },
+  appsTab: function() {
+    $('.root').click(function(e) {
+      if($(this).hasClass('selected')) return;
+      $('.sidebar .selected').removeClass('selected');
+      $(this).find('li').removeClass('hidden');
+      $(this).addClass('selected');
+      var clicked = $(e.target)
+        , ddoc = clicked.attr('data-id')
+        ;
+      util.getDDocFiles("/_design/" + ddoc).then(function(folder) {
+        app.fileHtmlElementByPath = {}
+        app.stateByPath = {}
+        var ul = document.createElement("ul")
+        for (var childEntry in folder.children) {
+          util.addHTMLElementForFileEntry(folder.children[childEntry], ul)
+        }
+        clicked.find('#files').html('').html(ul);
+      });
     })
   }
 }

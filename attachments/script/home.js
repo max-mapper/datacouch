@@ -1,9 +1,9 @@
 var app = {
-	baseURL: util.getBaseURL(window.location.href),
-	container: 'main_content',
-	emitter: util.registerEmitter(),
-	cache: {},
-	reservedPages: ['edit']
+  baseURL: util.getBaseURL(window.location.href),
+  container: 'main_content',
+  emitter: util.registerEmitter(),
+  cache: {},
+  reservedPages: ['edit']
 };
 
 couch.dbPath = app.baseURL + "api/";

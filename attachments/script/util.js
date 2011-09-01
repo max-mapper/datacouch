@@ -86,14 +86,14 @@ var util = function() {
   
   function listenFor(keys) {
     var shortcuts = { // from jquery.hotkeys.js
-			8: "backspace", 9: "tab", 13: "return", 16: "shift", 17: "ctrl", 18: "alt", 19: "pause",
-			20: "capslock", 27: "esc", 32: "space", 33: "pageup", 34: "pagedown", 35: "end", 36: "home",
-			37: "left", 38: "up", 39: "right", 40: "down", 45: "insert", 46: "del", 
-			96: "0", 97: "1", 98: "2", 99: "3", 100: "4", 101: "5", 102: "6", 103: "7",
-			104: "8", 105: "9", 106: "*", 107: "+", 109: "-", 110: ".", 111 : "/", 
-			112: "f1", 113: "f2", 114: "f3", 115: "f4", 116: "f5", 117: "f6", 118: "f7", 119: "f8", 
-			120: "f9", 121: "f10", 122: "f11", 123: "f12", 144: "numlock", 145: "scroll", 191: "/", 224: "meta"
-		}
+      8: "backspace", 9: "tab", 13: "return", 16: "shift", 17: "ctrl", 18: "alt", 19: "pause",
+      20: "capslock", 27: "esc", 32: "space", 33: "pageup", 34: "pagedown", 35: "end", 36: "home",
+      37: "left", 38: "up", 39: "right", 40: "down", 45: "insert", 46: "del", 
+      96: "0", 97: "1", 98: "2", 99: "3", 100: "4", 101: "5", 102: "6", 103: "7",
+      104: "8", 105: "9", 106: "*", 107: "+", 109: "-", 110: ".", 111 : "/", 
+      112: "f1", 113: "f2", 114: "f3", 115: "f4", 116: "f5", 117: "f6", 118: "f7", 119: "f8", 
+      120: "f9", 121: "f10", 122: "f11", 123: "f12", 144: "numlock", 145: "scroll", 191: "/", 224: "meta"
+    }
     window.addEventListener("keyup", function(e) { 
       var pressed = shortcuts[e.keyCode];
       if(_.include(keys, pressed)) app.emitter.emit("keyup", pressed); 
@@ -489,7 +489,7 @@ var util = function() {
     if(id){
       route = route.split('/')[0];
     }
-    
+
     // If "#" is in the route, and it's the first char, then we are dealing with
     // a modal, we're going to route it through the views modals object
     if( route.indexOf( '#' ) === 0 ) {
@@ -516,7 +516,7 @@ var util = function() {
   function formatProperties( properties ) {
     var data = {properties: []};
     _.each(_.keys(properties), function(prop) {
-      if (_.include(["name", "description", "source", "nouns"], prop)) {
+      if (_.include(["name", "description", "source", "nouns", "apps"], prop)) {
         data[prop] = properties[prop];
       }
     }) 
@@ -525,6 +525,161 @@ var util = function() {
     if(properties.createdAt) data.properties.push({key:'Created', value: properties.createdAt});
     if(properties.statsGenerated) data.properties.push({key:'Updated', value: properties.statsGenerated});
     return data;
+  }
+  
+  // transform couch _attachment objects into file trees that are compatible with the Nide editor
+  function mergeFileTree(arr, obj, attachments, ddocPath) {
+    var x = arr.shift();
+    if (typeof obj["children"][x] === "undefined") {
+      obj["children"][x] = {"children": {}};
+    } 
+    if(arr.length > 0) {
+      util.filePath.push(x);
+      var currentPath = util.filePath.join("/");
+    } else {
+      if (util.filePath.length > 0) {
+        var currentPath = util.filePath.join("/") + "/" + x;
+      } else {
+        var currentPath = x;
+      }
+    }
+    obj["children"][x].path = ddocPath + "/" + currentPath;
+    if (attachments[currentPath]) {
+      obj["children"][x].type = "file";
+      obj["children"][x].name = x;
+    } else {
+      obj["children"][x].type = "directory";
+      obj["children"][x].name = _.last(util.filePath);
+    }
+    if (arr.length > 0) {
+      mergeFileTree(arr, obj["children"][x], attachments, ddocPath);
+    }
+  }
+  
+  function getDDocFiles(ddocPath) {
+    var dfd = $.Deferred();
+    couch.request({url: app.dbPath + ddocPath}).then(function(ddoc) {
+      var folder = {
+        "name": "",
+        "type": "directory",
+        "path": ddocPath,
+        "children": {}
+      }
+      _.each(_.keys(ddoc._attachments), function(file) {
+        util.filePath = [];
+        util.mergeFileTree(file.split('/'), folder, ddoc._attachments, ddocPath)
+      })
+      dfd.resolve(folder);
+    })
+    return dfd.promise();
+  }
+  
+  function addHTMLElementForFileEntry(entry, parentElement) {
+    var thisElement = document.createElement("li");
+    app.fileHtmlElementByPath[entry.path] = thisElement
+
+    if (app.fileEntriesArray) {
+      app.fileEntriesArray.push(entry)
+    }
+
+    if (entry.type == "directory") {
+      thisElement.className = 'folder'
+      if (app.stateByPath[entry.path] == 'open') {
+        thisElement.className += ' open'
+      }
+      thisElement.innerHTML = '<img src="/images/folder.png">' + entry.name;
+      $(thisElement).click(function(e) {
+        if (!e.offsetX) e.offsetX = e.clientX - $(e.target).position().left;
+        if (!e.offsetY) e.offsetY = e.clientY - $(e.target).position().top;
+        if (e.target == thisElement && e.offsetY < 24) {
+          if (e.offsetX < 24) {
+            $(this).toggleClass('open');
+            app.stateByPath[entry.path] = $(this).hasClass('open') ? 'open' : '';
+            e.stopPropagation()
+          } else {
+            $('.right-panel').html(codeEditor(entry));
+            e.stopPropagation()
+          }
+        }
+      })
+      var ul = document.createElement("ul")
+      thisElement.appendChild(ul)
+      for (var childEntry in entry.children) {
+        addHTMLElementForFileEntry(entry.children[childEntry], ul)
+      }
+    } else {
+      thisElement.innerHTML = '<img src="/images/file.png">' + entry.name;
+      $(thisElement).click(function(e) {
+        $('.right-panel').html(codeEditor(entry));
+      })
+    }
+    if (entry.name.charAt(0) == '.') {
+      thisElement.className += ' hidden'
+    }
+    parentElement.appendChild(thisElement)
+  }
+  
+  function codeEditor(entry) {
+    if(entry.type !== "file") return;
+    var codeMirror;
+    var editor = document.createElement('div')
+    var versionEditors = []
+    var actionsBar = document.createElement('div')
+    actionsBar.className = 'actions'
+    actionsBar.innerHTML = '<b>' + entry.path + '</b> '
+    var renameButton = document.createElement('button')
+    renameButton.innerHTML = 'Rename'
+    $(renameButton).click(function(e) {
+      var newName = prompt('New filename:', entry.name)
+      if (newName) {
+        renameFile(entry.path, entry.path.replace(/\/[^\/]+$/, '/' + newName))
+      }
+    })
+    actionsBar.appendChild(renameButton)
+    editor.appendChild(actionsBar)
+    editor.className = 'code-editor'
+    console.log('requesting... ' + app.dbPath + entry.path)
+    $.ajax({dataType: "text", url: app.dbPath + entry.path}).then(
+      function(file) {
+        codeMirror = CodeMirror(editor, {
+          value: file,
+          mode: "javascript",
+          lineNumbers: true,
+          onChange: function(editor) {
+            content = editor.getValue()
+            changed = true
+          }
+        });
+  
+        var content = file
+        var changed = false;
+        var saving = false;
+  
+        setInterval(function() {
+          if (changed && !saving) {
+            var done = false;
+            saving = true;
+            var selected = $('.selected')
+            selected.addClass('syncing')
+            saveFile(entry.path, content, function(err){
+              if (!err) {
+                changed = false
+                done = true;
+                selected.removeClass('syncing')
+              }
+              saving = false
+            })
+            setTimeout(function() {
+              if (!done) {
+                saving = false
+              }
+            }, 8000)
+          }
+        }, 3000)
+      },
+      function(err) { console.log('err!', err) }
+    )
+    return editor;
   }
   
   return {
@@ -554,6 +709,10 @@ var util = function() {
     showDatasets: showDatasets,
     showTrendingsets: showTrendingsets,
     routeViews: routeViews,
-    formatProperties: formatProperties
+    formatProperties: formatProperties,
+    mergeFileTree: mergeFileTree,
+    getDDocFiles: getDDocFiles,
+    addHTMLElementForFileEntry: addHTMLElementForFileEntry,
+    codeEditor: codeEditor
   };
 }();

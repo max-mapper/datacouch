@@ -398,7 +398,7 @@ $(function(){
             message : util.linkSplit( r.value.message ),
             id: r.id,
             created_at : r.value.created_at,
-        		hostname : r.value.hostname || "unknown",
+            hostname : r.value.hostname || "unknown",
             files : files,
             photos: photos
           }, r.value.profile );
@@ -426,8 +426,8 @@ $(function(){
           id : r.id,
           created: r.value.created_at,
           message : util.linkSplit( r.value.message ),
-    			hostname : r.value.hostname || "unknown",
-    			randomToken : randomToken()
+          hostname : r.value.hostname || "unknown",
+          randomToken : randomToken()
         }, r.value.profile );
       });
 
@@ -475,7 +475,7 @@ $(function(){
             created_at : date,
             profile : userProfile(),
             message : form.find( '[name=message]' ).val(),
-        	  hostname : document.domain,
+            hostname : document.domain,
             parent_id : parent_id,
             parent_created_at : parent_created_at
         };
@@ -489,23 +489,23 @@ $(function(){
     }
 
     function decorateStream() {
-    	$( ".hover_profile" ).cluetip( { local: true, sticky: true, activation: "click" } );
+      $( ".hover_profile" ).cluetip( { local: true, sticky: true, activation: "click" } );
       $( '.timeago' ).timeago();
-    	$( 'a.hide_post_comments' ).click( function( e ) {
+      $( 'a.hide_post_comments' ).click( function( e ) {
         var comment = $( this ).closest( 'li' ).find( 'div.comments' );
         comment.find( '*' ).remove();
         comment.closest( 'li' ).find( 'a.hide_post_comments' ).hide().end().find( 'a.show_post_comments' ).show();
         e.preventDefault();
-    	})
+      })
 
-    	$( 'a.show_post_comments' ).click( function( e ) {
-    	  var postComments = $( this );
+      $( 'a.show_post_comments' ).click( function( e ) {
+        var postComments = $( this );
         var post = postComments.closest( '.stream_element' ).find( 'div.comments' )
           , postID = postComments.closest( '.stream_element' ).attr( 'data-post-id' );
 
         showComments( postID, post );
         e.preventDefault();
-    	})
+      })
     }
 
     function bindInfiniteScroll() {

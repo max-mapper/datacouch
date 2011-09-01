@@ -219,3 +219,76 @@ span.tooltip-status {
   color:red;
   text-align:center;
 }
+
+/* FROM NIDE */
+
+
+.sidebar ul {
+	margin: 8px 0;
+	padding-left: 0px;
+}
+
+.sidebar ul ul {
+	margin: 0;
+}
+
+.sidebar li {
+	padding-left: 20px;
+	list-style: none;
+	white-space: nowrap;
+}
+
+.sidebar li.hidden {
+	display: none !important;
+}
+
+.sidebar.show-hidden li.hidden {
+	display: block !important;
+	opacity: 0.25;
+}
+
+.sidebar li.folder {
+	background: url('/images/right-arrow.png') 6px 4px no-repeat;
+}
+
+.sidebar li.folder > ul {
+	display: none;
+}
+
+.sidebar li.folder.open {
+	background: url('/images/down-arrow.png') 6px 4px no-repeat;
+}
+
+.sidebar li.folder.open > ul {
+	display: block;
+}
+
+.sidebar li.root {
+	padding-left: 10px;
+}
+
+.sidebar li.selected, .sidebar li.folder.selected {
+	background-color: rgba(55,120,194,0.3);
+	border-radius: 5px 0 0 5px;
+	box-shadow: 0 1px 2px rgba(0,0,0,0.2) inset, 0 1px 0 rgba(255,255,255,0.5);
+	color: #3d5979;
+	text-shadow: 0 1px 0 rgba(255,255,255,0.5);
+}
+
+.sidebar li.selected.syncing {
+	background-image: url('/images/ajax-loader.gif');
+	background-repeat: no-repeat;
+	background-position: right center;
+}
+
+.sidebar li img {
+	margin: 4px;
+	vertical-align: -7px;
+	min-width: 16px;
+	min-height: 16px;
+}
+
+.sidebar li i {
+	font-size: 8pt;
+	color: #444;
+}

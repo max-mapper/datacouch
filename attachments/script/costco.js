@@ -120,7 +120,6 @@ var costco = function() {
         };
         var worker = new Worker('/script/costco-csv-worker.js');
         worker.onmessage = function(message) {
-           // console.log("MESSAGE", message.data)
            message = JSON.parse(message.data);
            if (message.done) {
              util.hide('dialog');
