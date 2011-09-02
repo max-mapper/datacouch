@@ -12,6 +12,7 @@ var follow = require('follow')
   , http = require('http')
   , path = require('path')
   , url = require('url')
+  , _ = require('underscore')
   ;
 
 var configURL = url.parse(process.env['DATACOUCH_DATABASE'])
@@ -30,7 +31,17 @@ follow({db:db, include_docs:true}, function(error, change) {
     , dbPath = couch + "/" + dbName
     ;
 
-  checkForDB(dbPath).then(function(status) {
+  _(doc.apps).each(function(app) {
+    var start_time = new Date();
+    function done() { console.log("installed " + app.id + " into " + dbPath + " in " + (new Date() - start_time) + "ms") }
+    checkExistenceOf(dbPath + "/_design/" + app.id).then(function(status) {
+      if(status === 404) {
+        replicate("apps", dbPath, "_design/" + app.id).then(done);
+      }
+    })
+  })
+  
+  checkExistenceOf(dbPath).then(function(status) {
     if(status === 404) {
       console.log('creating ' + dbName);
       var start_time = new Date();
@@ -40,7 +51,6 @@ follow({db:db, include_docs:true}, function(error, change) {
           replicate(doc.forkedFrom, dbName).then(done);
         } else {
           pushCouchapp("../db.js", couch + "/" + dbName).then(done);
-          // replicate("apps", dbName, "_design/recline").then(done);
         }
         setAdmin(dbName, doc.couch_user); 
       })
@@ -72,7 +82,7 @@ function replicate(source, target, ddoc) {
   return dfd.promise();
 }
 
-function checkForDB(url) {
+function checkExistenceOf(url) {
   var dfd = deferred();
   request({uri: url, method: "HEAD", headers: h}, function(err, resp, body) {
     dfd.resolve(resp.statusCode);
@@ -94,6 +104,7 @@ function createDB(url) {
   })
   return dfd.promise();
 }
+
 
 function setAdmin(dbName, username) {
   var dfd = deferred();
