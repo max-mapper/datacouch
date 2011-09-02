@@ -595,10 +595,8 @@ var util = function() {
           if (e.offsetX < 24) {
             $(this).toggleClass('open');
             app.stateByPath[entry.path] = $(this).hasClass('open') ? 'open' : '';
-            e.stopPropagation()
           } else {
             $('.right-panel').html(codeEditor(entry));
-            e.stopPropagation()
           }
         }
       })

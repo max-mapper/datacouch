@@ -269,23 +269,25 @@ app.after = {
     tabs.find('a').first().click();
   },
   appsTab: function() {
-    $('.root').click(function(e) {
-      if($(this).hasClass('selected')) return;
-      $('.sidebar .selected').removeClass('selected');
-      $(this).find('li').removeClass('hidden');
-      $(this).addClass('selected');
+    $('.root').live('click', function(e) {
       var clicked = $(e.target)
         , ddoc = clicked.attr('data-id')
         ;
-      util.getDDocFiles("/_design/" + ddoc).then(function(folder) {
-        app.fileHtmlElementByPath = {}
-        app.stateByPath = {}
-        var ul = document.createElement("ul")
-        for (var childEntry in folder.children) {
-          util.addHTMLElementForFileEntry(folder.children[childEntry], ul)
-        }
-        clicked.find('#files').html('').html(ul);
-      });
+      if(clicked.hasClass('selected')) return;
+      $('.sidebar .selected').removeClass('selected');
+      $(this).find('li').removeClass('hidden');
+      clicked.addClass('selected');
+      if (ddoc) {
+        util.getDDocFiles("/_design/" + ddoc).then(function(folder) {
+          app.fileHtmlElementByPath = {}
+          app.stateByPath = {}
+          var ul = document.createElement("ul")
+          for (var childEntry in folder.children) {
+            util.addHTMLElementForFileEntry(folder.children[childEntry], ul)
+          }
+          clicked.find('#files').html('').html(ul);
+        }); 
+      }
     })
   }
 }
