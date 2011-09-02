@@ -10,7 +10,7 @@ couch.dbPath = app.baseURL + "api/";
 couch.rootPath = couch.dbPath + "couch/";
 
 /*
- App.routes
+ app.routes
    pages
     home
     user
@@ -291,6 +291,7 @@ var routeTemplate = function( route ){
 }
 
 $(function() {  
+    
   // set the route as the pathname, but loose the leading slash
   var route = window.location.pathname.replace('/', '');
 
