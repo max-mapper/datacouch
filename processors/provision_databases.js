@@ -32,11 +32,13 @@ follow({db:db, include_docs:true}, function(error, change) {
     ;
 
   _(doc.apps).each(function(app) {
+    console.log(dbName, app)
     var start_time = new Date();
-    function done() { console.log("installed " + app.id + " into " + dbPath + " in " + (new Date() - start_time) + "ms") }
-    checkExistenceOf(dbPath + "/_design/" + app.id).then(function(status) {
+    function done() { console.log("installed " + app.ddoc + " into " + dbPath + " in " + (new Date() - start_time) + "ms") }
+    checkExistenceOf(dbPath + "/_design/" + app.ddoc).then(function(status) {
+      console.log(dbPath + "/_design/" + app.ddoc, status)
       if(status === 404) {
-        replicate("apps", dbPath, "_design/" + app.id).then(done);
+        replicate("apps", dbPath, "_design/" + app.ddoc).then(done);
       }
     })
   })

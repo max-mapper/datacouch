@@ -43,11 +43,17 @@
       <div class="dialog-content dialog-border"></div>
     </div>
   </div>
-  
-  <script type='text/mustache' class="busyTemplate">
+
+  <script type="text/mustache" class="busyTemplate">
     <div id="loading-message">
-      <img src="/images/large-spinner.gif">
-      <span> Working...</span>
+      <img src="../images/large-spinner.gif">
+      <span>{{message}}{{^message}}Working...{{/message}}</span>
+    </div>
+  </script>
+  
+  <script type='text/mustache' class="appTemplatesTemplate">
+    <div class="appTemplates">
+      {{#apps}}<img data-ddoc="{{ddoc}}" src="{{screenshot}}">{{/apps}}
     </div>
   </script>
 
@@ -122,11 +128,12 @@
   <script type='text/mustache' class="appsTabTemplate">
     <div class="top">
       {{^apps}}<div class="description">You haven't made any apps on top of this data yet.</div>{{/apps}}
+      <a class="browseApps">Browse available apps</a>
     </div>
     <div class="bottom">
       {{#apps}}
         <ul>
-          <li class="root" data-id="{{id}}" id="project"><img src="/images/project.png">{{id}}
+          <li class="root" data-ddoc="{{ddoc}}" id="project"><img src="/images/project.png">{{ddoc}}
           <div id="files">
             <ul>
               <li class="hidden"><img src="/images/ajax-loader.gif">Loading project...

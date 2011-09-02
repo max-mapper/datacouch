@@ -268,10 +268,28 @@ app.after = {
     })
     tabs.find('a').first().click();
   },
+  appTemplates: function() {
+    $('.appTemplates img').click(function(e) {
+      var ddoc = $(e.target).attr('data-ddoc');
+      util.addApp(ddoc, app.datasetInfo._id);
+    })
+  },
   appsTab: function() {
+    $('.browseApps').click(function() {
+      return couch.request({url: app.baseURL + "api/apps"}).then(function(apps) {
+        var appData = {apps: _(apps.rows).map(function(row) { 
+          var appDoc = row.doc;
+          return { 
+            ddoc: appDoc.ddoc,
+            screenshot: app.baseURL + "api/" + appDoc._id + '/screenshot.png'
+          }
+        })}
+        recline.showDialog("appTemplates", appData);
+      })
+    })
     $('.root').live('click', function(e) {
       var clicked = $(e.target)
-        , ddoc = clicked.attr('data-id')
+        , ddoc = clicked.attr('data-ddoc')
         ;
       if(clicked.hasClass('selected')) return;
       $('.sidebar .selected').removeClass('selected');

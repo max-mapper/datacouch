@@ -679,6 +679,41 @@ var util = function() {
     return editor;
   }
   
+  function addApp(ddoc, id) {
+    var docURL = app.baseURL + "api/" + id;
+    couch.request({url: docURL}).then(function(doc) {
+      if(!doc.apps) doc.apps = [];
+      if(_.detect(doc.apps, function(appEntry) { return appEntry.ddoc === ddoc })) {
+        util.hide('dialog');
+        util.notify('That app is already installed')
+      } else {
+        doc.apps.push({ddoc: ddoc});
+        couch.request({url: docURL, type: "PUT", data: JSON.stringify(doc)}).then(function(resp) {
+          var dbName = id + "/_design/" + ddoc;
+          function waitUntilExists(url) {
+            couch.request({url: url, type: "HEAD"}).then(
+              function(resp, status) {
+                couch.request({url: app.baseURL + "api/" + id}).then(function(datasetInfo) {
+                  util.hide('dialog');
+                  app.datasetInfo = datasetInfo;
+                  app.routes.tabs['apps']();
+                })
+              },
+              function(resp, status){
+                console.log("not created yet...", resp, status);
+                setTimeout(function() {
+                  waitUntilExists(url);
+                }, 500);
+              }
+            )
+          }
+          util.render('busy', 'dialog-content', {message: "Installing app..."});
+          waitUntilExists(couch.rootPath + "api/couch/" + dbName);
+        })
+      }
+    })
+  }
+  
   return {
     inURL: inURL,
     formatDiskSize: formatDiskSize,
@@ -710,6 +745,7 @@ var util = function() {
     mergeFileTree: mergeFileTree,
     getDDocFiles: getDDocFiles,
     addHTMLElementForFileEntry: addHTMLElementForFileEntry,
-    codeEditor: codeEditor
+    codeEditor: codeEditor,
+    addApp: addApp
   };
 }();
