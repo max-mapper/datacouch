@@ -26,6 +26,7 @@ app.routes = {
   tabs: {
     data: function() {
       util.render('dataTab', 'sidebar', util.formatProperties(app.datasetInfo))
+      recline.initializeTable(app.offset);
     },
     apps: function() {
       util.render('appsTab', 'sidebar', util.formatProperties(app.datasetInfo))

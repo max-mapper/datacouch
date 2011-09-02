@@ -122,7 +122,12 @@ var recline = function() {
   }
   
   function getPageSize() {
-    return parseInt($(".viewpanel-pagesize .selected").text());
+    var pagination = $(".viewpanel-pagesize .selected");
+    if (pagination.length > 0) {
+      return parseInt(pagination.text())
+    } else {
+      return 10;
+    }
   }
   
   function fetchRows(id, skip) {
@@ -181,7 +186,6 @@ var recline = function() {
     util.listenFor(['esc', 'return']);
     
     getDbInfo(app.dbPath).then(function( dbInfo ) {
-      util.render( 'tableContainer', 'right-panel' );
       util.render( 'generating', 'project-actions' );    
             
       couch.session().then(function(session) {
@@ -204,6 +208,7 @@ var recline = function() {
   }
   
   function initializeTable(offset) {
+    util.render( 'tableContainer', 'right-panel' );
     showDialog('busy');
     couch.request({url: app.dbPath + '/headers'}).then(function ( headers ) {
       util.hide('dialog');

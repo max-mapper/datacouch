@@ -299,9 +299,9 @@ span.tooltip-status {
 .iframeContainer {
   position: absolute;
   top: 35px;
-  bottom: 5px;
-  left: 5px;
-  right: 5px;
+  bottom: 10px;
+  left: 10px;
+  right: 10px;
 }
 
 .iframeDetails {
@@ -309,6 +309,7 @@ span.tooltip-status {
 }
 
 .right-panel .title {
+  margin-left: 5px;
   font-size: 18px;
   position: relative;
   top: 2px;
