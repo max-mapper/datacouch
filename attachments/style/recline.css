@@ -294,6 +294,25 @@ span.tooltip-status {
 }
 
 .appTemplates img {margin: 10px}
+.right-panel iframe {height: 100%; width: 100%}
+
+.iframeContainer {
+  position: absolute;
+  top: 35px;
+  bottom: 5px;
+  left: 5px;
+  right: 5px;
+}
+
+.iframeDetails {
+  line-height: 30px;
+}
+
+.right-panel .title {
+  font-size: 18px;
+  position: relative;
+  top: 2px;
+}
 
 .code-editor {
     position: absolute;

@@ -125,6 +125,17 @@
     </div>
   </script>
   
+  <script type='text/mustache' class="ddocIframeTemplate">
+    <div class="iframeDetails">
+      <span class="title">{{ddoc}}</span> (<a href="{{url}}">permalink</a>)
+    </div>
+    <div id="view-panel">
+      <div class="iframeContainer">
+        <iframe class="ddocIframe" src="{{url}}"></iframe>
+      </div>
+    </div>
+  </script>
+  
   <script type='text/mustache' class="appsTabTemplate">
     <div class="top">
       {{^apps}}<div class="description">You haven't made any apps on top of this data yet.</div>{{/apps}}

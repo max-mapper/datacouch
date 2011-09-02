@@ -296,6 +296,7 @@ app.after = {
       $(this).find('li').removeClass('hidden');
       clicked.addClass('selected');
       if (ddoc) {
+        util.render("ddocIframe", "right-panel", {ddoc: ddoc, url: app.dbPath + "/_design/" + ddoc + "/_rewrite"})
         util.getDDocFiles("/_design/" + ddoc).then(function(folder) {
           app.fileHtmlElementByPath = {}
           app.stateByPath = {}
