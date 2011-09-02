@@ -293,6 +293,7 @@ span.tooltip-status {
 	color: #444;
 }
 
+.appTemplates img {margin: 10px}
 
 .code-editor {
     position: absolute;
