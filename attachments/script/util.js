@@ -665,6 +665,7 @@ var util = function() {
           mode: "javascript",
           lineNumbers: true,
           onChange: function(editor) {
+            $('.selected').addClass('syncing');
             content = editor.getValue()
             changed = true
           }
@@ -679,7 +680,6 @@ var util = function() {
             var done = false;
             saving = true;
             var selected = $('.selected')
-            selected.addClass('syncing')
             saveFile(entry.path, content).then(function(resp){
               if (resp.ok) {
                 changed = false
