@@ -559,6 +559,7 @@ var util = function() {
   function getDDocFiles(ddocPath) {
     var dfd = $.Deferred();
     couch.request({url: app.dbPath + ddocPath}).then(function(ddoc) {
+      app.ddocs[ddoc._id] = ddoc;
       var folder = {
         "name": "",
         "type": "directory",
@@ -617,6 +618,27 @@ var util = function() {
     parentElement.appendChild(thisElement)
   }
   
+  function saveFile(file, content) {
+    var dfd = $.Deferred();
+    
+    var path = _.rest(file.split('/'))
+      , ddoc = path.splice(0,2).join('/')
+      , attachment = path.join('/')
+      ;
+    $.ajax({
+       type: "PUT",
+       contentType: app.ddocs[ddoc]._attachments[attachment].content_type,
+       headers: {"Accept":"application/json"},
+       url: app.dbPath + "/" + ddoc + "/" + attachment + "?rev=" + app.ddocs[ddoc]._rev,
+       data: content,
+       dataType:"json"
+     }).then(function(resp) {
+       app.ddocs[ddoc]._rev = resp.rev;
+       dfd.resolve(resp);
+     }, dfd.reject);
+     return dfd.promise();
+  }
+  
   function codeEditor(entry) {
     if(entry.type !== "file") return;
     var codeMirror;
@@ -658,8 +680,8 @@ var util = function() {
             saving = true;
             var selected = $('.selected')
             selected.addClass('syncing')
-            saveFile(entry.path, content, function(err){
-              if (!err) {
+            saveFile(entry.path, content).then(function(resp){
+              if (resp.ok) {
                 changed = false
                 done = true;
                 selected.removeClass('syncing')
