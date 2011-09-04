@@ -3,7 +3,7 @@
   *  Author: Max Ogden (@maxogden)
  **/
  
-if(!process.env['DATACOUCH_DATABASE']) throw ("OMGZ YOU HAVE TO SET $DATACOUCH_DATABASE");
+if(!process.env['DATACOUCH_DATABASE'] || !process.env['DATACOUCH_VHOST']) throw ("OMGZ YOU HAVE TO SET $DATACOUCH_DATABASE and $DATACOUCH_VHOST");
 
 var follow = require('follow')
   , request = require('request')
@@ -16,7 +16,8 @@ var follow = require('follow')
   ;
 
 var configURL = url.parse(process.env['DATACOUCH_DATABASE'])
-var couch = configURL.protocol + "//" + configURL.host
+  , vhostDomain = process.env['DATACOUCH_VHOST']
+  , couch = configURL.protocol + "//" + configURL.host
   , db = couch + configURL.pathname
   , h = {"Content-type": "application/json", "Accept": "application/json"}
   ;
@@ -37,7 +38,8 @@ follow({db:db, include_docs:true}, function(error, change) {
     checkExistenceOf(dbPath + "/_design/" + app.ddoc).then(function(status) {
       if(status === 404) {
         replicate("apps", dbPath, "_design/" + app.ddoc).then(done);
-      }
+        addVhost(doc.user + "-" + app.ddoc + "." + vhostDomain, "/" + dbName + "/_design/" + app.ddoc + "/_rewrite")
+      };
     })
   })
   
@@ -105,6 +107,14 @@ function createDB(url) {
   return dfd.promise();
 }
 
+function addVhost(url, couchapp) {
+  var dfd = deferred();
+  request({uri: couch + "/_config/vhosts/" + encodeURIComponent(url), method: "PUT", headers: h, body: JSON.stringify(couchapp)}, function (err, resp, body) {
+    if (err) throw new Error('ahh!! ' + err);
+    dfd.resolve(body);
+  })
+  return dfd.promise(); 
+}
 
 function setAdmin(dbName, username) {
   var dfd = deferred();

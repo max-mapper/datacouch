@@ -297,7 +297,8 @@ app.after = {
       $(this).find('li').removeClass('hidden');
       clicked.addClass('selected');
       if (ddoc) {
-        util.render("ddocIframe", "right-panel", {ddoc: ddoc, url: app.dbPath + "/_design/" + ddoc + "/_rewrite"})
+        var domain = $.url(window.location).attr('authority');
+        util.render("ddocIframe", "right-panel", {ddoc: ddoc, url: "http://" + app.datasetInfo.user + "-" + ddoc + "." + domain})
         util.getDDocFiles("/_design/" + ddoc).then(function(folder) {
           app.fileHtmlElementByPath = {}
           app.stateByPath = {}
