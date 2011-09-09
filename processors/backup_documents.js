@@ -1,5 +1,5 @@
 /**  Copies all revisions of all documents to a separate backup database
-  *  Usage: export DATACOUCH_DATABASE="http://admin:admin@yourcouch/datacouch" then spawn as child process
+  *  Usage: export DATACOUCH_DATABASE="http://admin:admin@yourcouch/datacouch" then node backup_documents.js
   *  Author: Max Ogden (@maxogden)
  **/
  
@@ -24,16 +24,31 @@ function backupDatabases(couch, datasetsDB) {
   var start_time = new Date();  
   request({uri: datasetsDB, headers: h, include_docs: true}, function(err, resp, body) {
     _.each(JSON.parse(body).rows, function(db) {
-      request({uri: couch + "/datacouch/" + db.id, headers: h}, function(err, resp, body) {
+      var metadataURL = couch + "/datacouch/" + db.id;
+      request({uri: metadataURL, headers: h}, function(err, resp, body) {
         var dbInfo = JSON.parse(body)
           , backupURL = couch + "/" + db.id + "-backup"
           , dbURL = couch + "/" + db.id
           ;
+          
         function copyChanged() {
-          request({uri: dbURL + "/_changes?since=" + (dbInfo.lastSeq || "0"), headers: h}, function(err, resp, body) {
+          request({uri: dbURL + "/_changes?since=" + (dbInfo.lastBackupSeq || "0"), headers: h}, function(err, resp, body) {
             var changes = JSON.parse(body).results;
+            var pending = changes.length;
             _(changes).each(function(change) {
-              request.get(dbURL + "/" + change.id + "?attachments=true").pipe(request.put(backupURL + "/" + change.id + "-" + change.changes[0].rev))
+              var source = dbURL + "/" + change.id + "?attachments=true"
+               , destination = backupURL + "/" + change.id + "-" + change.changes[0].rev
+               ;
+              request.get(source).pipe(request.put(destination, function(err, resp, body) {
+                pending--;
+                if(pending === 0 && change.seq > (dbInfo.lastBackupSeq || 0)) {
+                  dbInfo.lastBackupSeq = change.seq;
+                  request({uri: metadataURL, method: "PUT", headers: h, body: JSON.stringify(dbInfo)}, function(err, resp, body) {
+                    console.log(metadataURL, body)
+                    // TODO handle conflicts
+                  })
+                }
+              }))
             })
           })
         }
