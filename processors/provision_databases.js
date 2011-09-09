@@ -3,7 +3,7 @@
   *  Author: Max Ogden (@maxogden)
  **/
  
-if(!process.env['DATACOUCH_DATABASE'] || !process.env['DATACOUCH_VHOST']) throw ("OMGZ YOU HAVE TO SET $DATACOUCH_DATABASE and $DATACOUCH_VHOST");
+if(!process.env['DATACOUCH_ROOT'] || !process.env['DATACOUCH_VHOST']) throw ("OMGZ YOU HAVE TO SET $DATACOUCH_ROOT and $DATACOUCH_VHOST");
 
 var follow = require('follow')
   , request = require('request')
@@ -15,7 +15,7 @@ var follow = require('follow')
   , _ = require('underscore')
   ;
 
-var configURL = url.parse(process.env['DATACOUCH_DATABASE'])
+var configURL = url.parse(process.env['DATACOUCH_ROOT'] + "/datacouch")
   , vhostDomain = process.env['DATACOUCH_VHOST']
   , couch = configURL.protocol + "//" + configURL.host
   , db = couch + configURL.pathname

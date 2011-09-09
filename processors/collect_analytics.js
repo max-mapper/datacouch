@@ -1,9 +1,9 @@
 /**  Logs couchapp pageviews via a transparent image tracking thingy
   *  Usage: export DATACOUCH_ANALYTICS="http://admin:admin@yourcouch/datacouch-analytics"  then "node collect_analytics.js"
-  *  Author: Max Ogden (@maxogden)
+  *  Author: Max Ogden (@maxogden) forked from Dale Harvey (@daleharvey)
  **/
 
-if(!process.env['DATACOUCH_ANALYTICS']) throw ("OMGZ YOU HAVE TO SET $DATACOUCH_ANALYTICS");
+if(!process.env['DATACOUCH_ROOT']) throw ("OMGZ YOU HAVE TO SET $DATACOUCH_ROOT");
 
 var http = require('http')
   , request = require('request')
@@ -12,7 +12,7 @@ var http = require('http')
 
 var opts = {
   host: "0.0.0.0",
-  couch: process.env['DATACOUCH_ANALYTICS'],
+  couch: process.env['DATACOUCH_ROOT'],
   ping_port: 9876,
   couch_port: 5984
 };

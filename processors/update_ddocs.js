@@ -6,7 +6,9 @@ var request = require('request')
   , _ = require('underscore')
   ;
 
-var couch = process.argv[2]
+if(!process.env['DATACOUCH_ROOT']) throw ("OMGZ YOU HAVE TO SET $DATACOUCH_ROOT");
+
+var couch = process.env['DATACOUCH_ROOT']
   , db = couch + "/datacouch"
   , h = {"Content-type": "application/json", "Accept": "application/json"}
   ;

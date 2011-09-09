@@ -3,7 +3,7 @@
   *  Author: Max Ogden (@maxogden)
  **/
 
- if(!process.env['DATACOUCH_STATS']) throw ("OMGZ YOU HAVE TO SET $DATACOUCH_STATS");
+ if(!process.env['DATACOUCH_ROOT']) throw ("OMGZ YOU HAVE TO SET $DATACOUCH_ROOT");
 
 var request = require('request')
   , _ = require('underscore')
@@ -53,7 +53,7 @@ function getHits(id) {
   return dfd.promise();
 }
 
-var couch = process.env['DATACOUCH_STATS']
+var couch = process.env['DATACOUCH_ROOT']
   , datasets = couch + "/" + "datacouch/_design/datacouch/_view/by_user?include_docs=true"
   , h = {"Content-type": "application/json", "Accept": "application/json"}
   ;
