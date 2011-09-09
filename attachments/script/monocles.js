@@ -17,17 +17,23 @@ $(function(){
 
     // binds UX interaction and form submit event handlers to the signup/login forms
     function showLogin() {
-      navigator.id.getVerifiedEmail(function(assertion) {
-        if (assertion) {
-          var verificationURL = couch.rootPath + '_browserid';
-          var verification = { 'assertion': encodeURIComponent(assertion)
-                             , 'audience' : encodeURIComponent(document.domain)
-                             };
-          couch.request({url: verificationURL, type: "POST", data: JSON.stringify(verification)}).then(fetchSession, loginFail);
-        } else {
-          loginFail();
-        }
+      $.oauthpopup({
+          path: app.baseURL + "login",
+          callback: function(){
+              window.location.reload();
+          }
       });
+      // navigator.id.getVerifiedEmail(function(assertion) {
+      //   if (assertion) {
+      //     var verificationURL = couch.rootPath + '_browserid';
+      //     var verification = { 'assertion': encodeURIComponent(assertion)
+      //                        , 'audience' : encodeURIComponent(document.domain)
+      //                        };
+      //     couch.request({url: verificationURL, type: "POST", data: JSON.stringify(verification)}).then(fetchSession, loginFail);
+      //   } else {
+      //     loginFail();
+      //   }
+      // });
     }
 
     function ensureProfile() {

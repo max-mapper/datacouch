@@ -62,6 +62,10 @@ app.routes = {
     },
   },
   modals: {
+    loggedIn: function() {
+      alert('logged in!')
+      // app.routes.pages.home();
+    },
     "new": function() {
       monocles.ensureProfile().then(function(profile) {
         util.show('dialog');
@@ -272,30 +276,8 @@ app.after = {
   }
 }
 
-var routeTemplate = function( route ){
-  
-  if( route.split('')[0] === '#' ){
-    var id = '';
-    route = route.replace('#', '').split('/');
-    
-    if( route.indexOf('/') ) {
-      id = route[1]
-    }    
-    
-    route = route[0]
-    app.routes[ route ]( id ); 
- 
-  } else {
-    app.routes.pages['user']();      
-  }  
-}
-
 $(function() {  
-  // set the route as the pathname, but loose the leading slash
-  var route = window.location.pathname.replace('/', '');
 
-  util.routeViews( route );
-  
   $('a').live('click', function( event ) {
     /*
       Basic rules of this router:
@@ -325,11 +307,10 @@ $(function() {
     event.preventDefault();
     util.routeViews( route )
   });
-
+  
   $(window).bind('popstate', function() {
-
+    console.log('popstate',event.state)
     event.preventDefault();
-
-    util.routeViews( $.url(window.location.pathname).segment()[0] );
+    util.routeViews( util.currentPath() );
   });
 })

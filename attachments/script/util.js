@@ -37,6 +37,12 @@ var util = function() {
     return exists;
   }
   
+  function currentPath() {
+    // the current relative path, but loose the leading slash
+    // e.g. for http://woo.com/#pizza this would return #pizza
+    return $.url(window.location.href).attr('relative').replace('/', '');
+  }
+  
   function emailToDB(email) {
     return email.replace(/@/ig, "/").replace(/\./ig, "$");
   }
@@ -474,7 +480,7 @@ var util = function() {
   }
   
   function routeViews( route ){
-    
+
     var fullRoute = route;
     
     if( !route.length ) {
@@ -489,11 +495,10 @@ var util = function() {
     if(id){
       route = route.split('/')[0];
     }
-
+    
     // If "#" is in the route, and it's the first char, then we are dealing with
     // a modal, we're going to route it through the views modals object
     if( route.indexOf( '#' ) === 0 ) {
-
       route = route.replace('#', '');
       app.routes.modals[ route ]( id );
 
@@ -502,12 +507,12 @@ var util = function() {
     } else {
       
       if( route === "/" ) {
-        history.pushState({}, "", '/'); 
+        history.pushState({route: "home"}, "wee", '/'); 
         app.routes.pages[ 'home' ]();
         return;
       }
 
-      history.pushState({}, "", '/' + fullRoute); 
+      history.pushState({route: "user", id: id}, "woo", '/' + fullRoute); 
       app.routes.pages[ 'user' ]( id );
       
     }
@@ -738,6 +743,7 @@ var util = function() {
   
   return {
     inURL: inURL,
+    currentPath: currentPath,
     formatDiskSize: formatDiskSize,
     capitalize: capitalize,
     emailToDB: emailToDB,
