@@ -16,43 +16,48 @@ var follow = require('follow')
 
 var configURL = url.parse(process.env['DATACOUCH_ROOT'])
   , couch = configURL.protocol + "//" + configURL.host
-  , datasets = couch + "/datacouch/_design/datacouch/_view/by_user?include_docs=true"
+  , datasetsDB = couch + "/datacouch/_design/datacouch/_view/by_user?include_docs=true"
   , h = {"Content-type": "application/json", "Accept": "application/json"}
   ;
 
-function backupDatabases(couch, datasetsDB) {
-  var start_time = new Date();  
+function backupDatabases() {
   request({uri: datasetsDB, headers: h, include_docs: true}, function(err, resp, body) {
-    _.each(JSON.parse(body).rows, function(db) {
+    var dbs = JSON.parse(body).rows
+      , pendingBackups = dbs.length
+      ;
+    _.each(dbs, function(db) {
       var metadataURL = couch + "/datacouch/" + db.id;
       request({uri: metadataURL, headers: h}, function(err, resp, body) {
         var dbInfo = JSON.parse(body)
           , backupURL = couch + "/" + db.id + "-backup"
           , dbURL = couch + "/" + db.id
           ;
-          
         function copyChanged() {
           request({uri: dbURL + "/_changes?since=" + (dbInfo.lastBackupSeq || "0"), headers: h}, function(err, resp, body) {
             var changes = JSON.parse(body).results;
-            var pending = changes.length;
+            var pendingDocs = changes.length;
+            if(pendingDocs === 0) {
+              pendingBackups--;
+              if(pendingBackups === 0) setTimeout(backupDatabases, 5000);
+            }
             _(changes).each(function(change) {
               var source = dbURL + "/" + change.id + "?attachments=true"
                , destination = backupURL + "/" + change.id + "-" + change.changes[0].rev
                ;
               request.get(source).pipe(request.put(destination, function(err, resp, body) {
-                pending--;
-                if(pending === 0 && change.seq > (dbInfo.lastBackupSeq || 0)) {
+                pendingDocs--;
+                if(pendingDocs === 0 && change.seq > (dbInfo.lastBackupSeq || 0)) {
                   dbInfo.lastBackupSeq = change.seq;
                   request({uri: metadataURL, method: "PUT", headers: h, body: JSON.stringify(dbInfo)}, function(err, resp, body) {
-                    console.log(metadataURL, body)
                     // TODO handle conflicts
+                    pendingBackups--;
+                    if(pendingBackups === 0) setTimeout(backupDatabases, 5000);                    
                   })
                 }
               }))
             })
           })
         }
-        
         checkExistenceOf(backupURL).then(function(status) {
           if(status === 404) {
             createDB(backupURL).then(copyChanged)
@@ -63,11 +68,6 @@ function backupDatabases(couch, datasetsDB) {
       })
     })
   })
-}
-
-function loop() {
-  backupDatabases(couch, datasets);
-  // setTimeout(loop, 10000);
 }
 
 function checkExistenceOf(url) {
@@ -93,5 +93,4 @@ function createDB(url) {
   return dfd.promise();
 }
 
-
-loop()
+backupDatabases();
