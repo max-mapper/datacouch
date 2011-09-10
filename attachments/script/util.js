@@ -36,11 +36,7 @@ var util = function() {
     }
     return exists;
   }
-  
-  function emailToDB(email) {
-    return email.replace(/@/ig, "/").replace(/\./ig, "$");
-  }
-  
+
   // true if no admins exist in the database
   function isAdminParty( userCtx ) {
     return userCtx.roles.indexOf("_admin") !== -1;
@@ -473,46 +469,6 @@ var util = function() {
     })
   }
   
-  function routeViews( route ){
-    
-    var fullRoute = route;
-    
-    if( !route.length ) {
-      app.routes.pages[ 'home' ]();
-    }
-
-    // If we've made it this far, then the ID (if one exists) will be
-    // what comes after the slash
-    id = route.split('/')[1];
-    
-    // If there is an Id, then we have to trim it off the route
-    if(id){
-      route = route.split('/')[0];
-    }
-
-    // If "#" is in the route, and it's the first char, then we are dealing with
-    // a modal, we're going to route it through the views modals object
-    if( route.indexOf( '#' ) === 0 ) {
-
-      route = route.replace('#', '');
-      app.routes.modals[ route ]( id );
-
-    // Otherwise, it's a page, and we're going to route it through the
-    // views pages object, and pushState
-    } else {
-      
-      if( route === "/" ) {
-        history.pushState({}, "", '/'); 
-        app.routes.pages[ 'home' ]();
-        return;
-      }
-
-      history.pushState({}, "", '/' + fullRoute); 
-      app.routes.pages[ 'user' ]( id );
-      
-    }
-  }
-  
   function formatProperties( properties ) {
     var data = {properties: []};
     _.each(_.keys(properties), function(prop) {
@@ -740,7 +696,6 @@ var util = function() {
     inURL: inURL,
     formatDiskSize: formatDiskSize,
     capitalize: capitalize,
-    emailToDB: emailToDB,
     isAdminParty: isAdminParty,
     registerEmitter: registerEmitter,
     cachedRequest: cachedRequest,
@@ -762,7 +717,6 @@ var util = function() {
     renderTree: renderTree,
     showDatasets: showDatasets,
     showTrendingsets: showTrendingsets,
-    routeViews: routeViews,
     formatProperties: formatProperties,
     mergeFileTree: mergeFileTree,
     getDDocFiles: getDDocFiles,

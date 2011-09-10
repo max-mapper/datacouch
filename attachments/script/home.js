@@ -21,45 +21,49 @@ couch.rootPath = couch.dbPath + "couch/";
   actions
     fork
 */
+var routes1 = {
+
+  '/motivation': {
+    on: function() {}
+  },
+  '/anatomy': {
+    on: function() {}
+  },
+  '/project': {
+    on: function() {}
+  },
+
+};
 app.routes = {
   pages: {
-    home: function() {
+    '/': {
+      on: function() {
 
-      util.showDatasets();      
-      util.showTrendingsets();      
+        util.showDatasets();      
+        util.showTrendingsets();      
 
-      var user;
-      // If we are not logged in, show the banner
-      monocles.fetchSession().then( function( session ) {
+        var user;
+        // If we are not logged in, show the banner
+        monocles.fetchSession().then( function( session ) {
 
-        if( !session.userCtx.name ){
-          util.render( 'banner', 'bannerContainer' );
-        }
+          if( !session.userCtx.name ){
+            util.render( 'banner', 'bannerContainer' );
+          }
 
-      });
+        });
 
-      app.emitter.on('login', function(name) {
-        $('.banner').slideUp();
-      })
-    },
-    user: function(){
-      monocles.fetchSession();
-      
-      var username;
-
-      // If we're using the full path to the design doc
-      // then split on _rewrite, and the user name will be the first thing
-      // after that
-      if (window.location.pathname.indexOf('_rewrite') > -1) {
-        username = window.location.pathname.split('_rewrite')[1].replace('/', '');
-
-      // Otherwise, it's the first thing adter the TLD
-      } else {
-        username = $.url(window.location.pathname).segment()[0];
+        app.emitter.on('login', function(name) {
+          $('.banner').slideUp();
+        })
       }
-
-      util.showDatasets( username );
     },
+    '/:username': {
+      on: function(username) { 
+        console.log('woo', username)
+        monocles.fetchSession();        
+        util.showDatasets( username );
+      }
+    }
   },
   modals: {
     "new": function() {
@@ -272,64 +276,6 @@ app.after = {
   }
 }
 
-var routeTemplate = function( route ){
-  
-  if( route.split('')[0] === '#' ){
-    var id = '';
-    route = route.replace('#', '').split('/');
-    
-    if( route.indexOf('/') ) {
-      id = route[1]
-    }    
-    
-    route = route[0]
-    app.routes[ route ]( id ); 
- 
-  } else {
-    app.routes.pages['user']();      
-  }  
-}
-
-$(function() {  
-  // set the route as the pathname, but loose the leading slash
-  var route = window.location.pathname.replace('/', '');
-
-  util.routeViews( route );
-  
-  $('a').live('click', function( event ) {
-    /*
-      Basic rules of this router:
-        We are going to let the following types of hrefs through
-         * links off domain (contains http://)
-         * point to elements in app.reservedKeywords through
-         
-        If it's not one of these things, then we are going to prevent default and
-          * If there is a hash in the href, we're going to launch a modal
-          * Otherwise, we're going to pushState and render a page view
-    */
-    
-    var route =  $(this).attr('href')
-
-    // If "http://" is in the route, we're going to let it through, and this function is over
-    if( route.indexOf( 'http://' ) > -1) {
-      return;
-    }
-
-    // If the route contains one of our reserved pages, let it through
-    if( route.split('/')[0].indexOf(app.reservedPages) > -1){
-      return;
-    }
-
-    // If it's not off tld or if it's not going to start with a reserved page,
-    // then we're going to prevent default and handle everything with javascript
-    event.preventDefault();
-    util.routeViews( route )
-  });
-
-  $(window).bind('popstate', function() {
-
-    event.preventDefault();
-
-    util.routeViews( $.url(window.location.pathname).segment()[0] );
-  });
+$(function() {
+  app.router = Router(app.routes.pages).init('/');
 })
