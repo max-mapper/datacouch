@@ -10,47 +10,40 @@ couch.dbPath = app.baseURL + "api/";
 couch.rootPath = couch.dbPath + "couch/";
 
 /*
- App.routes
-   pages
-    home
-    user
-  modals
-    new
-    settings
-    logout
-  actions
-    fork
+  App.routes
+    pages (URL routed with SugarSkull)
+      home
+      user
+    actions (no URL change triggered)
+      new
+      settings
+      logout
+      fork
 */
 
 app.routes = {
   pages: {
-    '/': {
-      on: function() {
-        console.log('home')
-        util.showDatasets();      
-        util.showTrendingsets();      
+    home: function() {
+      util.showDatasets();      
+      util.showTrendingsets();      
 
-        var user;
-        // If we are not logged in, show the banner
-        monocles.fetchSession().then( function( session ) {
+      var user;
+      // If we are not logged in, show the banner
+      monocles.fetchSession().then( function( session ) {
 
-          if( !session.userCtx.name ){
-            util.render( 'banner', 'bannerContainer' );
-          }
+        if( !session.userCtx.name ){
+          util.render( 'banner', 'bannerContainer' );
+        }
 
-        });
+      });
 
-        app.emitter.on('login', function(name) {
-          $('.banner').slideUp();
-        })
-      }
+      app.emitter.on('login', function(name) {
+        $('.banner').slideUp();
+      })
     },
-    '/:username': {
-      on: function(username) { 
-        console.log('woo', username)
-        monocles.fetchSession();        
-        util.showDatasets( username );
-      }
+    user: function(username) { 
+      monocles.fetchSession();        
+      util.showDatasets( username );
     }
   },
   modals: {
@@ -102,7 +95,7 @@ app.routes = {
               function waitForDB(url) {
                 couch.request({url: url, type: "HEAD"}).then(
                   function(resp, status) {
-                    window.location = app.baseURL + 'edit/' + dbID;
+                    window.location = app.baseURL + 'edit/#/' + dbID;
                   },
                   function(resp, status){
                     console.log("not created yet...", resp, status);
@@ -125,7 +118,7 @@ app.after = {
   newProfileForm: function() {
     $('.cancel').click(function(e) {
       util.hide('dialog');
-      app.routes['home']();
+      app.routes.pages['home']();
     })
     $(".profile_setup input[name='username']").keyup(function() {
       var input = $(this);
@@ -155,7 +148,7 @@ app.after = {
   editProfileForm: function() {
     $('.cancel').click(function(e) {
       util.hide('dialog');
-      app.routes['home']();
+      app.routes.pages['home']();
     })
     $( '.profile_setup' ).submit( function( e ) {
       monocles.updateProfile($( e.target ).serializeObject());
@@ -224,7 +217,7 @@ app.after = {
         function waitForDB(url) {
           couch.request({url: url, type: "HEAD"}).then(
             function(resp, status){
-              window.location = app.baseURL + 'edit/' + dbID;
+              window.location = app.baseURL + 'edit/#/' + dbID;
             },
             function(resp, status){
               console.log("not created yet...", resp, status);
@@ -265,5 +258,12 @@ app.after = {
 }
 
 $(function() {
-  app.router = Router(app.routes.pages).init('/');
+  
+  util.catchModals()
+  
+  app.router = Router({
+    '/': {on: 'home'},
+    '/:username': {on: 'user'}
+  }).use({ resource: app.routes.pages }).init('/');
+  
 })
