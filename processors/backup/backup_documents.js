@@ -8,6 +8,7 @@ if(!process.env['DATACOUCH_ROOT']) throw ("OMGZ YOU HAVE TO SET $DATACOUCH_ROOT"
 var follow = require('follow')
   , request = require('request')
   , deferred = require('deferred')
+  , couchapp = require('couchapp')
   , http = require('http')
   , path = require('path')
   , url = require('url')
@@ -60,7 +61,9 @@ function backupDatabases() {
         }
         checkExistenceOf(backupURL).then(function(status) {
           if(status === 404) {
-            createDB(backupURL).then(copyChanged)
+            createDB(backupURL).then(function(resp) {
+              pushCouchapp("../../backup.js", backupURL).then(copyChanged);
+            })
           } else {
             copyChanged()
           }
@@ -68,6 +71,18 @@ function backupDatabases() {
       })
     })
   })
+}
+
+function pushCouchapp(app, target) {
+  var dfd = deferred();
+  var capp = require(absolutePath(app))
+  couchapp.createApp(capp, target, function (app) { app.push(function(resp) { dfd.resolve() }) })
+  return dfd.promise();
+}
+
+function absolutePath(pathname) {
+  if (pathname[0] === '/') return pathname
+  return path.join(process.env.PWD, path.normalize(pathname));
 }
 
 function checkExistenceOf(url) {

@@ -52,7 +52,7 @@ follow({db:db, include_docs:true}, function(error, change) {
         if (doc.forkedFrom) {
           replicate(doc.forkedFrom, dbName).then(done);
         } else {
-          pushCouchapp("../db.js", couch + "/" + dbName).then(done);
+          pushCouchapp("../../db.js", couch + "/" + dbName).then(done);
         }
         setAdmin(dbName, doc.couch_user); 
       })
