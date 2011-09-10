@@ -21,24 +21,12 @@ couch.rootPath = couch.dbPath + "couch/";
   actions
     fork
 */
-var routes1 = {
 
-  '/motivation': {
-    on: function() {}
-  },
-  '/anatomy': {
-    on: function() {}
-  },
-  '/project': {
-    on: function() {}
-  },
-
-};
 app.routes = {
   pages: {
     '/': {
       on: function() {
-
+        console.log('home')
         util.showDatasets();      
         util.showTrendingsets();      
 
