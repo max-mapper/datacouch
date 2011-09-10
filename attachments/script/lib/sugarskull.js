@@ -2,6 +2,20 @@
 
   var dloc = document.location;
 
+  function regify(routes) { // convert all simple param routes to regex
+    if (typeof routes === 'string') {
+      return; 
+    }
+    for (var key in routes) {
+      regify(routes[key]);
+      if (key.indexOf(':') !== -1) {
+        var newKey = key.replace(/:.*?\/|:.*?$/g, '([a-zA-Z0-9-]+)/').slice(0, -1);
+        routes[newKey] = routes[key];
+        delete routes[key];
+      }
+    }
+  }
+
   window.Router = Router;
   
   function Router(routes) {
@@ -32,17 +46,6 @@
     this.notfound = null;
     this.lastroutevalue = null;
     this.alreadyrun = false;
-
-    function regify(routes) { // convert all simple param routes to regex
-      for (var key in routes) {
-        regify(routes[key]);
-        if (key.indexOf(':') !== -1) {
-          var newKey = key.replace(/:.*?\/|:.*?$/g, '([a-z0-9-]+)/').slice(0, -1);
-          routes[newKey] = routes[key];
-          delete routes[key];
-        }
-      }
-    }
 
     regify(this.routes);
 
@@ -76,11 +79,13 @@
       var roughmatch, exactmatch;
       var route = routes[path];
 
-      if(!route) {
+      if(!route || path === '/') {
         for (var r in routes) { // we dont have an exact match, lets explore.
           if(routes.hasOwnProperty(r)) {
+
             exactmatch = path.match(new RegExp('^' + r));
             roughmatch = path.match(new RegExp('^' + r + '(.*)?'));
+            
             if(exactmatch && roughmatch) {
 
               // convert roughmatch to an array of names without `/`s.
@@ -91,6 +96,12 @@
                 else {
                   roughmatch.splice(i, 1);
                 }
+              }
+
+              if (exactmatch[0] === '/' && 
+                  roughmatch.length > 1 && 
+                  '/([a-zA-Z0-9-]+)' in routes) {
+                continue;
               }
 
               var partsCount = exactmatch[0].split('/').length - 1,
@@ -129,7 +140,7 @@
           if (len === 0 || self._recurse) {
 
             function queue(fn, type) {
-              if(fn && fn[0]) {
+              if(fn && typeof fn !== 'string' && fn[0]) {
                 for (var j = 0, m = fn.length; j < m; j++) {
                   self[type][add]({ fn: fn[j], val: matched || path });
                 }
@@ -182,13 +193,16 @@
     }
 
     this.init = function(r) {
-      listener.init(route);
-      if(dloc.hash.length < 1 && r) { 
+
+      if(dloc.hash === '' && r) { 
         dloc.hash = r; 
       }
+
       if(dloc.hash.length > 0) {
         route();
       }
+
+      listener.init(route);
       return this;
     };
 
@@ -201,7 +215,7 @@
   }
 
   Router.prototype.use = function(conf) {
-    
+
     for(var item in conf) {
       if(conf.hasOwnProperty(item)) {
 
@@ -209,12 +223,12 @@
           this.recurse(conf[item]);
           continue;
         }
-        
+
         if(item === 'resource') {
           this.resource = conf[item];
           continue;
         }
-        
+
         if(item === 'notfound') {
           this.notfound = conf[item];
           continue;
