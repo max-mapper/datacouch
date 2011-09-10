@@ -6,6 +6,7 @@ ddoc =
   { _id:'_design/datacouch'
   , rewrites :
     [ {from:"/", to:'pages/index.html'}
+    , {from:"/edit", to:"pages/recline.html"}
     , {from:"/edit/*", to:"pages/recline.html"}
     , {from:"/api/datasets/:user", to:"_view/by_user", query:{endkey: [":user",null], startkey:[":user",{}], include_docs:"true", descending: "true"}}
     , {from:"/api/datasets", to:"_view/by_date", query:{include_docs:"true", descending: "true"}}

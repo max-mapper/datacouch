@@ -15,7 +15,7 @@ app.handler = function(route) {
 
 app.routes = {
   pages: {
-    user: function(id) {
+    dataset: function(id) {
       $('.homeButton').attr('href', app.baseURL);
       recline.bootstrap(id);
     },
@@ -315,9 +315,11 @@ app.after = {
 
 $(function() {  
 
-  // set the route as the pathname, but loose the leading slash
-  var route = window.location.pathname.replace('/', '');
-
-  util.routeViews( route );
+  util.catchModals()
+  
+  app.router = Router({
+    '/': {on: 'noID'},
+    '/:dataset': {on: 'dataset'}
+  }).use({ resource: app.routes.pages }).init('/');
   
 })

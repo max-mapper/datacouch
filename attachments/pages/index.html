@@ -43,7 +43,7 @@
 <body style="margin: 0">
 
   <div class='header limiter'>
-    <a href="/" class='logo'></a>
+    <a href="#/" class='logo'></a>
     <a href="http://www.github.com/maxogden/datacouch">
       <img class="notification-banner" src="style/images/ribbon.png">
     </a>
@@ -99,7 +99,7 @@
   
   <script type="text/mustache" class="topBarTemplate">
     <div class="container">
-      {{#name}}<h3><a href="#">{{name}}</a></h3>{{/name}}
+      {{#name}}<h3><a href="#/">{{name}}</a></h3>{{/name}}
       <ul>
         {{#nav}}<li><a href="{{href}}">{{name}}</a></li>{{/nav}}
       </ul>
@@ -122,7 +122,7 @@
 
   <script type="text/mustache" class="loggedInTemplate">
     <div class="option user_profile">
-      <a href="{{username}}">
+      <a href="#/{{username}}">
         <div class="username">
           <img width="16px" src="{{gravatar_url}}">
         </div>
@@ -132,17 +132,17 @@
       </a>
     </div>
     <div class="option user_settings">
-      <a href="#settings"><div class="navIcon"></div></a>
+      <a href="settings!"><div class="navIcon"></div></a>
     </div>
     <div class="option logout">
-      <a href="#logout"><div class="navIcon"></div></a>
+      <a href="logout!"><div class="navIcon"></div></a>
     </div>
   </script>
 
   <script type="text/mustache" class="loginButtonTemplate">
     <div class="right">
       <ul id="landing_nav">
-        <li><a href="#login" class="btn secondary login">Log in with BrowserID&nbsp;<span class="rightarrow icon"></span></a></li>
+        <li><a href="login!" class="btn secondary login">Log in with BrowserID&nbsp;<span class="rightarrow icon"></span></a></li>
         <li class="disclaimer">Your email address will be publicly viewable by other users</li>
       </ul>
     </div>
@@ -158,7 +158,7 @@
     
         <div class="modal-header">
           <h3>Hello {{name}}, Please setup your user profile.</h3>
-          <a href="#" class="close cancel">×</a>
+          <a href="#/" class="close cancel">×</a>
         </div>
         <div class="modal-body">
           <div class="clearfix">
@@ -196,7 +196,7 @@
     <form class="profile_setup">
       <div class="modal-header">
         <h3>Editing {{_id}}'s profile.</h3>
-        <a href="#" class="close cancel">×</a>
+        <a href="#/" class="close cancel">×</a>
       </div>
       <div class="modal-body">
         <div class="clearfix">
@@ -224,7 +224,7 @@
       </div>
       <div class="modal-footer">
         <input type="submit" class="btn primary" value="Save">
-        <a href="#" class="btn secondary cancel">Cancel</a>
+        <a href="#/" class="btn secondary cancel">Cancel</a>
         <input type="hidden" name="user" value="{{user}}">
       </div>              
     </form>
@@ -238,21 +238,21 @@
     {{#datasets}}
       <li>
         <div class="name">
-          <a class="owner" href="{{user}}">{{user}}</a>&nbsp;/ <a class="dataset" href="edit/{{id}}">{{name}}</a>
+          <a class="owner" href="#/{{user}}">{{user}}</a>&nbsp;/ <a class="dataset" href="edit/#/{{id}}">{{name}}</a>
           {{#nouns}}
             <a href="http://thenounproject.com/noun/{{noun}}/">{{{svg}}}</a>
           {{/nouns}}
         </div>
         <div class="forkedFrom">
           {{#forkedFrom}}
-            <span><span class="fork icon"></span>forked from <a href="{{forkedFromUser}}">{{forkedFromUser}}</a>&nbsp;/ <a class="dataset" href="{{forkedFrom}}">{{name}}</a></span>
+            <span><span class="fork icon"></span>forked from <a href="#/{{forkedFromUser}}">{{forkedFromUser}}</a>&nbsp;/ <a class="dataset" href="#/{{forkedFrom}}">{{name}}</a></span>
           {{/forkedFrom}}
         </div>
         <div class="metadata subtitle">Created <span class="timeago" title="{{date}}"></span>, {{count}} documents, {{size}}</div>
         <div class="avatar"><a href="#/{{user}}"><img src="{{gravatar_url}}"></a></div>
         {{#description}}<div><p>{{description}}</p></div>{{/description}}
         <div class="datasetActions">
-          {{#loggedIn}}<a href="#fork/{{id}}" class="btn secondary small"><span class="fork icon"></span>Fork dataset</a>{{/loggedIn}}
+          {{#loggedIn}}<a href="fork/{{id}}!" class="btn secondary small"><span class="fork icon"></span>Fork dataset</a>{{/loggedIn}}
         </div>
       </li>
     {{/datasets}}
@@ -264,7 +264,7 @@
   </script>
   
   <script type="text/mustache" class="userActionsTemplate">
-    <a href="#new" class="btn primary">
+    <a href="new!" class="btn primary">
       + New Dataset
     </a>
   </script>
@@ -273,7 +273,7 @@
     <form class="dataset_setup">
       <div class="modal-header">
         <h3>Create a new dataset</h3>
-        <a href="#" class="close cancel">×</a>
+        <a href="#/" class="close cancel">×</a>
       </div>
       <div class="modal-body">
         <h4>Name:</h4>
