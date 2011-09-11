@@ -42,35 +42,35 @@ var util = function() {
     return userCtx.roles.indexOf("_admin") !== -1;
   }
   
-  function catchModals() {
-    $('a').live('click', function( event ) {
-      /*
-        Basic rules of this router:
-          * If the href ends with a bang (!) we're going to launch a modal
-          * Otherwise, we're going to pass it through to SugarSkull
-      */
+  function catchModals( route ) {
+    
+    // Trim off the #/ from the beginning of the route if it exists
+    route = route.replace('#/', '');
+    
+    /*
+      Basic rules:
+        * If the href ends with a bang (!) we're going to launch a modal
+        * Otherwise, we're going to pass it through to SugarSkull
+    */
 
-      var route =  $(this).attr('href');
+    if( route && route.indexOf( '!' ) === ( route.length -1 ) ) {
 
-      if( route && route.indexOf( '!' ) === ( route.length -1 ) ) {
+      route = route.substr(0, route.lastIndexOf('!'));
 
-        route = route.substr(0, route.lastIndexOf('!'))
+      // The ID (if one exists) will be what comes after the slash
+      var id = route.split('/')[1];
 
-        // The ID (if one exists) will be what comes after the slash
-        var id = route.split('/')[1];
-
-        // If there is an Id, then we have to trim it off the route
-        if(id) {
-          route = route.split('/')[0];
-        }
-
-        if(route in app.routes.modals) app.routes.modals[ route ](id);
-
-        event.preventDefault();
-
+      // If there is an ID, then we have to trim it off the route
+      if (id) {
+        route = route.split('/')[0];
       }
 
-    });
+      if(route in app.routes.modals) app.routes.modals[ route ](id);
+
+      event.preventDefault();
+
+    }
+
   }
   
   function registerEmitter() {

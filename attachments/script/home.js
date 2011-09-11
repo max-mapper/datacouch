@@ -259,11 +259,15 @@ app.after = {
 
 $(function() {
   
-  util.catchModals()
+  $('a').live('click', function(event) {
+    var route =  $(this).attr('href');
+    util.catchModals(route);
+  });
   
   app.router = Router({
     '/': {on: 'home'},
-    '/:username': {on: 'user'}
-  }).use({ resource: app.routes.pages }).init('/');
+    '/(\\w+)!': {on: function(modal) { util.catchModals("#/" + modal + "!") }},
+    '/:username': {on: 'user'},
+  }).use({ resource: app.routes.pages, notfound: function() {console.log('notfound')} }).init('/');
   
 })
