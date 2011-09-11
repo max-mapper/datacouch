@@ -2,22 +2,23 @@ var app = {
   baseURL: util.getBaseURL(window.location.href),
   container: 'main_content',
   emitter: util.registerEmitter(),
-  cache: {},
-  reservedPages: ['edit']
+  cache: {}
 };
 
 couch.dbPath = app.baseURL + "api/";
 couch.rootPath = couch.dbPath + "couch/";
 
 /*
-  App.routes
-    pages (URL routed with SugarSkull)
+  app.routes
+    pages (URL routed with SugarSkull, hrefs like "#/" or "#/bob")
       home
       user
-    actions (no URL change triggered)
+    actions (no URL change triggered, hrefs like "#/cancel!" or "#/logout!")
       new
       settings
+      login
       logout
+      cancel
       fork
 */
 
@@ -59,6 +60,9 @@ app.routes = {
         util.render( 'editProfileForm', 'modal', profile );
       })    
     },
+    login: function() {
+      monocles.showLogin();
+    },
     logout: function() {
       couch.logout().then(function() {
         util.render('empty', 'userButtons');
@@ -66,8 +70,10 @@ app.routes = {
         delete app.session;
         $( '#header' ).data( 'profile', null );
         app.routes.pages['home']();
-        history.pushState({}, "", "/");
       })
+    },
+    cancel: function() {
+      util.hide('dialog');
     },
     fork: function(id) {
       monocles.ensureProfile().then(function(profile) {
@@ -116,10 +122,6 @@ app.routes = {
 
 app.after = {
   newProfileForm: function() {
-    $('.cancel').click(function(e) {
-      util.hide('dialog');
-      app.routes.pages['home']();
-    })
     $(".profile_setup input[name='username']").keyup(function() {
       var input = $(this);
       input.removeClass('available').removeClass('notAvailable').addClass('loading');
@@ -146,10 +148,6 @@ app.after = {
     });
   },
   editProfileForm: function() {
-    $('.cancel').click(function(e) {
-      util.hide('dialog');
-      app.routes.pages['home']();
-    })
     $( '.profile_setup' ).submit( function( e ) {
       monocles.updateProfile($( e.target ).serializeObject());
       e.preventDefault();
@@ -161,10 +159,6 @@ app.after = {
   newDatasetForm: function() {
     var doc = {}, docID;
     couch.request({url: couch.rootPath + "_uuids"}).then( function( data ) { docID = data.uuids[ 0 ] });
-    $('.cancel').click(function(e) {
-      util.hide('dialog');
-      app.routes.pages['home']();
-    })
     var inputs = $(".dataset_setup textarea[name='description'], .dataset_setup input[name='name']");
     var renderIcons = _.throttle(function() {
         var input = $(this);
@@ -232,20 +226,6 @@ app.after = {
       })
       e.preventDefault();
       return false;
-    });
-  },
-  loginButton: function() {
-    $('.login').click(function(e) {
-      monocles.showLogin();
-      return false;
-    })
-  },
-  actions: function() {
-    $('.button').click(function(e) { 
-      var action = $(e.target).attr('data-action');
-      util.position('menu', e, {left: -60, top: 5});
-      util.render(action + 'Actions', 'menu');
-      recline.handleMenuClick();
     });
   },
   datasets: function() {
