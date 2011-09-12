@@ -261,7 +261,6 @@ app.after = {
             },
             function (err) {
               util.hide('dialog');
-              util.notify("Error uploading: " + err.responseText);
             }
           );        
         } else {
@@ -316,7 +315,11 @@ app.after = {
 }
 
 $(function() {  
-
+  
+  app.emitter.on('error', function(error) {
+    util.notify("Server error: " + error);
+  })
+  
   $('a').live('click', function(event) {
     var route =  $(this).attr('href');
     util.catchModals(route);
