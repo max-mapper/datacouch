@@ -23,6 +23,20 @@ app.routes = {
       alert('you have to specify an id!');
     }
   },
+  modals: {
+    browse: function() {
+      couch.request({url: app.baseURL + "api/apps"}).then(function(apps) {
+        var appData = {apps: _(apps.rows).map(function(row) { 
+          var appDoc = row.doc;
+          return { 
+            ddoc: appDoc.ddoc,
+            screenshot: app.baseURL + "api/" + appDoc._id + '/screenshot.png'
+          }
+        })}
+        recline.showDialog("appTemplates", appData);
+      })
+    }
+  },
   tabs: {
     data: function() {
       util.render('dataTab', 'sidebar', util.formatProperties(app.datasetInfo))
@@ -276,18 +290,6 @@ app.after = {
     })
   },
   appsTab: function() {
-    $('.browseApps').click(function() {
-      return couch.request({url: app.baseURL + "api/apps"}).then(function(apps) {
-        var appData = {apps: _(apps.rows).map(function(row) { 
-          var appDoc = row.doc;
-          return { 
-            ddoc: appDoc.ddoc,
-            screenshot: app.baseURL + "api/" + appDoc._id + '/screenshot.png'
-          }
-        })}
-        recline.showDialog("appTemplates", appData);
-      })
-    })
     $('.root').live('click', function(e) {
       var clicked = $(e.target)
         , ddoc = clicked.attr('data-ddoc')
@@ -315,10 +317,14 @@ app.after = {
 
 $(function() {  
 
-  util.catchModals()
-  
+  $('a').live('click', function(event) {
+    var route =  $(this).attr('href');
+    util.catchModals(route);
+  });
+
   app.router = Router({
     '/': {on: 'noID'},
+    '/(\\w+)!': {on: function(modal) { util.catchModals("#/" + modal + "!") }},
     '/:dataset': {on: 'dataset'}
   }).use({ resource: app.routes.pages }).init('/');
   
