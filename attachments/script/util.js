@@ -500,8 +500,7 @@ var util = function() {
     })
   }
   
-<<<<<<< HEAD
-  function routeViews( route ){
+function routeViews( route ){
 
     var fullRoute = route;
     
@@ -765,7 +764,6 @@ var util = function() {
   
   return {
     inURL: inURL,
-    currentPath: currentPath,
     formatDiskSize: formatDiskSize,
     capitalize: capitalize,
     isAdminParty: isAdminParty,

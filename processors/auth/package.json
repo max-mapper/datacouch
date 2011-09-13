@@ -1,0 +1,14 @@
+{
+  "name": "dc_auth",
+  "subdomain": "dcauth",
+  "scripts": {
+    "start": "server.js"
+  },
+  "dependencies": {
+    "request": ">= 2.0.3",
+    "oauth": ">= 0.9.5",
+    "underscore": ">= 1.1.7",
+    "express": ">= 2.4.6"
+  },
+  "version": "0.0.1"
+}
