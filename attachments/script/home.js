@@ -2,29 +2,29 @@ var app = {
   baseURL: util.getBaseURL(window.location.href),
   container: 'main_content',
   emitter: util.registerEmitter(),
-  cache: {},
-  reservedPages: ['edit']
+  cache: {}
 };
 
 couch.dbPath = app.baseURL + "api/";
 couch.rootPath = couch.dbPath + "couch/";
 
 /*
- App.routes
-   pages
-    home
-    user
-  modals
-    new
-    settings
-    logout
-  actions
-    fork
+  app.routes
+    pages (URL routed with SugarSkull, hrefs like "#/" or "#/bob")
+      home
+      user
+    actions (no URL change triggered, hrefs like "#/cancel!" or "#/logout!")
+      new
+      settings
+      login
+      logout
+      cancel
+      fork
 */
+
 app.routes = {
   pages: {
     home: function() {
-
       util.showDatasets();      
       util.showTrendingsets();      
 
@@ -42,24 +42,10 @@ app.routes = {
         $('.banner').slideUp();
       })
     },
-    user: function(){
-      monocles.fetchSession();
-      
-      var username;
-
-      // If we're using the full path to the design doc
-      // then split on _rewrite, and the user name will be the first thing
-      // after that
-      if (window.location.pathname.indexOf('_rewrite') > -1) {
-        username = window.location.pathname.split('_rewrite')[1].replace('/', '');
-
-      // Otherwise, it's the first thing adter the TLD
-      } else {
-        username = $.url(window.location.pathname).segment()[0];
-      }
-
+    user: function(username) { 
+      monocles.fetchSession();        
       util.showDatasets( username );
-    },
+    }
   },
   modals: {
     loggedIn: function() {
@@ -78,6 +64,9 @@ app.routes = {
         util.render( 'editProfileForm', 'modal', profile );
       })    
     },
+    login: function() {
+      monocles.showLogin();
+    },
     logout: function() {
       couch.logout().then(function() {
         util.render('empty', 'userButtons');
@@ -85,8 +74,10 @@ app.routes = {
         delete app.session;
         $( '#header' ).data( 'profile', null );
         app.routes.pages['home']();
-        history.pushState({}, "", "/");
       })
+    },
+    cancel: function() {
+      util.hide('dialog');
     },
     fork: function(id) {
       monocles.ensureProfile().then(function(profile) {
@@ -114,7 +105,7 @@ app.routes = {
               function waitForDB(url) {
                 couch.request({url: url, type: "HEAD"}).then(
                   function(resp, status) {
-                    window.location = app.baseURL + 'edit/' + dbID;
+                    window.location = app.baseURL + 'edit/#/' + dbID;
                   },
                   function(resp, status){
                     console.log("not created yet...", resp, status);
@@ -135,10 +126,6 @@ app.routes = {
 
 app.after = {
   newProfileForm: function() {
-    $('.cancel').click(function(e) {
-      util.hide('dialog');
-      app.routes['home']();
-    })
     $(".profile_setup input[name='username']").keyup(function() {
       var input = $(this);
       input.removeClass('available').removeClass('notAvailable').addClass('loading');
@@ -165,10 +152,6 @@ app.after = {
     });
   },
   editProfileForm: function() {
-    $('.cancel').click(function(e) {
-      util.hide('dialog');
-      app.routes['home']();
-    })
     $( '.profile_setup' ).submit( function( e ) {
       monocles.updateProfile($( e.target ).serializeObject());
       e.preventDefault();
@@ -180,10 +163,6 @@ app.after = {
   newDatasetForm: function() {
     var doc = {}, docID;
     couch.request({url: couch.rootPath + "_uuids"}).then( function( data ) { docID = data.uuids[ 0 ] });
-    $('.cancel').click(function(e) {
-      util.hide('dialog');
-      app.routes.pages['home']();
-    })
     var inputs = $(".dataset_setup textarea[name='description'], .dataset_setup input[name='name']");
     var renderIcons = _.throttle(function() {
         var input = $(this);
@@ -236,7 +215,7 @@ app.after = {
         function waitForDB(url) {
           couch.request({url: url, type: "HEAD"}).then(
             function(resp, status){
-              window.location = app.baseURL + 'edit/' + dbID;
+              window.location = app.baseURL + 'edit/#/' + dbID;
             },
             function(resp, status){
               console.log("not created yet...", resp, status);
@@ -253,20 +232,6 @@ app.after = {
       return false;
     });
   },
-  loginButton: function() {
-    $('.login').click(function(e) {
-      monocles.showLogin();
-      return false;
-    })
-  },
-  actions: function() {
-    $('.button').click(function(e) { 
-      var action = $(e.target).attr('data-action');
-      util.position('menu', e, {left: -60, top: 5});
-      util.render(action + 'Actions', 'menu');
-      recline.handleMenuClick();
-    });
-  },
   datasets: function() {
     $('.timeago').timeago();
     $('svg').height('15px').width('25px');
@@ -276,41 +241,17 @@ app.after = {
   }
 }
 
-$(function() {  
-
-  $('a').live('click', function( event ) {
-    /*
-      Basic rules of this router:
-        We are going to let the following types of hrefs through
-         * links off domain (contains http://)
-         * point to elements in app.reservedKeywords through
-         
-        If it's not one of these things, then we are going to prevent default and
-          * If there is a hash in the href, we're going to launch a modal
-          * Otherwise, we're going to pushState and render a page view
-    */
-    
-    var route =  $(this).attr('href')
-
-    // If "http://" is in the route, we're going to let it through, and this function is over
-    if( route.indexOf( 'http://' ) > -1) {
-      return;
-    }
-
-    // If the route contains one of our reserved pages, let it through
-    if( route.split('/')[0].indexOf(app.reservedPages) > -1){
-      return;
-    }
-
-    // If it's not off tld or if it's not going to start with a reserved page,
-    // then we're going to prevent default and handle everything with javascript
-    event.preventDefault();
-    util.routeViews( route )
+$(function() {
+  
+  $('a').live('click', function(event) {
+    var route =  $(this).attr('href');
+    util.catchModals(route);
   });
   
-  $(window).bind('popstate', function() {
-    console.log('popstate',event.state)
-    event.preventDefault();
-    util.routeViews( util.currentPath() );
-  });
+  app.router = Router({
+    '/': {on: 'home'},
+    '/(\\w+)!': {on: function(modal) { util.catchModals("#/" + modal + "!") }},
+    '/:username': {on: 'user'},
+  }).use({ resource: app.routes.pages, notfound: function() {console.log('notfound')} }).init('/');
+  
 })

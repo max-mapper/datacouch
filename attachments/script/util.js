@@ -36,20 +36,41 @@ var util = function() {
     }
     return exists;
   }
-  
-  function currentPath() {
-    // the current relative path, but loose the leading slash
-    // e.g. for http://woo.com/#pizza this would return #pizza
-    return $.url(window.location.href).attr('relative').replace('/', '');
-  }
-  
-  function emailToDB(email) {
-    return email.replace(/@/ig, "/").replace(/\./ig, "$");
-  }
-  
+
   // true if no admins exist in the database
   function isAdminParty( userCtx ) {
     return userCtx.roles.indexOf("_admin") !== -1;
+  }
+  
+  function catchModals( route ) {
+    
+    // Trim off the #/ from the beginning of the route if it exists
+    route = route.replace('#/', '');
+    
+    /*
+      Basic rules:
+        * If the href ends with a bang (!) we're going to launch a modal
+        * Otherwise, we're going to pass it through to SugarSkull
+    */
+
+    if( route && route.indexOf( '!' ) === ( route.length -1 ) ) {
+
+      route = route.substr(0, route.lastIndexOf('!'));
+
+      // The ID (if one exists) will be what comes after the slash
+      var id = route.split('/')[1];
+
+      // If there is an ID, then we have to trim it off the route
+      if (id) {
+        route = route.split('/')[0];
+      }
+
+      if(route in app.routes.modals) app.routes.modals[ route ](id);
+
+      event.preventDefault();
+
+    }
+
   }
   
   function registerEmitter() {
@@ -479,6 +500,7 @@ var util = function() {
     })
   }
   
+<<<<<<< HEAD
   function routeViews( route ){
 
     var fullRoute = route;
@@ -517,7 +539,7 @@ var util = function() {
       
     }
   }
-  
+
   function formatProperties( properties ) {
     var data = {properties: []};
     _.each(_.keys(properties), function(prop) {
@@ -746,8 +768,8 @@ var util = function() {
     currentPath: currentPath,
     formatDiskSize: formatDiskSize,
     capitalize: capitalize,
-    emailToDB: emailToDB,
     isAdminParty: isAdminParty,
+    catchModals: catchModals,
     registerEmitter: registerEmitter,
     cachedRequest: cachedRequest,
     lookupIcon: lookupIcon,
@@ -768,7 +790,6 @@ var util = function() {
     renderTree: renderTree,
     showDatasets: showDatasets,
     showTrendingsets: showTrendingsets,
-    routeViews: routeViews,
     formatProperties: formatProperties,
     mergeFileTree: mergeFileTree,
     getDDocFiles: getDDocFiles,

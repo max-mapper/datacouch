@@ -6,7 +6,9 @@ var request = require('request')
   , _ = require('underscore')
   ;
 
-var couch = process.argv[2]
+if(!process.env['DATACOUCH_ROOT']) throw ("OMGZ YOU HAVE TO SET $DATACOUCH_ROOT");
+
+var couch = process.env['DATACOUCH_ROOT']
   , db = couch + "/datacouch"
   , h = {"Content-type": "application/json", "Accept": "application/json"}
   ;
@@ -33,7 +35,7 @@ function get(uri) {
 get(db + "/_design/datacouch/_view/by_date").then(function(datasets) {
   _.each(datasets, function(dataset) {
     console.log(dataset)
-    pushCouchapp("../db.js", couch + "/" + dataset.id).then(function() {
+    pushCouchapp("../../db.js", couch + "/" + dataset.id).then(function() {
       console.log('updated ' + dataset.id);
     });
   })

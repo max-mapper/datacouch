@@ -35,8 +35,7 @@ var recline = function() {
             function(updatedDocs) { 
               util.notify("Row deleted successfully");
               recline.initializeTable(app.offset);
-            },
-            function(err) { util.notify("Errorz! " + err) }
+            }
           )
         }
       }

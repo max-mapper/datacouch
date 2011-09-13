@@ -15,12 +15,26 @@ app.handler = function(route) {
 
 app.routes = {
   pages: {
-    user: function(id) {
+    dataset: function(id) {
       $('.homeButton').attr('href', app.baseURL);
       recline.bootstrap(id);
     },
     noID: function() {
       alert('you have to specify an id!');
+    }
+  },
+  modals: {
+    browse: function() {
+      couch.request({url: app.baseURL + "api/apps"}).then(function(apps) {
+        var appData = {apps: _(apps.rows).map(function(row) { 
+          var appDoc = row.doc;
+          return { 
+            ddoc: appDoc.ddoc,
+            screenshot: app.baseURL + "api/" + appDoc._id + '/screenshot.png'
+          }
+        })}
+        recline.showDialog("appTemplates", appData);
+      })
     }
   },
   tabs: {
@@ -247,7 +261,6 @@ app.after = {
             },
             function (err) {
               util.hide('dialog');
-              util.notify("Error uploading: " + err.responseText);
             }
           );        
         } else {
@@ -276,18 +289,6 @@ app.after = {
     })
   },
   appsTab: function() {
-    $('.browseApps').click(function() {
-      return couch.request({url: app.baseURL + "api/apps"}).then(function(apps) {
-        var appData = {apps: _(apps.rows).map(function(row) { 
-          var appDoc = row.doc;
-          return { 
-            ddoc: appDoc.ddoc,
-            screenshot: app.baseURL + "api/" + appDoc._id + '/screenshot.png'
-          }
-        })}
-        recline.showDialog("appTemplates", appData);
-      })
-    })
     $('.root').live('click', function(e) {
       var clicked = $(e.target)
         , ddoc = clicked.attr('data-ddoc')
@@ -314,10 +315,20 @@ app.after = {
 }
 
 $(function() {  
+  
+  app.emitter.on('error', function(error) {
+    util.notify("Server error: " + error);
+  })
+  
+  $('a').live('click', function(event) {
+    var route =  $(this).attr('href');
+    util.catchModals(route);
+  });
 
-  // set the route as the pathname, but loose the leading slash
-  var route = window.location.pathname.replace('/', '');
-
-  util.routeViews( route );
+  app.router = Router({
+    '/': {on: 'noID'},
+    '/(\\w+)!': {on: function(modal) { util.catchModals("#/" + modal + "!") }},
+    '/:dataset': {on: 'dataset'}
+  }).use({ resource: app.routes.pages }).init('/');
   
 })

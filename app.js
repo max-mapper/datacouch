@@ -6,6 +6,7 @@ ddoc =
   { _id:'_design/datacouch'
   , rewrites :
     [ {from:"/", to:'pages/index.html'}
+    , {from:"/edit", to:"pages/recline.html"}
     , {from:"/edit/*", to:"pages/recline.html"}
     , {from:"/login", to:"../../../_twitter/auth/twitter"}
     , {from:"/auth/twitter/callback", to:"../../../_twitter/auth/twitter/callback"}
