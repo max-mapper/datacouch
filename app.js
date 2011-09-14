@@ -8,6 +8,7 @@ ddoc =
     [ {from:"/", to:'pages/index.html'}
     , {from:"/edit", to:"pages/recline.html"}
     , {from:"/edit/*", to:"pages/recline.html"}
+    // , {from:"/fakelogin", to:"../../../_twitter/auth/fakelogin"} // only enable when testing offline
     , {from:"/login", to:"../../../_twitter/auth/twitter"}
     , {from:"/login/callback", to:"../../../_twitter/auth/twitter/callback"}
     , {from:"/logout", to:"../../../_twitter/logout"}

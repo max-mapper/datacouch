@@ -5,6 +5,7 @@ var couch         = process.env['DATACOUCH_ROOT']
   , oauth   = require('oauth')
   , request = require('request')
   , url     = require('url')
+  , fs      = require('fs')
   , _       = require('underscore')
   , h       = {"Content-type": "application/json", "Accept": "application/json"}
   ;
@@ -53,60 +54,63 @@ module.exports = function(app, errorHandler) {
                 if (error) {
                   return errorHandler({ errors: "Error connecting to twitter. Please try again"});
                 } else {
-                  console.log(data, response)
-                  res.redirect('/');
+                  logUserIn(JSON.parse(data), function(userData) {
+                    res.redirect('/#/loggedin')
+                  })
                 }
             });
       }
     });
   });
+
+  // for testing when offline. you shouldnt expose this url in production
+  app.get('/auth/fakelogin', function(req, res) {
+    var data = JSON.parse(fs.readFileSync('./mock_response.json'));
+    _.extend(data
+      , { oauth_token: "12241752-yoapezX7E23joij24oijoim999TW33d6N8"
+        , oauth_secret: "y4234joijoh2oijhZCEHMqg"
+    })
+    logUserIn(data, function(userData) {
+      res.redirect('/')
+    })
+  })
   
-  // function get_user(session, twitter_user, callback) {
-  //   var resource;
-  //   if(session.secret) {
-  //     resource = api.base_url + '/user/' + session.secret;
-  //     request.get(resource, function(e,h,b) {
-  //       if(e) { return callback(
-  //           new Error('Connection Failed. Please try again later.')); }
-  //       try {
-  //         var user = JSON.parse(b);
-  //         if(user['status-code'] === 404) {
-  //           return callback(new Error('Invalid Secret. Are you sure that ' +
-  //             'is the link we provided you with?'));
-  //         }
-  //         user.twitter = twitter_user;
-  //         user.id      = user._id;
-  //         user.name    = user.name || twitter_user.name;
-  //         var put = {uri: resource, body: user, method: 'PUT', json: true};
-  //         request(put, 
-  //           function (e,h,b) {
-  //             if(e) {
-  //               return callback(new Error('Our services are too busy. ' +
-  //                 'Please try again later.'));
-  //             }
-  //             return callback(null,user);
-  //         });
-  //       } catch(exc) {
-  //         return callback(new Error('Something went south! Can you please' + 
-  //           ' try again?'));
-  //       }
-  //     });
-  //   }
-  //   else {
-  //     resource = api.base_url + '/user/by_twitter/' + twitter_user.screen_name;
-  //     request.get(resource, function (e,h,b) {
-  //       try {
-  //         console.log('==')
-  //         console.log(b)
-  //         console.log('==')
-  //         var rows = JSON.parse(b).rows;
-  //         if(rows && rows[0] && rows[0].value.twitter.screen_name === twitter_user.screen_name) {
-  //           return callback(null,rows[0].value);
-  //         }
-  //       } catch(exc) { callback(new Error("Please register before trying to use the service")); }
-  //       return callback(new Error('You are not registered. Send us an email to register!'));
-  //     });
-  //   }
-  // }
-  // 
+  function logUserIn(userData, callback) {
+    _.extend(userData, {
+         _id: "org.couchdb.user:" + userData.screen_name
+      , type: "user"
+      , roles: []
+      , name: userData.screen_name
+    })
+    getUser(userData._id, function(doc) {
+      if(doc) {
+        callback(doc)
+      } else {
+        saveUser(userData
+          , function(response) {
+              _.extend(userData, { 
+                _id: response.id,
+                _rev: response.rev
+              })
+              callback(userData);
+        })
+      }
+    })
+  }
+  
+  function getUser(id, callback) {
+    request.get({uri: couch + '/_users/' + id, json: true}
+      , function(e,r,b) { 
+        if (r.statusCode === 404) callback(false) 
+        else callback(b)
+      }
+    )
+  }
+  
+  function saveUser(data, callback) {
+    request.put({uri: couch + '/_users/' + data._id, body: data, json: true}
+      , function(e,r,b) { callback(b) }
+    )
+  }  
+   
 };
