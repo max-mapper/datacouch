@@ -79,6 +79,9 @@ app.routes = {
     cancel: function() {
       util.hide('dialog');
     },
+    close: function() {
+      window.close();
+    },
     fork: function(id) {
       monocles.ensureProfile().then(function(profile) {
         util.show('dialog');

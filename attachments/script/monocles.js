@@ -18,22 +18,11 @@ $(function(){
     // binds UX interaction and form submit event handlers to the signup/login forms
     function showLogin() {
       $.oauthpopup({
-          path: app.baseURL + "login",
-          callback: function(){
-              window.location.reload();
-          }
+        path: app.baseURL + "fakelogin",
+        callback: function() {
+          monocles.fetchSession();
+        }
       });
-      // navigator.id.getVerifiedEmail(function(assertion) {
-      //   if (assertion) {
-      //     var verificationURL = couch.rootPath + '_browserid';
-      //     var verification = { 'assertion': encodeURIComponent(assertion)
-      //                        , 'audience' : encodeURIComponent(document.domain)
-      //                        };
-      //     couch.request({url: verificationURL, type: "POST", data: JSON.stringify(verification)}).then(fetchSession, loginFail);
-      //   } else {
-      //     loginFail();
-      //   }
-      // });
     }
 
     function ensureProfile() {

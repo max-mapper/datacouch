@@ -3,6 +3,7 @@ var couch         = process.env['DATACOUCH_ROOT']
   , twitterKey    = process.env['DATACOUCH_TWITTER_KEY']
   , twitterSecret = process.env['DATACOUCH_TWITTER_SECRET']
   , oauth   = require('oauth')
+  , crypto  = require('crypto')
   , request = require('request')
   , url     = require('url')
   , fs      = require('fs')
@@ -54,7 +55,8 @@ module.exports = function(app, errorHandler) {
                 if (error) {
                   return errorHandler({ errors: "Error connecting to twitter. Please try again"});
                 } else {
-                  logUserIn(JSON.parse(data), function(userData) {
+                  logUserIn(JSON.parse(data), function(userData, cookie) {
+                    res.header('Set-Cookie', cookie)
                     res.redirect('/#/loggedin')
                   })
                 }
@@ -71,16 +73,19 @@ module.exports = function(app, errorHandler) {
         , oauth_secret: "y4234joijoh2oijhZCEHMqg"
     })
     logUserIn(data, function(userData) {
-      res.redirect('/')
+      res.redirect('/#/close!')
     })
   })
   
   function logUserIn(userData, callback) {
+    var salt = "woo";
     _.extend(userData, {
          _id: "org.couchdb.user:" + userData.screen_name
       , type: "user"
       , roles: []
       , name: userData.screen_name
+      , salt: salt
+      , password_sha: crypto.createHash("sha1").update("hoo" + salt).digest('hex')
     })
     getUser(userData._id, function(doc) {
       if(doc) {
@@ -88,9 +93,10 @@ module.exports = function(app, errorHandler) {
       } else {
         saveUser(userData
           , function(response) {
-              _.extend(userData, { 
-                _id: response.id,
-                _rev: response.rev
+            console.log('re', response)
+              _.extend(userData
+                , { _id: response.id
+                  , _rev: response.rev
               })
               callback(userData);
         })
