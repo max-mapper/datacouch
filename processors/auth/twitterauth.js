@@ -7,6 +7,7 @@ var couch         = process.env['DATACOUCH_ROOT']
   , request = require('request')
   , url     = require('url')
   , fs      = require('fs')
+  , qs      = require('querystring')
   , _       = require('underscore')
   , h       = {"Content-type": "application/json", "Accept": "application/json"}
   ;
@@ -55,7 +56,7 @@ module.exports = function(app, errorHandler) {
                 if (error) {
                   return errorHandler({ errors: "Error connecting to twitter. Please try again"});
                 } else {
-                  logUserIn(JSON.parse(data), function(userData, cookie) {
+                  logUserIn(JSON.parse(data), function(userDoc, cookie) {
                     res.header('Set-Cookie', cookie)
                     res.redirect('/#/loggedin')
                   })
@@ -72,39 +73,42 @@ module.exports = function(app, errorHandler) {
       , { oauth_token: "12241752-yoapezX7E23joij24oijoim999TW33d6N8"
         , oauth_secret: "y4234joijoh2oijhZCEHMqg"
     })
-    logUserIn(data, function(userData) {
-      res.redirect('/#/close!')
+    logUserIn(data, function(userDoc, cookie) {
+      // todo figure out better way to merge set-cookie in express
+      var authCookie = cookie[0].split(';')[0].split('=');
+      res.cookie(authCookie[0], authCookie[1])
+      res.redirect('/#/')
     })
   })
   
   function logUserIn(userData, callback) {
-    var salt = "woo";
-    _.extend(userData, {
-         _id: "org.couchdb.user:" + userData.screen_name
-      , type: "user"
-      , roles: []
-      , name: userData.screen_name
-      , salt: salt
-      , password_sha: crypto.createHash("sha1").update("hoo" + salt).digest('hex')
+    getOrCreateUser(userData, function(userDoc) {
+      request.post({
+          uri: couch + '/_session'
+        , headers: {"content-type": "application/x-www-form-urlencoded"}
+        , body: qs.encode({name: userDoc.name, password: userDoc.couch_token})
+      }
+      , function(e,r,b) {
+        callback(userDoc, r.headers['set-cookie'])
+      })
     })
-    getUser(userData._id, function(doc) {
+  }
+
+  function getOrCreateUser(userData, callback) {
+    getUser(userData.screen_name, function(doc) {
       if(doc) {
         callback(doc)
       } else {
-        saveUser(userData
-          , function(response) {
-            console.log('re', response)
-              _.extend(userData
-                , { _id: response.id
-                  , _rev: response.rev
-              })
-              callback(userData);
+        createUser(userData
+          , function(doc) {
+              callback(doc);
         })
       }
     })
   }
-  
-  function getUser(id, callback) {
+
+  function getUser(username, callback) {
+    var id = "org.couchdb.user:" + username;
     request.get({uri: couch + '/_users/' + id, json: true}
       , function(e,r,b) { 
         if (r.statusCode === 404) callback(false) 
@@ -113,9 +117,29 @@ module.exports = function(app, errorHandler) {
     )
   }
   
-  function saveUser(data, callback) {
-    request.put({uri: couch + '/_users/' + data._id, body: data, json: true}
-      , function(e,r,b) { callback(b) }
+  // create a couch user with a random password (couch_token)
+  // make sure your _users db is private!
+  function createUser(userData, callback) {
+    var salt = "woo"
+      , password = "hoo"
+      ;
+    _.extend(userData, {
+         _id: "org.couchdb.user:" + userData.screen_name
+      , type: "user"
+      , roles: []
+      , name: userData.screen_name
+      , salt: salt
+      , password_sha: crypto.createHash("sha1").update(password + salt).digest('hex')
+      , couch_token: password
+    })
+    request.put({uri: couch + '/_users/' + userData._id, body: userData, json: true}
+      , function(e,r,b) { 
+        _.extend(userData
+          , { _id: r.id
+            , _rev: r.rev
+        })
+        callback(userData)
+      }
     )
   }  
    
