@@ -15,6 +15,7 @@
   }
   
   couch.responseError = function(response) {
+    if(!response) return false;
     if(_.isArray(response) && (response.length > 0) ) response = response[0];
     if (response.error) return couch.errors[response.error];
   }
@@ -32,6 +33,7 @@
       }, 
       function(errorResponse) {
         app.emitter.emit("Fatal XHR Error", 'error');
+        dfd.reject(errorResponse);
       }
     )
     

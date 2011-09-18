@@ -56,7 +56,7 @@ module.exports = function(app, errorHandler) {
                 if (error) {
                   return errorHandler({ errors: "Error connecting to twitter. Please try again"});
                 } else {
-                  logUserIn(JSON.parse(data), function(userDoc, cookie) {
+                  logUserIn(couchUserDoc(JSON.parse(data)), function(userDoc, cookie) {
                     res.header('Set-Cookie', cookie)
                     res.redirect('/#/loggedin')
                   })
@@ -69,7 +69,7 @@ module.exports = function(app, errorHandler) {
   // for testing when offline. you shouldnt expose this url in production
   app.get('/auth/fakelogin', function(req, res) {
     var data = JSON.parse(fs.readFileSync('./mock_response.json'));
-    _.extend(data
+    _.extend(couchUserDoc(data)
       , { oauth_token: "12241752-yoapezX7E23joij24oijoim999TW33d6N8"
         , oauth_secret: "y4234joijoh2oijhZCEHMqg"
     })
@@ -81,49 +81,11 @@ module.exports = function(app, errorHandler) {
     })
   })
   
-  function logUserIn(userData, callback) {
-    getOrCreateUser(userData, function(userDoc) {
-      request.post({
-          uri: couch + '/_session'
-        , headers: {"content-type": "application/x-www-form-urlencoded"}
-        , body: qs.encode({name: userDoc.name, password: userDoc.couch_token})
-      }
-      , function(e,r,b) {
-        callback(userDoc, r.headers['set-cookie'])
-      })
-    })
-  }
-
-  function getOrCreateUser(userData, callback) {
-    getUser(userData.screen_name, function(doc) {
-      if(doc) {
-        callback(doc)
-      } else {
-        createUser(userData
-          , function(doc) {
-              callback(doc);
-        })
-      }
-    })
-  }
-
-  function getUser(username, callback) {
-    var id = "org.couchdb.user:" + username;
-    request.get({uri: couch + '/_users/' + id, json: true}
-      , function(e,r,b) { 
-        if (r.statusCode === 404) callback(false) 
-        else callback(b)
-      }
-    )
-  }
-  
-  // create a couch user with a random password (couch_token)
-  // make sure your _users db is private!
-  function createUser(userData, callback) {
+  function couchUserDoc(userData) {
     var salt = "woo"
       , password = "hoo"
       ;
-    _.extend(userData, {
+    return _.extend(userData, {
          _id: "org.couchdb.user:" + userData.screen_name
       , type: "user"
       , roles: []
@@ -132,7 +94,57 @@ module.exports = function(app, errorHandler) {
       , password_sha: crypto.createHash("sha1").update(password + salt).digest('hex')
       , couch_token: password
     })
-    request.put({uri: couch + '/_users/' + userData._id, body: userData, json: true}
+  }
+  
+  function couchProfile(userData) {
+    return {
+         _id: userData.screen_name
+      , avatar: userData.profile_image_url
+    }
+  }
+  
+  function logUserIn(userData, callback) {
+    var userDocURL = couch + '/_users/org.couchdb.user:' + userData.screen_name;
+    getOrCreate(userDocURL, userData, function(userDoc) {
+      request.post({
+          uri: couch + '/_session'
+        , headers: {"content-type": "application/x-www-form-urlencoded"}
+        , body: qs.encode({name: userDoc.name, password: userDoc.couch_token})
+      }
+      , function(e,r,b) {
+        getOrCreate(couch + '/datacouch-users/' + userDoc.screen_name, couchProfile(userDoc)
+          , function(profile) {
+            callback(userDoc, r.headers['set-cookie']);
+          });
+      })
+    })
+  }
+
+  function getOrCreate(url, userData, callback) {    
+    console.log(url)
+    getDoc(url, function(doc) {
+      if(doc) {
+        callback(doc)
+      } else {
+        createDoc(url, userData
+          , function(doc) {
+              callback(doc);
+        })
+      }
+    })
+  }
+
+  function getDoc(url, callback) {
+    request.get({uri: url, json: true}
+      , function(e,r,b) { 
+        if (r.statusCode === 404) callback(false) 
+        else callback(b)
+      }
+    )
+  }
+  
+  function createDoc(url, userData, callback) {
+    request.put({uri: url, body: userData, json: true}
       , function(e,r,b) { 
         _.extend(userData
           , { _id: r.id

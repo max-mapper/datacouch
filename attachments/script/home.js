@@ -98,7 +98,7 @@ app.routes = {
               name: dataset.name,
               user: app.profile._id,
               couch_user: app.session.userCtx.name,
-              gravatar_url: app.profile.gravatar_url,
+              avatar: app.profile.avatar,
               createdAt: new Date()
             };
             couch.request({url: app.baseURL + "api/" + doc._id, type: "PUT", data: JSON.stringify(doc)}).then(function(resp) {
@@ -208,7 +208,7 @@ app.after = {
         type: "database",
         user: app.profile._id,
         couch_user: app.session.userCtx.name,
-        gravatar_url: app.profile.gravatar_url,
+        avatar: app.profile.avatar,
         createdAt: new Date()
       });
       couch.request({url: app.baseURL + "api/" + doc._id, type: "PUT", data: JSON.stringify(doc)}).then(function(resp) {

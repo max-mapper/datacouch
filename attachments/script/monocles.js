@@ -49,7 +49,7 @@ $(function(){
           fetchProfile( session ).then( function( profile ) {
             util.render( 'loggedIn', 'session_status', {
               username : profile._id,
-              gravatar_url : profile.gravatar_url
+              avatar : profile.avatar
             });
             app.emitter.emit(profile._id, 'login');
             util.render('userActions', 'userButtons')
@@ -69,26 +69,20 @@ $(function(){
     // asks them to fill out a form if it's their first login
     function fetchProfile(session) {
       var dfd = $.Deferred();
-      couch.get( "users/by_email/" + session.userCtx.name ).then(function(resp) {
-        if (resp.rows.length > 0) {
-          var profile = resp.rows[0].doc;
+      couch.get( "users/" + session.userCtx.name ).then(
+        function(profile) {
           app.profile = profile;
           dfd.resolve( profile );
-        } else {
-          util.show('dialog');
-          util.render( 'newProfileForm', 'modal', session.userCtx );
+        },
+        function(error) {
+          console.log('no profile?!')
         }
-      })
+      )
       return dfd.promise();
-    }
-
-    function gravatarURL(uuid) {
-      return 'http://www.gravatar.com/avatar/' + md5.hex( uuid ) + '.jpg?s=50&d=identicon';
     }
 
     function updateProfile(profileDoc) {
       var dfd = $.Deferred();
-      profileDoc.gravatar_url = gravatarURL(profileDoc.email || profileDoc.rand);
       
       function upload(updatedDoc) {
         couch.request({url: app.baseURL + "api/users", data: JSON.stringify(updatedDoc), type: "POST"}).then(function(resp) {

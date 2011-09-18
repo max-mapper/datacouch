@@ -126,7 +126,7 @@
     <div class="option user_profile">
       <a href="#/{{username}}">
         <div class="username">
-          <img width="16px" src="{{gravatar_url}}">
+          <img width="16px" src="{{avatar}}">
         </div>
         <div class="label">
           <span>{{username}}</span>
@@ -251,7 +251,7 @@
           {{/forkedFrom}}
         </div>
         <div class="metadata subtitle">Created <span class="timeago" title="{{date}}"></span>, {{count}} documents, {{size}}</div>
-        <div class="avatar"><a href="#/{{user}}"><img src="{{gravatar_url}}"></a></div>
+        <div class="avatar"><a href="#/{{user}}"><img src="{{avatar}}"></a></div>
         {{#description}}<div><p>{{description}}</p></div>{{/description}}
         <div class="datasetActions">
           {{#loggedIn}}<a href="#/fork/{{id}}!" class="btn secondary small"><span class="fork icon"></span>Fork dataset</a>{{/loggedIn}}

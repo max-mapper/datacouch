@@ -12,8 +12,8 @@
 
 .option, .userControls .option { opacity: .7; -webkit-transition: .5s all; -moz-transition: .5s all; transition: .5s all; }
 .option:hover, .userControls .option:hover { opacity: 1; text-decoration: none;}
-.gravatar {float: left}
-.gravatar img {margin: 4px; border: 1px solid #D0E8F0}
+.avatar {float: left}
+.avatar img {margin: 4px; border: 1px solid #D0E8F0}
 .user_settings .navIcon { background: url('images/settings.png') center center no-repeat; }
 .logout .navIcon { background: url('images/logout.png') center center no-repeat; }
 .user_profile .username { float: left; font-style: normal; color: #FFF; width: 35px; height: 35px; line-height: 35px;}
