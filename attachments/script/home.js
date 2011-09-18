@@ -48,9 +48,8 @@ app.routes = {
     }
   },
   modals: {
-    loggedIn: function() {
-      alert('logged in!')
-      // app.routes.pages.home();
+    loggedin: function() {
+      window.close();
     },
     "new": function() {
       monocles.ensureProfile().then(function(profile) {

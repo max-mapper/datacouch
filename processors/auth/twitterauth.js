@@ -58,7 +58,7 @@ module.exports = function(app, errorHandler) {
                 } else {
                   logUserIn(couchUserDoc(JSON.parse(data)), function(userDoc, cookie) {
                     res.header('Set-Cookie', cookie)
-                    res.redirect('/#/loggedin')
+                    res.redirect('/#/loggedin!')
                   })
                 }
             });

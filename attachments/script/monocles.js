@@ -18,7 +18,7 @@ $(function(){
     // binds UX interaction and form submit event handlers to the signup/login forms
     function showLogin() {
       $.oauthpopup({
-        path: app.baseURL + "fakelogin",
+        path: app.baseURL + "login",
         callback: function() {
           monocles.fetchSession();
         }
