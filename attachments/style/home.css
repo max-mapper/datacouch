@@ -16,8 +16,8 @@
 .avatar img {margin: 4px; border: 1px solid #D0E8F0}
 .user_settings .navIcon { background: url('images/settings.png') center center no-repeat; }
 .logout .navIcon { background: url('images/logout.png') center center no-repeat; }
-.user_profile .username { float: left; font-style: normal; color: #FFF; width: 35px; height: 35px; line-height: 35px;}
-.user_profile .label {float: left; margin-right: 8px; font-style: normal; color: #FFF; line-height: 35px;}
+.user_profile .username { float: left; font-style: normal; width: 35px; height: 35px; line-height: 35px;}
+.user_profile .label {float: left; margin-right: 8px; font-style: normal; line-height: 35px;}
 .user_profile .username img { padding: 8px }
 
 .datasetsContainer h2, .trendingSetsContainer h2 {
@@ -460,21 +460,29 @@ a.download span.size { color:#666; }
 /**
  * Wrapper ====================================================================
  */
+.header-wrap {
+ background-color: #FFF;
+ border-bottom: 1px solid #CCC;
+}
 .header {
-  padding:40px 0px 20px;
-  margin: 20px auto 0px auto;
-  position:relative;
-  }
+ padding: 20px 0px;
+ margin: 0px auto 0px auto;
+ position:relative;
+ overflow: auto;
+ width: 425px;
+}
+
+.datacouch-logo {float: right}
 
 .logo {
-  display:block;
-  width:380px;
-  height:81px;
-  overflow:hidden;
-  text-indent:-9999px;
-  background:url(images/logo.png) 0px 0px no-repeat;
-  margin-top: 10px;
-  }
+ display:block;
+ width:249px;
+ height:82px;
+ overflow:hidden;
+ text-indent:-9999px;
+ background:url(../images/datacouch-title.png) 0px 0px no-repeat;
+ margin-top: 43px;
+ }
 
 .menu {
   position:absolute;
