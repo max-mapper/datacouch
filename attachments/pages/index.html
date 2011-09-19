@@ -248,7 +248,7 @@
           {{/forkedFrom}}
         </div>
         <div class="metadata subtitle">Created <span class="timeago" title="{{date}}"></span>, {{count}} documents, {{size}}</div>
-        <div class="avatar"><a href="#/{{user}}"><img src="{{avatar}}"></a></div>
+        <div class="avatar"><a href="#/{{user}}"><img src="{{#avatar}}{{.}}{{/avatar}}{{^avatar}}images/avatar_default.png{{/avatar}}"></a></div>
         {{#description}}<div><p>{{description}}</p></div>{{/description}}
         <div class="datasetActions">
           {{#loggedIn}}<a href="#/fork/{{id}}!" class="btn secondary small"><span class="fork icon"></span>Fork dataset</a>{{/loggedIn}}
