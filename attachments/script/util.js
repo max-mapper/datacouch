@@ -96,6 +96,15 @@ var util = function() {
     return cachedRequest(ajaxOpts);
   }
   
+  
+  function geocode(query, region) {
+    query = query + " " + region;
+    return $.ajax({
+      url: "http://maps.google.com/maps/geo?sensor=false&output=json&key=ABQIAAAAUXDSXET8IRGdgHP9FpGw5BTzK9ox1ur1avOry4RqckD8mqqMsxSpbbmXzhXBG_WjkV59qKCQhbciHQ&q=" + encodeURIComponent(query),
+      dataType: "jsonp"
+    }).promise()
+  }
+  
   function cachedRequest(opts) {
     var dfd = $.Deferred();
     var key = JSON.stringify(opts);
@@ -161,8 +170,8 @@ var util = function() {
   }
 
   function render( template, target, options ) {
-    if ( !options ) options = {data: {}};
-    if ( !options.data ) options = {data: options};
+    if ( !options ) options = {};
+    if ( !options.data ) options.data = {};
     var html = $.mustache( $( "." + template + "Template:first" ).html(), options.data );
     if (target instanceof jQuery) {
       var targetDom = target;

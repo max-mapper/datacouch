@@ -11,13 +11,13 @@
   are permitted provided that the following conditions are met:
 
   - Redistributions of source code must retain the above copyright notice, this
-    list of conditions and the following disclaimer.
+  list of conditions and the following disclaimer.
   - Redistributions in binary form must reproduce the above copyright notice, this
-    list of conditions and the following disclaimer in the documentation and/or
-    other materials provided with the distribution.
+  list of conditions and the following disclaimer in the documentation and/or
+  other materials provided with the distribution.
   - Neither the name "Development Seed" nor the names of its contributors may be
-    used to endorse or promote products derived from this software without
-    specific prior written permission.
+  used to endorse or promote products derived from this software without
+  specific prior written permission.
 
   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
   ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -43,273 +43,333 @@
   <script type='text/javascript' src='script/home.js'></script>
 </head>
 <body style="margin: 0">
+  
+  <div class="userControls"></div>
 
-  <div class="header-wrap">
-    <div class='header'>
+  <div class="header">
+    <div class='icons'>
       <img class="datacouch-logo" src="images/datacouch-logo.png">
       <a href="#/" class='logo'></a>
+      <div class="userButtons"></div>
     </div>
   </div>
   
-  <div class="userControls"></div>
-  <div class="userButtons"></div>
-
-  <div class='bannerContainer'></div>
+  <div class="row bannerContainer"></div>
   
   <div class="container">
+
+  <section id="examples">
+    <div class="page-header">
+      <h1>
+        How it works
+        <small>
+          if you have some data you want to share
+        </small>
+      </h1>
+    </div>
+    <!-- Fixed layout -->
     <div class="row">
-      <div class="span10 columns datasetsContainer">
+      <div class="span4 columns">
+        <h2>
+          Upload data
+        </h2>
+        <p>
+          You can upload CSV files or JSON data using a few different methods.
+        </p>
       </div>
-      <div class="span6 columns trendingSetsContainer">
+      <div class="span12 columns">
+        <img class="screenshot" src="images/import-data.png">
       </div>
     </div>
+    <div class="row">
+      <div class="span4 columns">
+        <h2>
+          Refine your data
+        </h2>
+        <p>
+          Use the HTML5 data editor to clean up or add to your dataset.
+        </p>
+      </div>
+      <div class="span12 columns">
+        <img class="screenshot" src="images/refine-data.png">
+      </div>
+    </div>
+    <div class="row">
+      <div class="span4 columns">
+        <h2>
+          Share & visualize
+        </h2>
+        <p>
+          Build HTML5 apps using the in-browser editor or consume data from the API.
+        </p>
+      </div>
+      <div class="span12 columns">
+        <img class="screenshot" src="images/visualize-data.png">
+      </div>
+    </div>
+  </section>
   </div>
   
   <div class="dialog-overlay" style="display: none; z-index: 101; ">&nbsp;</div>
   <div class="dialog" style="display: none">
-    <div class="modal" style="position: relative; top: 50px; left: auto; margin: 0 auto; z-index: 102"></div>
+  <div class="modal" style="position: relative; top: 50px; left: auto; margin: 0 auto; z-index: 102"></div>
   </div>
   
   <script type="text/mustache" class="emptyTemplate">
   </script>
 
-  <script type="text/mustache" class="bannerTemplate">
-    <div class="banner">
-      <ul class='limiter clearfix'>
-        <li class='first'>
-          <strong>Open Data</strong><br/>
-          Turn spreadsheets into APIs and share them with anyone in the world
-        </li>
-        <li>
-          <span class="fork icon"></span><strong>Dataset Forking</strong><br/>
-          Let others fork, edit and send you back enhanced versions of your data
-        </li>
-        <li class='last'>
-          <strong>Free for public data</strong><br/>
-          As long as you share your data we will host it for free (until we run out of money). Our entire platform is open source so you can even run your own DataCouch
-        </li>
-      </ul>
+  <script type="text/mustache" class="bannerTemplate">    
+  <div class="quickstart">
+    <div class="container">
+    <div class="row">
+      <div class="span5 columns">
+      <h6>
+        Open data
+      </h6>
+      <p>
+        Turn spreadsheets into APIs and share them with anyone in the world.
+      </p>
+      </div>
+      <div class="span5 columns">
+      <h6>
+        <span class="fork icon"></span>Dataset forking
+      </h6>
+      <p>
+        Let others fork, edit and send you back enhanced versions of your data.
+      </p>
+      </div>
+      <div class="span5 columns">
+      <h6>
+        Free for public data
+      </h6>
+      <p>
+        As long as you share your data we will host it for free (until we run out of money).
+      </p>
+      </div>
     </div>
+    </div>
+  </div>
   </script>
   
   <script type="text/mustache" class="topBarTemplate">
-    <div class="container">
-      {{#name}}<h3><a href="#/">{{name}}</a></h3>{{/name}}
-      <ul>
-        {{#nav}}<li><a href="{{href}}">{{name}}</a></li>{{/nav}}
-      </ul>
-      <form action="">
-        <input type="text" placeholder="Search">
-      </form>
-    </div>
+  <div class="container">
+    {{#name}}<h3><a href="#/">{{name}}</a></h3>{{/name}}
+    <ul>
+    {{#nav}}<li><a href="{{href}}">{{name}}</a></li>{{/nav}}
+    </ul>
+    <form action="">
+    <input type="text" placeholder="Search">
+    </form>
+  </div>
   </script>
   
   <script type="text/mustache" class="userControlsTemplate">
-    <div class="session_actions">
-      <div class="session_status"></div>
-    </div>
+  <div class="session_actions">
+    <div class="session_status"></div>
+  </div>
   </script>
   
   <script type="text/mustache" class="adminPartyTemplate">
-    <strong>Admin party, everyone is admin!</strong>
-    Fix this in <a href="/_utils/index.html">Futon</a> before proceeding.
+  <strong>Admin party, everyone is admin!</strong>
+  Fix this in <a href="/_utils/index.html">Futon</a> before proceeding.
   </script>
 
   <script type="text/mustache" class="loggedInTemplate">
-    <div class="option user_profile">
-      <a href="#/{{username}}">
-        <div class="username">
-          <img width="16px" src="{{avatar}}">
-        </div>
-        <div class="label">
-          <span>{{username}}</span>
-        </div>
-      </a>
+  <div class="option user_profile">
+    <a href="#/{{username}}">
+    <div class="username">
+      <img width="16px" src="{{avatar}}">
     </div>
-    <div class="option logout">
-      <a href="#/logout!"><div class="navIcon"></div></a>
+    <div class="label">
+      <span>{{username}}</span>
     </div>
+    </a>
+  </div>
+  <div class="option logout">
+    <a href="#/logout!"><div class="navIcon"></div></a>
+  </div>
   </script>
 
   <script type="text/mustache" class="loginButtonTemplate">
-    <div class="right">
-      <ul id="landing_nav">
-        <li><a href="#/login!" class="btn secondary login">Sign in with Twitter&nbsp;<span class="rightarrow icon"></span></a></li>
-        <li class="disclaimer">You will then be able to create or fork datasets.</li>
-      </ul>
+    <div class="register_mod">
+      <div>
+        <div>
+          <a href="#/login!">Sign in with the Twitters</a>
+        </div>
+      </div>
     </div>
   </script>
 
   <script type="text/mustache" class="loggedOutTemplate">
-    <!-- nothin here -->
+  <!-- nothin here -->
   </script>
   
   <script type="text/mustache" class="newProfileFormTemplate">
-    <div class="settings">
-      <form class="profile_setup">
-    
-        <div class="modal-header">
-          <h3>Hello {{name}}, Please setup your user profile.</h3>
-          <a href="#/cancel!" class="close cancel">×</a>
-        </div>
-        <div class="modal-body">
-          <div class="clearfix">
-            <label for="username">Username</label>
-            <div class="input">
-              <input class="xlarge" id="xlInput" name="username" size="30" type="text">
-              <div class="username-message"></div>
-            </div>
-          </div>
-          
-          <div class="clearfix">
-            <label for="email">Email</label>
-            <div class="input">
-              <input class="xlarge" id="xlInput" name="email" size="30" type="text"  value="{{name}}">
-            </div>
-          </div>
-          
-          <div class="clearfix">
-            <label for="url">URL (<em>for shameless self promotion</em>)</label>
-            <div class="input">
-              <input class="xlarge" id="xlInput" name="url" size="30" type="text">
-            </div>
-          </div>        
-        </div>
-        <div class="modal-footer">          
-          <input type="submit" class="btn primary" value="Save">
-          <a href="#/cancel!" class="btn secondary cancel">Cancel</a>
-          <input type="hidden" name="user" value="{{name}}">
-        </div>              
-      </form>
+  <div class="settings">
+    <form class="profile_setup">
+  
+    <div class="modal-header">
+      <h3>Hello {{name}}, Please setup your user profile.</h3>
+      <a href="#/cancel!" class="close cancel">×</a>
     </div>
+    <div class="modal-body">
+      <div class="clearfix">
+      <label for="username">Username</label>
+      <div class="input">
+        <input class="xlarge" id="xlInput" name="username" size="30" type="text">
+        <div class="username-message"></div>
+      </div>
+      </div>
+      
+      <div class="clearfix">
+      <label for="email">Email</label>
+      <div class="input">
+        <input class="xlarge" id="xlInput" name="email" size="30" type="text"  value="{{name}}">
+      </div>
+      </div>
+      
+      <div class="clearfix">
+      <label for="url">URL (<em>for shameless self promotion</em>)</label>
+      <div class="input">
+        <input class="xlarge" id="xlInput" name="url" size="30" type="text">
+      </div>
+      </div>    
+    </div>
+    <div class="modal-footer">      
+      <input type="submit" class="btn primary" value="Save">
+      <a href="#/cancel!" class="btn secondary cancel">Cancel</a>
+      <input type="hidden" name="user" value="{{name}}">
+    </div>        
+    </form>
+  </div>
   </script>
   
   <script type="text/mustache" class="editProfileFormTemplate">
-    <form class="profile_setup">
-      <div class="modal-header">
-        <h3>Editing {{_id}}'s profile.</h3>
-        <a href="#/cancel!" class="close cancel">×</a>
+  <form class="profile_setup">
+    <div class="modal-header">
+    <h3>Editing {{_id}}'s profile.</h3>
+    <a href="#/cancel!" class="close cancel">×</a>
+    </div>
+    <div class="modal-body">
+    <div class="clearfix">
+      <label for="_id">Username</label>
+      <div class="input">
+      <input class="xlarge" id="xlInput" name="_id" size="30" type="text" value="{{_id}}">
+      <div class="username-message"></div>
       </div>
-      <div class="modal-body">
-        <div class="clearfix">
-          <label for="_id">Username</label>
-          <div class="input">
-            <input class="xlarge" id="xlInput" name="_id" size="30" type="text" value="{{_id}}">
-            <div class="username-message"></div>
-          </div>
-        </div>
-        
-        
-        <div class="clearfix">
-          <label for="email">Email (<em>for <a href="http://gravatar.com">Gravatar</a></em>)</label>
-          <div class="input">
-            <input class="xlarge" id="xlInput" name="email" size="30" type="text" value="{{email}}">
-          </div>
-        </div>
-        
-        <div class="clearfix">
-          <label for="url">URL (<em>for shameless self promotion</em>)</label>
-          <div class="input">
-            <input class="xlarge" id="xlInput" name="url" size="30" type="text" value="{{url}}">
-          </div>
-        </div>
+    </div>
+    
+    
+    <div class="clearfix">
+      <label for="email">Email (<em>for <a href="http://gravatar.com">Gravatar</a></em>)</label>
+      <div class="input">
+      <input class="xlarge" id="xlInput" name="email" size="30" type="text" value="{{email}}">
       </div>
-      <div class="modal-footer">
-        <input type="submit" class="btn primary" value="Save">
-        <a href="#/cancel!" class="btn secondary cancel">Cancel</a>
-        <input type="hidden" name="user" value="{{user}}">
-      </div>              
-    </form>
+    </div>
+    
+    <div class="clearfix">
+      <label for="url">URL (<em>for shameless self promotion</em>)</label>
+      <div class="input">
+      <input class="xlarge" id="xlInput" name="url" size="30" type="text" value="{{url}}">
+      </div>
+    </div>
+    </div>
+    <div class="modal-footer">
+    <input type="submit" class="btn primary" value="Save">
+    <a href="#/cancel!" class="btn secondary cancel">Cancel</a>
+    <input type="hidden" name="user" value="{{user}}">
+    </div>        
+  </form>
   </script>
   
   
   <script type="text/mustache" class="datasetsTemplate">
-    {{^datasets}}<center><h1>{{name}} doesn't have any datasets yet!</h1></center>{{/datasets}}
-    <h2>{{name}}</h2>
-    <ol class="datasets detailed">
-    {{#datasets}}
-      <li>
-        <div class="name">
-          <a class="owner" href="#/{{user}}">{{user}}</a>&nbsp;/ <a class="dataset" href="edit/#/{{id}}">{{name}}</a>
-          {{#nouns}}
-            <a href="http://thenounproject.com/noun/{{noun}}/">{{{svg}}}</a>
-          {{/nouns}}
-        </div>
-        <div class="forkedFrom">
-          {{#forkedFrom}}
-            <span><span class="fork icon"></span>forked from <a href="#/{{forkedFromUser}}">{{forkedFromUser}}</a>&nbsp;/ <a class="dataset" href="#/{{forkedFrom}}">{{name}}</a></span>
-          {{/forkedFrom}}
-        </div>
-        <div class="metadata subtitle">Created <span class="timeago" title="{{date}}"></span>, {{count}} documents, {{size}}</div>
-        <div class="avatar"><a href="#/{{user}}"><img src="{{#avatar}}{{.}}{{/avatar}}{{^avatar}}images/avatar_default.png{{/avatar}}"></a></div>
-        {{#description}}<div><p>{{description}}</p></div>{{/description}}
-        <div class="datasetActions">
-          {{#loggedIn}}<a href="#/fork/{{id}}!" class="btn secondary small"><span class="fork icon"></span>Fork dataset</a>{{/loggedIn}}
-        </div>
-      </li>
-    {{/datasets}}
-    </ol>
+  {{^datasets}}<center><h1>{{name}} doesn't have any datasets yet!</h1></center>{{/datasets}}
+  <h2>{{name}}</h2>
+  <ol class="datasets detailed">
+  {{#datasets}}
+    <li>
+    <div class="name">
+      <a class="owner" href="#/{{user}}">{{user}}</a>&nbsp;/ <a class="dataset" href="edit/#/{{id}}">{{name}}</a>
+      {{#nouns}}
+      <a href="http://thenounproject.com/noun/{{noun}}/">{{{svg}}}</a>
+      {{/nouns}}
+    </div>
+    <div class="forkedFrom">
+      {{#forkedFrom}}
+      <span><span class="fork icon"></span>forked from <a href="#/{{forkedFromUser}}">{{forkedFromUser}}</a>&nbsp;/ <a class="dataset" href="#/{{forkedFrom}}">{{name}}</a></span>
+      {{/forkedFrom}}
+    </div>
+    <div class="metadata subtitle">Created <span class="timeago" title="{{date}}"></span>, {{count}} documents, {{size}}</div>
+    <div class="avatar"><a href="#/{{user}}"><img src="{{#avatar}}{{.}}{{/avatar}}{{^avatar}}images/avatar_default.png{{/avatar}}"></a></div>
+    {{#description}}<div><p>{{description}}</p></div>{{/description}}
+    <div class="datasetActions">
+      {{#loggedIn}}<a href="#/fork/{{id}}!" class="btn secondary small"><span class="fork icon"></span>Fork dataset</a>{{/loggedIn}}
+    </div>
+    </li>
+  {{/datasets}}
+  </ol>
   </script>
   
   <script type="text/mustache" class="noUserTemplate">
-    <center><h1>There is no user named {{name}} :(</h1></center>
+  <center><h1>There is no user named {{name}} :(</h1></center>
   </script>
   
   <script type="text/mustache" class="userActionsTemplate">
-    <a href="#/new!" class="btn primary">
-      + New Dataset
-    </a>
+  <a href="#/new!" class="btn primary">
+    + New Dataset
+  </a>
   </script>
   
   <script type="text/mustache" class="newDatasetFormTemplate">
-    <form class="dataset_setup">
-      <div class="modal-header">
-        <h3>Create a new dataset</h3>
-        <a href="#/cancel!" class="close cancel">×</a>
-      </div>
-      <div class="modal-body">
-        <h4>Name:</h4>
-        <input type="text" name="name" value="">
-        <h4>Description:</h4>
-        <textarea name="description" rows=5 value=""></textarea>
-        <div class="nounContainer"></div>
-      </div>
-      <div class="modal-footer">
-        <input type="submit" class="btn primary" value="Save">
-        <a href="#/cancel!" class="btn secondary cancel">Cancel</a>
-      </div>              
-    </form>
+  <form class="dataset_setup">
+    <div class="modal-header">
+    <h3>Create a new dataset</h3>
+    <a href="#/cancel!" class="close cancel">×</a>
+    </div>
+    <div class="modal-body">
+    <h4>Name:</h4>
+    <input type="text" name="name" value="">
+    <h4>Description:</h4>
+    <textarea name="description" rows=5 value=""></textarea>
+    <div class="nounContainer"></div>
+    </div>
+    <div class="modal-footer">
+    <input type="submit" class="btn primary" value="Save">
+    <a href="#/cancel!" class="btn secondary cancel">Cancel</a>
+    </div>        
+  </form>
   </script>
 
    <script type="text/mustache" class="nounsTemplate">
-     {{#nounsExist}}{{title}}{{/nounsExist}}
-     {{#nouns}}
-       <a href="http://thenounproject.com/noun/{{noun}}/">{{{svg}}}</a>
-     {{/nouns}}
+   {{#nounsExist}}{{title}}{{/nounsExist}}
+   {{#nouns}}
+     <a href="http://thenounproject.com/noun/{{noun}}/">{{{svg}}}</a>
+   {{/nouns}}
    </script>
   
   <script type="text/mustache" class="formLoadingTemplate">
-    <h1>Loading! Please hold on...</h1>
+  <h1>Loading! Please hold on...</h1>
   </script>
   
   <script type="text/mustache" class="loadingMessageTemplate">
-    <div id="loading-message">
-      <img src="images/large-spinner.gif">
-      <span>{{message}}</span>
-    </div>
+  <div id="loading-message">
+    <img src="images/large-spinner.gif">
+    <span>{{message}}</span>
+  </div>
   </script>
   
   <script type="text/javascript">
 
-    var _gaq = _gaq || [];
-      _gaq.push(['_setAccount', 'UA-25240840-1']);
-      _gaq.push(['_trackPageview']);
-    
-      (function() {
-        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-      })();
+  var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-25240840-1']);
+    _gaq.push(['_trackPageview']);
+  
+    (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
   
   </script>
   </body>

@@ -57,7 +57,7 @@ $(function(){
         } else if ( util.isAdminParty( session.userCtx ) ) {
           util.render( 'adminParty', 'userButtons' );
         } else {
-          util.render( 'loginButton', 'userButtons' );
+          util.render( 'loginButton', 'userButtons');
           util.render( 'loggedOut', 'session_status' );
         }
         dfd.resolve(session);

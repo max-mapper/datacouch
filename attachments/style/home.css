@@ -1,5 +1,5 @@
 .userControls {position: absolute; right: 25px; top: 2px}
-.userButtons {position: absolute; right: 50px; top: 50px;}
+.userButtons {float: right; margin-right: 50px}
 .navIcon { float: left; width: 35px; height: 35px; line-height: 35px; }
 
 .notification-banner {position: absolute; top: -14px; left: 51px; z-index: 10001;}
@@ -9,7 +9,7 @@
 .session_actions, .user_actions { float: left; }
 .userControls .option {float: left; min-width: 35px; height: 35px;}
 .account {cursor: pointer; -moz-border-radius: 2px; -webkit-border-radius: 2px; border-radius: 2px;}
-
+.header { background: #EDEBE1 }
 .option, .userControls .option { opacity: .7; -webkit-transition: .5s all; -moz-transition: .5s all; transition: .5s all; }
 .option:hover, .userControls .option:hover { opacity: 1; text-decoration: none;}
 .avatar {float: left}
@@ -19,6 +19,40 @@
 .user_profile .username { float: left; font-style: normal; width: 35px; height: 35px; line-height: 35px;}
 .user_profile .label {float: left; margin-right: 8px; font-style: normal; line-height: 35px;}
 .user_profile .username img { padding: 8px }
+#examples { margin-top: 50px }
+.twittericon { display: inline-block; width: 16px; height: 13px; margin: auto 3px auto auto; position: relative; top: 1px; *top: 0px; background-image: url('../images/twitter.png'); background-repeat: no-repeat; }
+
+.screenshot{
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+   -webkit-border-radius: 6px;
+      -moz-border-radius: 6px;
+           border-radius: 6px;
+   -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.125);
+      -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.125);
+           box-shadow: 0 1px 3px rgba(0, 0, 0, 0.125);
+}
+
+.register_mod {
+  margin: 40px 0 0 0;
+  background: transparent url('../images/gray-strokes.png') repeat 0 0;
+  overflow: hidden;
+}
+
+.register_mod div {
+  margin: 1em;
+  background: #EDEBE1;
+  overflow: hidden;
+}
+
+.register_mod div div {
+  font-family: Baskerville;
+  font-size: 15px;
+  margin: 0.45em;
+  padding: 0.4em 0.7em;
+  background: #EDEBE1;
+  border: 1px solid #1D181A;
+}
 
 .datasetsContainer h2, .trendingSetsContainer h2 {
   padding-left: 22px;
@@ -460,29 +494,26 @@ a.download span.size { color:#666; }
 /**
  * Wrapper ====================================================================
  */
-.header-wrap {
- background-color: #FFF;
- border-bottom: 1px solid #CCC;
-}
-.header {
+.icons {
  padding: 20px 0px;
  margin: 0px auto 0px auto;
  position:relative;
  overflow: auto;
- width: 425px;
+ width: 960px;
 }
 
-.datacouch-logo {float: right}
+.datacouch-logo {float: left; margin: 0px 60px 0 80px }
 
 .logo {
- display:block;
- width:249px;
- height:82px;
- overflow:hidden;
- text-indent:-9999px;
- background:url(../images/datacouch-title.png) 0px 0px no-repeat;
- margin-top: 43px;
- }
+  float: left;
+  display:block;
+  width:360px;
+  height:120px;
+  overflow:hidden;
+  text-indent:-9999px;
+  background:url(../images/datacouch-title.png) 0px 0px no-repeat;
+  margin-top: 15px;
+}
 
 .menu {
   position:absolute;
@@ -492,7 +523,7 @@ a.download span.size { color:#666; }
   border-radius:5px;
   -moz-border-radius:5px;
   -webkit-border-radius:5px;
-  }
+}
 
 .menu li,
 .menu li a { float:left; }
@@ -827,3 +858,59 @@ span.icon.uparrow { background-position: 0 -824px }
 .action:hover span.icon.uparrow { background-position: 0 -839px }
 span.icon.user { background-position: 0 -854px }
 .action:hover span.icon.user { background-position: 0 -869px }
+
+/* TWITTER BOOTSTRAP BONUS CSS */
+
+div.quickstart {
+  background-color: #f5f5f5;
+  background-repeat: repeat-x;
+  background-image: -khtml-gradient(linear, left top, left bottom, from(#f9f9f9), to(#f5f5f5));
+  background-image: -moz-linear-gradient(#f9f9f9, #f5f5f5);
+  background-image: -ms-linear-gradient(#f9f9f9, #f5f5f5);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #f9f9f9), color-stop(100%, #f5f5f5));
+  background-image: -webkit-linear-gradient(#f9f9f9, #f5f5f5);
+  background-image: -o-linear-gradient(#f9f9f9, #f5f5f5);
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#f9f9f9', endColorstr='#f5f5f5', GradientType=0)";
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f9f9f9', endColorstr='#f5f5f5', GradientType=0);
+  background-image: linear-gradient(#f9f9f9, #f5f5f5);
+  border-top: 1px solid #fff;
+  border-bottom: 1px solid #eee;
+}
+div.quickstart div.row {
+  margin: 0 -20px;
+  -webkit-box-shadow: 1px 0 0 #f9f9f9;
+     -moz-box-shadow: 1px 0 0 #f9f9f9;
+          box-shadow: 1px 0 0 #f9f9f9;
+}
+div.quickstart div.columns {
+  width: 285px;
+  margin-left: 0;
+  padding: 17px 20px;
+  border-left: 1px solid #eee;
+  -webkit-box-shadow: inset 1px 0 0 #f9f9f9;
+     -moz-box-shadow: inset 1px 0 0 #f9f9f9;
+          box-shadow: inset 1px 0 0 #f9f9f9;
+}
+div.quickstart div.columns:last-child {
+  border-right: 1px solid #eee;
+  width: 286px;
+}
+div.quickstart h6,
+div.quickstart p {
+  line-height: 18px;
+  text-align: center;
+  margin-bottom: 9px;
+  color: #333;
+}
+div.quickstart h6 {
+  color: #999;
+}
+div.quickstart form textarea {
+  display: block;
+  width: 275px;
+  height: auto;
+  margin: 0 0 9px;
+  line-height: 21px;
+  white-space: nowrap;
+  overflow: hidden;
+}

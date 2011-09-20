@@ -115,14 +115,18 @@ ddoc.lists = {
   }
 }
 
-ddoc.validate_doc_update = function (newDoc, oldDoc, userCtx) {
+ddoc.validate_doc_update = function (newDoc, oldDoc, userCtx, dbCtx) {
   if (userCtx.roles.indexOf('_admin') > -1) return;
-
-  if (newDoc._deleted === true && userCtx.roles.indexOf('browserid') === -1) {
+  
+  if(!userCtx.name) {
+    throw({forbidden : "You have to be signed in to change stuff."});;  
+  }
+  
+  if (newDoc._deleted === true && dbCtx.admins.names.indexOf(userCtx.name) === -1) {
     throw({forbidden : "Only dataset owners can delete documents."});;
   }
   
-  if (newDoc && userCtx.roles.indexOf('browserid') === -1) {
+  if (newDoc && dbCtx.admins.names.indexOf(userCtx.name) === -1) {
     throw({forbidden : "Only dataset owners can add or edit documents."});;
   }
 };
