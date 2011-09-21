@@ -43,24 +43,8 @@ $(function(){
       var dfd = $.Deferred();
       couch.session().then(function( session ) {
         app.session = session;
-        app.emitter.emit(app.session, 'session');
-        util.render('userControls', 'userControls');
-        if ( session.userCtx.name ) {
-          fetchProfile( session ).then( function( profile ) {
-            util.render( 'loggedIn', 'session_status', {
-              username : profile._id,
-              avatar : profile.avatar
-            });
-            app.emitter.emit(profile._id, 'login');
-            util.render('userActions', 'userButtons')
-          });
-        } else if ( util.isAdminParty( session.userCtx ) ) {
-          util.render( 'adminParty', 'userButtons' );
-        } else {
-          util.render( 'loginButton', 'userButtons');
-          util.render( 'loggedOut', 'session_status' );
-        }
-        dfd.resolve(session);
+        if(session.userCtx.name) app.emitter.emit(session.userCtx, 'login');
+        dfd.resolve(app.session);
       });
       return dfd.promise();
     }
@@ -76,6 +60,7 @@ $(function(){
         },
         function(error) {
           console.log('no profile?!')
+          window.location.href = "#/";
         }
       )
       return dfd.promise();

@@ -24,26 +24,30 @@ couch.rootPath = couch.dbPath + "couch/";
 
 app.routes = {
   pages: {
-    home: function() {
-      util.showDatasets();      
-      util.showTrendingsets();      
-
-      var user;
-      // If we are not logged in, show the banner
-      monocles.fetchSession().then( function( session ) {
-
-        if( !session.userCtx.name ){
-          util.render( 'banner', 'bannerContainer' );
-        }
-
-      });
+    welcome: function() {
+      util.render( 'welcome', 'content' );
+      util.render( 'banner', 'bannerContainer' );
+      util.render( 'loginButton', 'userButtons' );
 
       app.emitter.on('login', function(name) {
-        $('.banner').slideUp();
+        window.location.href = "#/activity";
       })
     },
+    activity: function() {
+      util.render('stream', 'content');
+      util.render('userControls', 'userControls');
+      monocles.ensureProfile().then(function(profile) {      
+        util.render( 'loggedIn', 'session_status', {
+          username : profile._id,
+          avatar : profile.avatar
+        });
+        util.showDatasets();
+        util.showTrendingsets();
+        util.render('userActions', 'userButtons')
+      });
+    },
     user: function(username) { 
-      monocles.fetchSession();        
+      monocles.fetchSession();
       util.showDatasets( username );
     }
   },
@@ -72,7 +76,7 @@ app.routes = {
         util.render('userControls', 'userControls');
         delete app.session;
         $( '#header' ).data( 'profile', null );
-        app.routes.pages['home']();
+        app.routes.pages['welcome']();
       })
     },
     cancel: function() {
@@ -158,7 +162,7 @@ app.after = {
       monocles.updateProfile($( e.target ).serializeObject());
       e.preventDefault();
       util.hide('dialog');
-      app.routes.pages['home']();
+      app.routes.pages['welcome']();
       return false;
     });
   },
@@ -250,8 +254,22 @@ $(function() {
     util.catchModals(route);
   });
   
+  app.defaultRoute = function() {
+    monocles.fetchSession().then( function( session ) {
+      if ( session.userCtx.name ) {
+        window.location.href = "#/activity";
+      } else if ( util.isAdminParty( session.userCtx ) ) {
+        util.render( 'adminParty', 'userButtons' );
+      } else {
+        window.location.href = "#/welcome";
+      }
+    });
+  }
+  
   app.router = Router({
-    '/': {on: 'home'},
+    '/': {on: app.defaultRoute},
+    '/welcome': {on: 'welcome'},
+    '/activity': {on: 'activity'},
     '/(\\w+)!': {on: function(modal) { util.catchModals("#/" + modal + "!") }},
     '/:username': {on: 'user'},
   }).use({ resource: app.routes.pages, notfound: function() {console.log('notfound')} }).init('/');

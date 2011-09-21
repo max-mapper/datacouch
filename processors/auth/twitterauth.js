@@ -77,7 +77,7 @@ module.exports = function(app, errorHandler) {
       // todo figure out better way to merge set-cookie in express
       var authCookie = cookie[0].split(';')[0].split('=');
       res.cookie(authCookie[0], authCookie[1])
-      res.redirect('/#/')
+      res.redirect('/#/loggedin!')
     })
   })
   

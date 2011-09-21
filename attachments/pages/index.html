@@ -29,7 +29,7 @@
   ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
   (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. -->
-  <title>DataCouch | Home</title>
+  <title>DataCouch | Collaborative Data</title>
   <link rel='shortcut icon' href='images/favicon.ico' type='image/x-icon' />
   <link rel='stylesheet' media='all' href='style/reset.css' />
   <link rel='stylesheet' media='all' href='style/home.css' />
@@ -43,86 +43,98 @@
   <script type='text/javascript' src='script/home.js'></script>
 </head>
 <body style="margin: 0">
-  
-  <div class="userControls"></div>
 
-  <div class="header">
-    <div class='icons'>
-      <img class="datacouch-logo" src="images/datacouch-logo.png">
-      <a href="#/" class='logo'></a>
-      <div class="userButtons"></div>
+  <div class="content">
+    <div class="container">
+      <div class="span12 columns">    
+        <div class="alert-message block-message info">
+          <p><strong>Howdy!</strong> Datacouch is loading! Give it a moment. This message may never go away if you have javascript turned off.</p>
+        </div>
+      </div>
     </div>
   </div>
   
-  <div class="row bannerContainer"></div>
+  <script type="text/mustache" class="welcomeTemplate">
+    <div class="userControls"></div>
   
-  <div class="container">
+    <div class="header">
+      <div class='icons'>
+        <img class="datacouch-logo" src="images/datacouch-logo.png">
+        <a href="#/" class='logo'></a>
+        <div class="userButtons"></div>
+      </div>
+    </div>
+  
+    <div class="row bannerContainer"></div>
+  
+    <div class="container">
     
-    <div class="alert-message warning" style="margin-top: 10px">
-      <p>
-        <strong>
-          This is pre-alpha software!
-        </strong>
-        Datacouch is still being built and tested. Be aware that your stuff might get deleted randomly! Watch progress <a href="http://github.com/maxogden/datacouch">on Github</a>
-      </p>
-    </div>
+      <div class="alert-message warning" style="margin-top: 10px">
+        <p>
+          <strong>
+            This is pre-alpha software!
+          </strong>
+          Datacouch is still being built and tested. Be aware that your stuff might get deleted randomly! Watch progress <a href="http://github.com/maxogden/datacouch">on Github</a>
+        </p>
+      </div>
 
-    <section id="examples">
-      <div class="page-header">
-        <h1>
-          How it works
-          <small>
-            if you have some data you want to share
-          </small>
-        </h1>
-      </div>
-      <!-- Fixed layout -->
-      <div class="row">
-        <div class="span4 columns">
-          <h2>
-            Upload data
-          </h2>
-          <p>
-            You can upload CSV files or JSON data using a few different methods.
-          </p>
+      <section id="examples">
+        <div class="page-header">
+          <h1>
+            How it works
+            <small>
+              if you have some data you want to share
+            </small>
+          </h1>
         </div>
-        <div class="span12 columns">
-          <img class="screenshot" src="images/import-data.png">
+        <!-- Fixed layout -->
+        <div class="row">
+          <div class="span4 columns">
+            <h2>
+              Upload data
+            </h2>
+            <p>
+              You can upload CSV files or JSON data using a few different methods.
+            </p>
+          </div>
+          <div class="span12 columns">
+            <img class="screenshot" src="images/import-data.png">
+          </div>
         </div>
-      </div>
-      <div class="row">
-        <div class="span4 columns">
-          <h2>
-            Refine your data
-          </h2>
-          <p>
-            Use the HTML5 data editor to clean up or add to your dataset.
-          </p>
+        <div class="row">
+          <div class="span4 columns">
+            <h2>
+              Refine your data
+            </h2>
+            <p>
+              Use the HTML5 data editor to clean up or add to your dataset.
+            </p>
+          </div>
+          <div class="span12 columns">
+            <img class="screenshot" src="images/refine-data.png">
+          </div>
         </div>
-        <div class="span12 columns">
-          <img class="screenshot" src="images/refine-data.png">
+        <div class="row">
+          <div class="span4 columns">
+            <h2>
+              Share & visualize
+            </h2>
+            <p>
+              Build HTML5 apps using the in-browser editor or consume data from the API.
+            </p>
+          </div>
+          <div class="span12 columns">
+            <img class="screenshot" src="images/visualize-data.png">
+          </div>
         </div>
-      </div>
-      <div class="row">
-        <div class="span4 columns">
-          <h2>
-            Share & visualize
-          </h2>
-          <p>
-            Build HTML5 apps using the in-browser editor or consume data from the API.
-          </p>
-        </div>
-        <div class="span12 columns">
-          <img class="screenshot" src="images/visualize-data.png">
-        </div>
-      </div>
-    </section>
-  </div>
+      </section>
+    </div>
   
-  <div class="dialog-overlay" style="display: none; z-index: 101; ">&nbsp;</div>
-  <div class="dialog" style="display: none">
-  <div class="modal" style="position: relative; top: 50px; left: auto; margin: 0 auto; z-index: 102"></div>
-  </div>
+    <div class="dialog-overlay" style="display: none; z-index: 101; ">&nbsp;</div>
+    <div class="dialog" style="display: none">
+      <div class="modal" style="position: relative; top: 50px; left: auto; margin: 0 auto; z-index: 102"></div>
+    </div>
+  </script>
   
   <script type="text/mustache" class="emptyTemplate">
   </script>
@@ -132,55 +144,65 @@
     <div class="container">
     <div class="row">
       <div class="span5 columns">
-      <h6>
-        Open data
-      </h6>
-      <p>
-        Turn spreadsheets into APIs and share them with anyone in the world.
-      </p>
+        <h6>
+          Open data
+        </h6>
+        <p>
+          Turn spreadsheets into APIs and share them with anyone in the world.
+        </p>
       </div>
       <div class="span5 columns">
-      <h6>
-        <span class="fork icon"></span>Dataset forking
-      </h6>
-      <p>
-        Let others fork, edit and send you back enhanced versions of your data.
-      </p>
+        <h6>
+          <span class="fork icon"></span>Dataset forking
+        </h6>
+        <p>
+          Let others fork, edit and send you back enhanced versions of your data.
+        </p>
       </div>
       <div class="span5 columns">
-      <h6>
-        Free for public data
-      </h6>
-      <p>
-        As long as you share your data we will host it for free (until we run out of money).
-      </p>
+        <h6>
+          Free for public data
+        </h6>
+        <p>
+          As long as you share your data we will host it for free (until we run out of money).
+        </p>
       </div>
     </div>
     </div>
   </div>
   </script>
   
-  <script type="text/mustache" class="topBarTemplate">
-  <div class="container">
-    {{#name}}<h3><a href="#/">{{name}}</a></h3>{{/name}}
-    <ul>
-    {{#nav}}<li><a href="{{href}}">{{name}}</a></li>{{/nav}}
-    </ul>
-    <form action="">
-    <input type="text" placeholder="Search">
-    </form>
-  </div>
+  <script class="streamTemplate" type="text/mustache">
+    <div class="stream">
+      <div id="header">
+        <div class="topbar">
+          <span class="blue">DATACOUCH</span>
+          <span class="separator"> — </span>
+          <span class="lightest_gray">collaborative data</span>
+          <div class="userControls"></div>
+          <div class="userButtons"></div>
+        </div>
+        <div class="showbar" id="showbar">
+          <div id="showbarItems"></div>
+        </div>
+      </div>
+      <div id="wrapper">
+        <div id="left"></div>
+        <div id="right">
+        </div>
+      </div>
+    </div>
   </script>
   
   <script type="text/mustache" class="userControlsTemplate">
-  <div class="session_actions">
-    <div class="session_status"></div>
-  </div>
+    <div class="session_actions">
+      <div class="session_status"></div>
+    </div>
   </script>
   
   <script type="text/mustache" class="adminPartyTemplate">
-  <strong>Admin party, everyone is admin!</strong>
-  Fix this in <a href="/_utils/index.html">Futon</a> before proceeding.
+    <strong>Admin party, everyone is admin!</strong>
+    Fix this in <a href="/_utils/index.html">Futon</a> before proceeding.
   </script>
 
   <script type="text/mustache" class="loggedInTemplate">
@@ -207,10 +229,6 @@
         </div>
       </div>
     </div>
-  </script>
-
-  <script type="text/mustache" class="loggedOutTemplate">
-  <!-- nothin here -->
   </script>
   
   <script type="text/mustache" class="newProfileFormTemplate">

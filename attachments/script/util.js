@@ -508,45 +508,6 @@ var util = function() {
       }
     })
   }
-  
-function routeViews( route ){
-
-    var fullRoute = route;
-    
-    if( !route.length ) {
-      app.routes.pages[ 'home' ]();
-    }
-
-    // If we've made it this far, then the ID (if one exists) will be
-    // what comes after the slash
-    id = route.split('/')[1];
-    
-    // If there is an Id, then we have to trim it off the route
-    if(id){
-      route = route.split('/')[0];
-    }
-    
-    // If "#" is in the route, and it's the first char, then we are dealing with
-    // a modal, we're going to route it through the views modals object
-    if( route.indexOf( '#' ) === 0 ) {
-      route = route.replace('#', '');
-      app.routes.modals[ route ]( id );
-
-    // Otherwise, it's a page, and we're going to route it through the
-    // views pages object, and pushState
-    } else {
-      
-      if( route === "/" ) {
-        history.pushState({route: "home"}, "wee", '/'); 
-        app.routes.pages[ 'home' ]();
-        return;
-      }
-
-      history.pushState({route: "user", id: id}, "woo", '/' + fullRoute); 
-      app.routes.pages[ 'user' ]( id );
-      
-    }
-  }
 
   function formatProperties( properties ) {
     var data = {properties: []};

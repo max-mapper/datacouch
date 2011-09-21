@@ -22,6 +22,9 @@
 #examples { margin-top: 50px }
 .twittericon { display: inline-block; width: 16px; height: 13px; margin: auto 3px auto auto; position: relative; top: 1px; *top: 0px; background-image: url('../images/twitter.png'); background-repeat: no-repeat; }
 
+.topbar{position:relative;height:30px;width:100%;background-color:#1A1A1A;}
+
+
 .screenshot{
   margin-bottom: 20px;
   border: 1px solid #ccc;
@@ -87,6 +90,16 @@
   position: relative;
   top: 5px;
 }
+
+.blue{color:#d5f3ff;font-family:"Geneva";font-size:13px;line-height:30px;padding:0 0 0 18px;}
+.red{color:#B43D54;}
+.green{color:#42A360;}
+.white{color:#FFF;float:left;font-size:14px;margin:0;padding:0 1px 0 9px;}
+.separator{color:#FFF;}
+.lightest_gray{color:#636363;font-family:"Geneva";font-size:13px;}
+.light_gray{color:#959595;font-family:"Geneva";font-size:13px;}
+.gray{color:#c2c2c2;font-family:"Geneva";font-size:13px;}
+.yellow{color:#fff799;font-family:"Geneva";font-size:14px;}
 
 
 ul#landing_nav {
@@ -914,3 +927,44 @@ div.quickstart form textarea {
   white-space: nowrap;
   overflow: hidden;
 }
+
+/*REDIRECTORY*/
+
+.stream {position: absolute; top: 0px; right: 0px; left: 0px; bottom: 0px}
+.stream #header{position:absolute;top:0px;left:0px;right:0px;height:50px}
+.stream #wrapper{position:absolute;top:80px;left:0px;right:0px;bottom:0px;border:0 #C0CCCA solid; border-right-width:1px; border-bottom-width: 1px; border-left-width: 1px}
+.stream #left{position:absolute;top:0px;bottom:0px;left:0px;width:300px;overflow-y:auto;background-color: #F0FFFD}
+.stream #right{position:absolute;top:0px;bottom:0px;right:0px;left:300px;overflow-y:auto}
+.stream .mapContainer{width:100%; height: 100%; background-color: #F0FFFD}
+.stream .topbar{position:relative;height:30px;width:100%;background-color:#1A1A1A;}
+.stream .showbar{position:relative;height:50px;width:100%;background-color:#1F86A1;}
+.stream .showbarItem{opacity: 0.5; float:right; line-height: 50px; text-transform: uppercase; font-size: 11px; color: #fff; height: 50px;}
+.stream .showbarItem:hover {opacity: 1; cursor:pointer; cursor:hand}
+.stream #separator {background: url('images/vdiv.png') no-repeat 0 11px; width: 2px; margin-left: 22px; opacity: 0.2}
+.stream #fullscreen {background: url('images/fullscreen.png') no-repeat 0px 17.5px; padding-left: 25px;}
+.stream #savedLocations {background: url('images/white-plus.png') no-repeat 0px 17.5px; padding-left: 28px; margin-left: 20px;}
+.stream .sidebar{height:100%;width:299px;background-color:#F0FFFD;position:relative;border-right:1px solid #C0CCCA;overflow-x: hidden}
+.stream .sidebar .title{font-family:"Lucida Grande", "Geneva";font-size:20px;line-height:22px; font-weight: 400; color: #084354; width: 240px; max-height: 44px; overflow: hidden}
+.stream .sidebar .timestamp{opacity:0.3;font-family:"Geneva";font-size:10px;line-height:16px;width: 240px}
+.stream .sidebar .edit{opacity:0.3;font-family:"Geneva";font-size:10px;line-height:18px;padding-left:12px;background-image:url('images/edit.png');background-position:0 4px;background-repeat:no-repeat;}
+.stream .sidebar .close{position:absolute;right:10px;top:15px;width:16px;height:16px;opacity:0.2;background-image:url('images/close.png');}
+.stream .sidebar .close:hover,.sidebar .edit:hover{opacity:1;}
+.stream .sidebar .top{background-color:#e6f3f1;border-bottom:1px solid #E1EEEC;padding:16px;}
+.stream .sidebar .description {font-family: "Lucida Grande"; font-size: 12px; font-style: italic; color: #707070; margin-top: 10px}
+.stream .sidebar .datasource {height: 10px; background: url('images/tiny-triangle.png') no-repeat 0px 5px;padding-left: 7px; font-family: "Lucida Grande"; font-size: 10px; color: #959595; margin-top: 10px}
+.stream .strong {font-weight: bold; margin-right: 5px}
+.stream .sidebar .bottom{width: 100%; overflow-x: hidden}
+.stream .sidebar .property {padding: 10px 16px; border-bottom: 1px solid #DDEFEC; overflow: auto}
+.stream .sidebar .key{width: 90px; float: left; font-family: "Lucida Grande"; font-size: 13px; font-weight: bold; color: #464646}
+.stream .sidebar .value{width: 170px; float: left; color: #707070; }
+.stream .sidebar .link{text-decoration: underline}
+.stream .sidebar p{font-family:"Geneva";font-size:11px;line-height:12px;padding-bottom:10px;color:#252525;}
+.stream .blue{color:#d5f3ff;font-family:"Geneva";font-size:13px;line-height:30px;padding:0 0 0 18px;}
+.stream .red{color:#B43D54;}
+.stream .green{color:#42A360;}
+.stream .white{color:#FFF;float:left;font-size:14px;margin:0;padding:0 1px 0 9px;}
+.stream .separator{color:#FFF;}
+.stream .lightest_gray{color:#636363;font-family:"Geneva";font-size:13px;}
+.stream .light_gray{color:#959595;font-family:"Geneva";font-size:13px;}
+.stream .gray{color:#c2c2c2;font-family:"Geneva";font-size:13px;}
+.stream .yellow{color:#fff799;font-family:"Geneva";font-size:14px;}
