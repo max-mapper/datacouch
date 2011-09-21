@@ -171,7 +171,7 @@ var util = function() {
 
   function render( template, target, options ) {
     if ( !options ) options = {};
-    if ( !options.data ) options.data = {};
+    if ( !options.data ) options.data = options;
     var html = $.mustache( $( "." + template + "Template:first" ).html(), options.data );
     if (target instanceof jQuery) {
       var targetDom = target;
