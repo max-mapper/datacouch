@@ -160,7 +160,7 @@ app.after = {
       monocles.updateProfile($( e.target ).serializeObject());
       e.preventDefault();
       util.hide('dialog');
-      window.location.href = "#/welcome";
+      window.location.href = "#/";
       return false;
     });
   },

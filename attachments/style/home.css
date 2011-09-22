@@ -1,4 +1,4 @@
-.userControls {position: absolute; right: 25px; top: 1px}
+.userControls {position: absolute; right: 15px; top: 1px}
 .userButtons {float: right; margin: 10px 20px}
 .navIcon { float: left; width: 35px; height: 35px; line-height: 35px; }
 
@@ -7,10 +7,11 @@
 .new_dataset { line-height: 35px; padding-right: 10px; margin-right: 25px}
 .new_dataset .navIcon { background: url('images/add.png') center center no-repeat; }
 .session_actions, .user_actions { float: left; }
-.userControls .option {float: left; line-height: 34px; color: #636363; opacity: 0.8;; font-size: 10px; text-transform: uppercase; }
+.userControls .option {float: left; line-height: 34px; color: #636363; opacity: 0.8; font-size: 10px; text-transform: uppercase; }
 .userControls .option:active, .userControls .option:hover {opacity: 1; color: #000}
+.userControls .editProfile {margin-right: 12px}
 .account {cursor: pointer; -moz-border-radius: 2px; -webkit-border-radius: 2px; border-radius: 2px;}
-.dot_separator { float: left; line-height: 33px; margin: 0px 5px}
+.dot_separator { float: left; line-height: 33px; margin: 0px 13px}
 .header { background: #EDEBE1 }
 .avatar {float: left}
 .avatar img {margin: 4px; border: 1px solid #D0E8F0}
