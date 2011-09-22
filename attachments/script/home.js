@@ -75,8 +75,8 @@ app.routes = {
         util.render('empty', 'userButtons');
         util.render('userControls', 'userControls');
         delete app.session;
-        $( '#header' ).data( 'profile', null );
-        app.routes.pages['welcome']();
+        $( 'body' ).data( 'profile', null );
+        window.location.href = "#/welcome";
       })
     },
     cancel: function() {
@@ -162,7 +162,7 @@ app.after = {
       monocles.updateProfile($( e.target ).serializeObject());
       e.preventDefault();
       util.hide('dialog');
-      app.routes.pages['welcome']();
+      window.location.href = "#/welcome";
       return false;
     });
   },

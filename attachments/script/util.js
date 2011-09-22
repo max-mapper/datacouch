@@ -443,7 +443,7 @@ var util = function() {
     // No name was passed in, so we're looking at the global
     // data sets feed
     } else {
-      name = "Recent Datasets";
+      name = "Newest Datasets";
     }
     return couch.request({url: url}).then(function(resp) {
       var datasets = _.map(resp.rows, function(row) {
@@ -461,7 +461,6 @@ var util = function() {
           count: row.doc.doc_count - 1 // TODO calculate this programatically
         };
       })
-      
       if (datasets.length > 0) {
         util.render('datasets', 'datasetsContainer', {
           loggedIn: function() { 

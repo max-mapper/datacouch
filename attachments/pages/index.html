@@ -174,25 +174,19 @@
   
   <script class="streamTemplate" type="text/mustache">
     <div class="stream">
-      <div id="header">
-        <div class="topbar">
-          <span class="blue">DATACOUCH</span>
-          <span class="separator"> — </span>
-          <span class="lightest_gray">collaborative data</span>
-          <div class="userControls"></div>
-        </div>
-        <div class="showbar" id="showbar">
-          <div id="showbarItems">
-            <div class="userButtons"></div>
-          </div>
-        </div>
+      <div class="top_bar">
+        <img id="couchLogo" src="images/fancycouch-small.png">
+        <span class="project-title">DataCouch</span>
+        <span class="separator"> — </span>
+        <span class="lightest_gray">collaborative data</span>
+        <div class="userControls"></div>
       </div>
-      <div id="wrapper">
-        <div id="left"></div>
-        <div id="right">
-          <div class="datasetsContainer"></div>
-          <div class="trendingDatasetsContainer"></div>
-        </div>
+      <div class="showbar" id="showbar">
+        <div class="userButtons"></div>
+      </div>
+      <div class="container">
+        <div class="datasetsContainer"></div>
+        <div class="trendingDatasetsContainer"></div>
       </div>
     </div>
   </script>
@@ -209,19 +203,16 @@
   </script>
 
   <script type="text/mustache" class="loggedInTemplate">
-  <div class="option user_profile">
+  <div class="user_profile">
+  <div class="label">hello,</div>
     <a href="#/{{username}}">
-    <div class="username">
-      <img width="16px" src="{{avatar}}">
-    </div>
-    <div class="label">
-      <span>{{username}}</span>
-    </div>
+      <div class="username">
+        <span>{{username}}</span>
+      </div>
     </a>
   </div>
-  <div class="option logout">
-    <a href="#/logout!"><div class="navIcon"></div></a>
-  </div>
+  <div class="dot_separator">•</div>
+  <a class="logout option" href="#/logout!">logout</a>
   </script>
 
   <script type="text/mustache" class="loginButtonTemplate">
@@ -275,41 +266,41 @@
   </script>
   
   <script type="text/mustache" class="editProfileFormTemplate">
-  <form class="profile_setup">
-    <div class="modal-header">
-    <h3>Editing {{_id}}'s profile.</h3>
-    <a href="#/cancel!" class="close cancel">×</a>
-    </div>
-    <div class="modal-body">
-    <div class="clearfix">
-      <label for="_id">Username</label>
-      <div class="input">
-      <input class="xlarge" id="xlInput" name="_id" size="30" type="text" value="{{_id}}">
-      <div class="username-message"></div>
+    <form class="profile_setup">
+      <div class="modal-header">
+      <h3>Editing {{_id}}'s profile.</h3>
+      <a href="#/cancel!" class="close cancel">×</a>
       </div>
-    </div>
+      <div class="modal-body">
+      <div class="clearfix">
+        <label for="_id">Username</label>
+        <div class="input">
+        <input class="xlarge" id="xlInput" name="_id" size="30" type="text" value="{{_id}}">
+        <div class="username-message"></div>
+        </div>
+      </div>
     
     
-    <div class="clearfix">
-      <label for="email">Email (<em>for <a href="http://gravatar.com">Gravatar</a></em>)</label>
-      <div class="input">
-      <input class="xlarge" id="xlInput" name="email" size="30" type="text" value="{{email}}">
+      <div class="clearfix">
+        <label for="email">Email (<em>for <a href="http://gravatar.com">Gravatar</a></em>)</label>
+        <div class="input">
+        <input class="xlarge" id="xlInput" name="email" size="30" type="text" value="{{email}}">
+        </div>
       </div>
-    </div>
     
-    <div class="clearfix">
-      <label for="url">URL (<em>for shameless self promotion</em>)</label>
-      <div class="input">
-      <input class="xlarge" id="xlInput" name="url" size="30" type="text" value="{{url}}">
+      <div class="clearfix">
+        <label for="url">URL (<em>for shameless self promotion</em>)</label>
+        <div class="input">
+        <input class="xlarge" id="xlInput" name="url" size="30" type="text" value="{{url}}">
+        </div>
       </div>
-    </div>
-    </div>
-    <div class="modal-footer">
-    <input type="submit" class="btn primary" value="Save">
-    <a href="#/cancel!" class="btn secondary cancel">Cancel</a>
-    <input type="hidden" name="user" value="{{user}}">
-    </div>        
-  </form>
+      </div>
+      <div class="modal-footer">
+      <input type="submit" class="btn primary" value="Save">
+      <a href="#/cancel!" class="btn secondary cancel">Cancel</a>
+      <input type="hidden" name="user" value="{{user}}">
+      </div>        
+    </form>
   </script>
   
   
@@ -331,7 +322,7 @@
         {{/forkedFrom}}
       </div>
       <div class="metadata subtitle">Created <span class="timeago" title="{{date}}"></span>, {{count}} documents, {{size}}</div>
-      <div class="avatar"><a href="#/{{user}}"><img src="{{#avatar}}{{.}}{{/avatar}}{{^avatar}}images/avatar_default.png{{/avatar}}"></a></div>
+      <div class="avatar"><a href="#/{{user}}"><img src="{{#avatar}}{{avatar}}{{/avatar}}{{^avatar}}images/avatar_default.png{{/avatar}}"></a></div>
       {{#description}}<div><p>{{description}}</p></div>{{/description}}
       <div class="datasetActions">
         {{#loggedIn}}<a href="#/fork/{{id}}!" class="btn secondary small"><span class="fork icon"></span>Fork dataset</a>{{/loggedIn}}

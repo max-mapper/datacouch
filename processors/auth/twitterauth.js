@@ -121,7 +121,6 @@ module.exports = function(app, errorHandler) {
   }
 
   function getOrCreate(url, userData, callback) {    
-    console.log(url)
     getDoc(url, function(doc) {
       if(doc) {
         callback(doc)

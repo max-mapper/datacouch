@@ -20,7 +20,7 @@ $(function(){
       $.oauthpopup({
         path: app.baseURL + "login",
         callback: function() {
-          monocles.fetchSession();
+          window.location.href = "#/activity";
         }
       });
     }
