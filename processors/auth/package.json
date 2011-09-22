@@ -8,7 +8,8 @@
     "request": ">= 2.0.3",
     "oauth": ">= 0.9.5",
     "underscore": ">= 1.1.7",
-    "express": ">= 2.4.6"
+    "express": ">= 2.4.6",
+    "rbytes": ">= 0.0.2"
   },
   "version": "0.0.1"
 }

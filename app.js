@@ -12,6 +12,7 @@ ddoc =
     , {from:"/login", to:"../../../_twitter/auth/twitter"}
     , {from:"/login/callback", to:"../../../_twitter/auth/twitter/callback"}
     , {from:"/logout", to:"../../../_twitter/logout"}
+    , {from:"/api/token", to:"../../../_twitter/auth/token"}
     , {from:"/api/datasets/:user", to:"_view/by_user", query:{endkey: [":user",null], startkey:[":user",{}], include_docs:"true", descending: "true"}}
     , {from:"/api/datasets", to:"_view/by_date", query:{include_docs:"true", descending: "true"}}
     , {from:"/api/profile/all", to:"../../../datacouch-users/_design/users/_list/all/users"}

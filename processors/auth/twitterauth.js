@@ -4,6 +4,7 @@ var couch         = process.env['DATACOUCH_ROOT']
   , twitterSecret = process.env['DATACOUCH_TWITTER_SECRET']
   , oauth   = require('oauth')
   , crypto  = require('crypto')
+  , rbytes  = require('rbytes')
   , request = require('request')
   , url     = require('url')
   , fs      = require('fs')
@@ -81,9 +82,26 @@ module.exports = function(app, errorHandler) {
     })
   })
   
+  app.get('/auth/token', function(req, res) {
+    request({uri: "http://" + couchVhost + '/api/couch/_session', headers: {cookie: "AuthSession=" + req.cookies['authsession']} }
+      , function(e,r,b) {
+        var user = JSON.parse(b).userCtx.name
+        if(user) {
+          getDoc("http://" + couchVhost + '/api/couch/_users/org.couchdb.user:' + user
+            , function(doc) {
+              res.header('Content-Type', 'application/json');
+              res.end(JSON.stringify({token: doc.couch_token}));
+          })
+        } else {
+          res.writeHead(401);
+          res.end('Unauthorized');
+        }
+      })
+  })
+  
   function couchUserDoc(userData) {
-    var salt = "woo"
-      , password = "hoo"
+    var salt = rbytes.randomBytes(16).toHex()
+      , password = rbytes.randomBytes(16).toHex()
       ;
     return _.extend(userData, {
          _id: "org.couchdb.user:" + userData.screen_name
