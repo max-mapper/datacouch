@@ -19,6 +19,7 @@
 .user_profile .username { color: #111; float: left; font-style: normal; height: 30px; line-height: 31px;}
 .user_profile .label {color: #636363; float: left; margin-right: 5px; font-style: normal; line-height: 31px;}
 .user_profile .username img { padding: 8px }
+.user-missing { margin: 10px}
 #examples { margin-top: 50px }
 .twittericon { display: inline-block; width: 16px; height: 13px; margin: auto 3px auto auto; position: relative; top: 1px; *top: 0px; background-image: url('../images/twitter.png'); background-repeat: no-repeat; }
 
@@ -318,13 +319,17 @@ body { font: 13px/20px "Helvetica Neue",Helvetica,Arial,sans-serif; }
   src:url('fonts/DroidSansMono.ttf');
   }
 
+html, body {
+  height: 100%;
+}
+
 body {
   font:normal 15px/20px DroidSans,Arial,sans-serif;
-  background:#fff;
+  background-color:#F0FFFD !important;
   color:#222;
   margin:0px;
   padding:0px 0px 40px;
-  }
+}
 
 a {
   color:#222;
@@ -930,7 +935,6 @@ div.quickstart form textarea {
 
 /*REDIRECTORY*/
 
-.stream {background-color: #F0FFFD;}
 .stream .container{background-color: #fff; margin-top: 50px}
 .stream #left{position:absolute;top:0px;bottom:0px;left:0px;width:300px;overflow-y:auto;background-color: #F0FFFD}
 .stream #right{position:absolute;top:0px;bottom:0px;right:0px;left:300px;overflow-y:auto}

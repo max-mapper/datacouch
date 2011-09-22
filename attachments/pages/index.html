@@ -306,7 +306,7 @@
   
   <script type="text/mustache" class="datasetsTemplate">
     {{^datasets}}<center><h1>{{name}} doesn't have any datasets yet!</h1></center>{{/datasets}}
-    <h2>{{name}}</h2>
+    <h2>{{name}}'s datasets</h2>
     <ol class="datasets detailed">
     {{#datasets}}
       <li>
@@ -333,12 +333,19 @@
   </script>
   
   <script type="text/mustache" class="noUserTemplate">
-  <center><h1>There is no user named {{name}} :(</h1></center>
+    <div class="user-missing alert-message block-message warning">
+      <p>
+        <strong>
+          Oopsies!
+        </strong>
+        There is no user named {{name}} :(
+      </p>
+    </div>
   </script>
   
   <script type="text/mustache" class="userActionsTemplate">
   <a href="#/new!" class="btn primary">
-    + New Dataset
+    New Dataset
   </a>
   </script>
   

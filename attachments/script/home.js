@@ -12,7 +12,7 @@ couch.rootPath = couch.dbPath + "couch/";
   app.routes
     pages (URL routed with SugarSkull, hrefs like "#/" or "#/bob")
       home
-      user
+      activity
     actions (no URL change triggered, hrefs like "#/cancel!" or "#/logout!")
       new
       settings
@@ -33,7 +33,7 @@ app.routes = {
         window.location.href = "#/activity";
       })
     },
-    activity: function() {
+    activity: function(username) {
       util.render('stream', 'content');
       util.render('userControls', 'userControls');
       monocles.ensureProfile().then(function(profile) {      
@@ -41,14 +41,10 @@ app.routes = {
           username : profile._id,
           avatar : profile.avatar
         });
-        util.showDatasets();
+        util.showDatasets(username);
         util.showTrendingsets();
         util.render('userActions', 'userButtons')
       });
-    },
-    user: function(username) { 
-      monocles.fetchSession();
-      util.showDatasets( username );
     }
   },
   modals: {
@@ -271,7 +267,7 @@ $(function() {
     '/welcome': {on: 'welcome'},
     '/activity': {on: 'activity'},
     '/(\\w+)!': {on: function(modal) { util.catchModals("#/" + modal + "!") }},
-    '/:username': {on: 'user'},
+    '/:username': {on: 'activity'},
   }).use({ resource: app.routes.pages, notfound: function() {console.log('notfound')} }).init('/');
   
 })
