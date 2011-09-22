@@ -16,12 +16,10 @@ $(function(){
     function loginFail() { alert('oh noes! an error occurred whilst logging you in') };
 
     // binds UX interaction and form submit event handlers to the signup/login forms
-    function showLogin() {
+    function showLogin(callback) {
       $.oauthpopup({
         path: app.baseURL + "login",
-        callback: function() {
-          window.location.href = "#/activity";
-        }
+        callback: callback
       });
     }
 

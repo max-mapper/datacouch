@@ -187,14 +187,7 @@ var recline = function() {
     getDbInfo(app.dbPath).then(function( dbInfo ) {
       util.render( 'generating', 'project-actions' );    
             
-      couch.session().then(function(session) {
-        if ( session.userCtx.name ) {
-          var text = "Sign out";
-        } else {
-          var text = "Sign in";
-        }
-        util.render('controls', 'project-controls', {text: text});
-      })
+      showSessionButtons();
       
       couch.request({url: app.baseURL + "api/" + id}).then(function(datasetInfo) {
         app.datasetInfo = datasetInfo;
@@ -204,6 +197,13 @@ var recline = function() {
       })
 
       initializeTable();
+    })
+  }
+  
+  function showSessionButtons() {
+    couch.session().then(function(session) {
+      if ( session.userCtx.name ) util.render('signOut', 'project-controls');
+      else util.render('signIn', 'project-controls')
     })
   }
   
@@ -228,6 +228,7 @@ var recline = function() {
     showDialog: showDialog,
     updateDocCount: updateDocCount,
     bootstrap: bootstrap,
+    showSessionButtons: showSessionButtons,
     fetchRows: fetchRows,
     activateControls: activateControls,
     getPageSize: getPageSize,

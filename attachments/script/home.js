@@ -64,7 +64,9 @@ app.routes = {
       })    
     },
     login: function() {
-      monocles.showLogin();
+      monocles.showLogin(function() {
+        window.location.href = "#/activity";
+      });
     },
     logout: function() {
       couch.logout().then(function() {

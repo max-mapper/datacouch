@@ -12,6 +12,7 @@
   <script type="text/javascript" src="/script/util.js"></script>
   <script type="text/javascript" src="/script/costco.js"></script>
   <script type="text/javascript" src="/script/recline.js"></script>
+  <script type="text/javascript" src="/script/monocles.js"></script>
   <script type="text/javascript" src="/script/edit.js"></script>
 </head> 
 <body class="bod">
@@ -57,8 +58,12 @@
     </div>
   </script>
 
-  <script type='text/mustache' class="controlsTemplate">
-    <a id="logged-in-status" href="JavaScript:void(0);" class="secondary">{{text}}</a>
+  <script type='text/mustache' class="signInTemplate">
+    <a id="logged-in-status" href="#/login!" class="secondary">Sign in</a>
+  </script>
+  
+  <script type='text/mustache' class="signOutTemplate">
+    <a id="logged-in-status" href="#/logout!" class="secondary">Sign Out</a>
   </script>
   
   <script type='text/mustache' class="actionsTemplate">

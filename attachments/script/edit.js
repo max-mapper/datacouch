@@ -35,6 +35,19 @@ app.routes = {
         })}
         recline.showDialog("appTemplates", appData);
       })
+    },
+    login: function() {
+      monocles.showLogin(recline.showSessionButtons);
+    },
+    logout: function() {
+      util.notify("Signing you out...", {persist: true, loader: true});
+      couch.logout().then(function(response) {
+        util.notify("Signed out");
+        util.render('signIn', 'project-controls');
+      })
+    },
+    loggedIn: function() {
+      
     }
   },
   tabs: {
@@ -109,19 +122,6 @@ app.after = {
       recline.handleMenuClick();
     });
   },
-  controls: function() {
-    $('#logged-in-status').click(function(e) { 
-      if ($(e.target).text() === "Sign in") {
-        recline.showDialog("signIn");
-      } else if ($(e.target).text() === "Sign out") {
-        util.notify("Signing you out...", {persist: true, loader: true});
-        couch.logout().then(function(response) {
-          util.notify("Signed out");
-          util.render('controls', 'project-controls', {text: "Sign in"});
-        })
-      }
-    });
-  },
   signIn: function() {
     
     $('.dialog-content #username-input').focus();
@@ -141,7 +141,7 @@ app.after = {
       }
       couch.login(credentials).then(function(response) {
         util.notify("Signed in");
-        util.render('controls', 'project-controls', {text: "Sign out"});
+        util.render('signOut', 'project-controls');
       }, function(error) {
         if (error.statusText === "error") util.notify(JSON.parse(error.responseText).reason);
       })
