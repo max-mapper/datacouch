@@ -87,7 +87,7 @@ module.exports = function(app, errorHandler) {
       , function(e,r,b) {
         var user = JSON.parse(b).userCtx.name
         if(user) {
-          getDoc("http://" + couchVhost + '/api/couch/_users/org.couchdb.user:' + user
+          getDoc(couch + '_users/org.couchdb.user:' + user
             , function(doc) {
               res.header('Content-Type', 'application/json');
               res.end(JSON.stringify({token: doc.couch_token}));
