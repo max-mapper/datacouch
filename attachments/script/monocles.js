@@ -70,15 +70,8 @@ $(function(){
       function upload(updatedDoc) {
         couch.request({url: app.baseURL + "api/users", data: JSON.stringify(updatedDoc), type: "POST"}).then(function(resp) {
           updatedDoc._rev = resp.rev;
+          app.profile = updatedDoc;
           dfd.resolve(updatedDoc);
-          couch.userDb().then(function(userDb) {
-            userDb.get( "org.couchdb.user:" + app.session.userCtx.name).then(
-              function( userDoc ) {              
-                userDoc.username = updatedDoc._id;
-                userDb.save(userDoc);
-              }
-            )
-          })
         });
       }
       
