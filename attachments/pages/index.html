@@ -306,7 +306,8 @@
   
   <script type="text/mustache" class="datasetsTemplate">
     {{^datasets}}<center><h1>{{name}} doesn't have any datasets yet!</h1></center>{{/datasets}}
-    <h2>{{name}}'s datasets</h2>
+    {{#name}}<h2>{{name}}'s datasets</h2>{{/name}}
+    {{^name}}<h2>Recent Datasets</h2>{{/name}}
     <ol class="datasets detailed">
     {{#datasets}}
       <li>

@@ -9,11 +9,6 @@ ddoc.views = {
     map: function(doc) {
       emit(doc._id);
     }
-  },
-  by_email: {
-    map: function(doc) {
-      emit(doc.user);
-    }
   }
 };
 

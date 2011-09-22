@@ -18,7 +18,6 @@ ddoc =
     , {from:"/api/trending", to:"_view/popular", query:{include_docs: "true", descending: "true", limit: "10"}}
     , {from:"/api/apps", to:"_view/apps", query:{include_docs: "true"}}
     , {from:"/api/users/search/:user", to:"../../../datacouch-users/_design/users/_view/users", query:{startkey:":user", endkey:":user", include_docs: "true"}}
-    , {from:"/api/users/by_email/:user", to:"../../../datacouch-users/_design/users/_view/by_email", query:{startkey:":user", endkey:":user", include_docs: "true"}}
     , {from:"/api/users", to:'../../../datacouch-users/'}
     , {from:"/api/users/*", to:'../../../datacouch-users/*'}
     , {from:"/api/couch", to:"../../../"}

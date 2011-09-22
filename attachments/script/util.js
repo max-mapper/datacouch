@@ -439,12 +439,8 @@ var util = function() {
     // If a name is passed in, then add it to the url
     if (name) {
       url += name;
-    
-    // No name was passed in, so we're looking at the global
-    // data sets feed
-    } else {
-      name = "Newest Datasets";
     }
+    
     return couch.request({url: url}).then(function(resp) {
       var datasets = _.map(resp.rows, function(row) {
         return {
