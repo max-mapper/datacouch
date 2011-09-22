@@ -18,7 +18,7 @@
 .user_settings .navIcon { background: url('images/settings.png') center center no-repeat; }
 .user_profile { float: left}
 .user_profile .username { color: #111; float: left; font-style: normal; height: 30px; line-height: 31px;}
-.user_profile .label {color: #636363; float: left; margin-right: 5px; font-style: normal; line-height: 31px;}
+.user_profile .message {color: #636363; float: left; margin-right: 5px; font-style: normal; line-height: 31px;}
 .user_profile .username img { padding: 8px }
 .user-missing { margin: 10px}
 #examples { margin-top: 50px }
@@ -80,6 +80,9 @@
 .datasets li:hover {background-color: #EEEEEE;}
 .datasets li:hover .dataset {color: #2B547D}
 
+.wrapper {background:url('../images/diagonals.png'); overflow: auto}
+
+html, body, .content, .wrapper { height: 100% }
 
 #loading-message {
   text-align: center;
@@ -320,13 +323,8 @@ body { font: 13px/20px "Helvetica Neue",Helvetica,Arial,sans-serif; }
   src:url('fonts/DroidSansMono.ttf');
   }
 
-html, body {
-  height: 100%;
-}
-
 body {
   font:normal 15px/20px DroidSans,Arial,sans-serif;
-  background-color:#F0FFFD !important;
   color:#222;
   margin:0px;
   padding:0px 0px 40px;

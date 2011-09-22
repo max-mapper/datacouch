@@ -173,20 +173,22 @@
   </script>
   
   <script class="streamTemplate" type="text/mustache">
-    <div class="stream">
-      <div class="top_bar">
-        <img id="couchLogo" src="images/fancycouch-small.png">
-        <span class="project-title">DataCouch</span>
-        <span class="separator"> — </span>
-        <span class="lightest_gray">collaborative data</span>
-        <div class="userControls"></div>
-      </div>
-      <div class="showbar" id="showbar">
-        <div class="userButtons"></div>
-      </div>
-      <div class="container">
-        <div class="datasetsContainer"></div>
-        <div class="trendingDatasetsContainer"></div>
+    <div class="wrapper">
+      <div class="stream">
+        <div class="top_bar">
+          <img id="couchLogo" src="images/fancycouch-small.png">
+          <span class="project-title">DataCouch</span>
+          <span class="separator"> — </span>
+          <span class="lightest_gray">collaborative data</span>
+          <div class="userControls"></div>
+        </div>
+        <div class="showbar" id="showbar">
+          <div class="userButtons"></div>
+        </div>
+        <div class="container">
+          <div class="datasetsContainer"></div>
+          <div class="trendingDatasetsContainer"></div>
+        </div>
       </div>
     </div>
   </script>
@@ -203,17 +205,17 @@
   </script>
 
   <script type="text/mustache" class="loggedInTemplate">
-  <div class="user_profile">
-  <div class="label">hello,</div>
-    <a href="#/{{username}}">
-      <div class="username">
-        <span>{{username}}</span>
-      </div>
-    </a>
-  </div>
-  <div class="dot_separator">•</div>
-  <a class="editProfile option" href="#/settings!">edit profile</a>
-  <a class="logout option" href="#/logout!">logout</a>
+    <div class="user_profile">
+      <div class="message">hello,</div>
+      <a href="#/{{username}}">
+        <div class="username">
+          <span>{{username}}</span>
+        </div>
+      </a>
+    </div>
+    <div class="dot_separator">•</div>
+    <a class="editProfile option" href="#/settings!">edit profile</a>
+    <a class="logout option" href="#/logout!">logout</a>
   </script>
 
   <script type="text/mustache" class="loginButtonTemplate">
@@ -225,47 +227,7 @@
       </div>
     </div>
   </script>
-  
-  <script type="text/mustache" class="newProfileFormTemplate">
-  <div class="settings">
-    <form class="profile_setup">
-  
-    <div class="modal-header">
-      <h3>Hello {{name}}, Please setup your user profile.</h3>
-      <a href="#/cancel!" class="close cancel">×</a>
-    </div>
-    <div class="modal-body">
-      <div class="clearfix">
-      <label for="username">Username</label>
-      <div class="input">
-        <input class="xlarge" id="xlInput" name="username" size="30" type="text">
-        <div class="username-message"></div>
-      </div>
-      </div>
-      
-      <div class="clearfix">
-      <label for="email">Email</label>
-      <div class="input">
-        <input class="xlarge" id="xlInput" name="email" size="30" type="text"  value="{{name}}">
-      </div>
-      </div>
-      
-      <div class="clearfix">
-      <label for="url">URL (<em>for shameless self promotion</em>)</label>
-      <div class="input">
-        <input class="xlarge" id="xlInput" name="url" size="30" type="text">
-      </div>
-      </div>    
-    </div>
-    <div class="modal-footer">      
-      <input type="submit" class="btn primary" value="Save">
-      <a href="#/cancel!" class="btn secondary cancel">Cancel</a>
-      <input type="hidden" name="user" value="{{name}}">
-    </div>        
-    </form>
-  </div>
-  </script>
-  
+
   <script type="text/mustache" class="editProfileFormTemplate">
     <form class="profile_setup">
       <div class="modal-header">
