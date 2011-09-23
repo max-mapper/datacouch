@@ -227,8 +227,21 @@
   </script>
   
   <script type="text/mustache" class="bioTemplate">
-    <img src="{{avatar}}"/>
-    {{_id}}
+    <div class="bio">
+      <ul class="media-grid span2">
+        <li>
+          <a href="JavaScript:void(0);">
+            <img class="thumbnail" src="{{avatar}}" alt="">
+          </a>
+        </li>
+      </ul>
+      <div class="span5">
+        <h2>{{_id}}</h2>
+        <span class="item">{{bio}}</span>
+        <span class="item">{{city}}</span>
+        <span class="item"><a href="{{url}}">{{url}}</a></span>
+      </div>
+    </div>
   </script>
   
   <script type="text/mustache" class="userControlsTemplate">

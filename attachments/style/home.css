@@ -27,6 +27,9 @@
 .project-title {font-family:"Geneva";font-size:13px;line-height:32px;padding: 2px 4px; margin-left: 53px;color: rgba(0, 0, 0, 0.75);webkit-border-radius: 3px;-moz-border-radius: 3px;border-radius: 3px;}
 #couchLogo{height: 25px;position: absolute;top: 4px;left: 10px;}
 
+.bio .media-grid {padding: 10px 0px 0px 10px }
+.bio .item {display: block}
+
 .screenshot{
   margin-bottom: 20px;
   border: 1px solid #ccc;
