@@ -42,7 +42,13 @@ app.routes = {
           avatar : profile.avatar
         });
         util.showDatasets(username);
-        util.showTrendingsets();
+        if (username) {
+          couch.request({url: app.baseURL + 'api/users/' + username}).then(function(profile) {
+            util.render('bio', 'infoContainer', profile);
+          })
+        } else {
+          util.render('info', 'infoContainer');
+        }
         util.render('userActions', 'userButtons')
       });
     }
