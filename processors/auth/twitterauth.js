@@ -3,18 +3,16 @@ var couch         = process.env['DATACOUCH_ROOT']
   , twitterKey    = process.env['DATACOUCH_TWITTER_KEY']
   , twitterSecret = process.env['DATACOUCH_TWITTER_SECRET']
   , oauth   = require('oauth')
-  , crypto  = require('crypto')
-  , rbytes  = require('rbytes')
   , request = require('request')
   , url     = require('url')
   , fs      = require('fs')
-  , qs      = require('querystring')
   , _       = require('underscore')
   , h       = {"Content-type": "application/json", "Accept": "application/json"}
+  , util  = require('./couch_utils')
   ;
 
 module.exports = function(app, errorHandler) {
-  var callback_url = "http://" + couchVhost + "/login/callback";
+  
   function consumer() {
     return new oauth.OAuth(
         "https://twitter.com/oauth/request_token"
@@ -22,7 +20,7 @@ module.exports = function(app, errorHandler) {
       , twitterKey
       , twitterSecret
       , "1.0A"
-      , callback_url
+      , "http://" + couchVhost + "/login/callback"
       , "HMAC-SHA1");
   }
 
@@ -57,7 +55,7 @@ module.exports = function(app, errorHandler) {
                 if (error) {
                   return errorHandler({ errors: "Error connecting to twitter. Please try again"});
                 } else {
-                  logUserIn(couchUserDoc(JSON.parse(data)), function(userDoc, cookie) {
+                  util.logUserIn(util.couchUserDoc(JSON.parse(data)), function(userDoc, cookie) {
                     res.header('Set-Cookie', cookie)
                     res.redirect('/#/loggedin!')
                   })
@@ -70,11 +68,11 @@ module.exports = function(app, errorHandler) {
   // for testing when offline. you shouldnt expose this url in production
   app.get('/auth/fakelogin', function(req, res) {
     var data = JSON.parse(fs.readFileSync('./mock_response.json'));
-    _.extend(couchUserDoc(data)
+    _.extend(util.couchUserDoc(data)
       , { oauth_token: "12241752-yoapezX7E23joij24oijoim999TW33d6N8"
         , oauth_secret: "y4234joijoh2oijhZCEHMqg"
     })
-    logUserIn(data, function(userDoc, cookie) {
+    util.logUserIn(data, function(userDoc, cookie) {
       // todo figure out better way to merge set-cookie in express
       var authCookie = cookie[0].split(';')[0].split('=');
       res.cookie(authCookie[0], authCookie[1])
@@ -87,7 +85,7 @@ module.exports = function(app, errorHandler) {
       , function(e,r,b) {
         var user = JSON.parse(b).userCtx.name
         if(user) {
-          getDoc(couch + '_users/org.couchdb.user:' + user
+          util.getDoc(couch + '_users/org.couchdb.user:' + user
             , function(doc) {
               res.header('Content-Type', 'application/json');
               res.end(JSON.stringify({token: doc.couch_token}));
@@ -98,78 +96,5 @@ module.exports = function(app, errorHandler) {
         }
       })
   })
-  
-  function couchUserDoc(userData) {
-    var salt = rbytes.randomBytes(16).toHex()
-      , password = rbytes.randomBytes(16).toHex()
-      ;
-    return _.extend(userData, {
-         _id: "org.couchdb.user:" + userData.screen_name
-      , type: "user"
-      , roles: []
-      , name: userData.screen_name
-      , salt: salt
-      , password_sha: crypto.createHash("sha1").update(password + salt).digest('hex')
-      , couch_token: password
-    })
-  }
-  
-  function couchProfile(userData) {
-    return {
-         _id: userData.screen_name
-      , avatar: userData.profile_image_url
-    }
-  }
-  
-  function logUserIn(userData, callback) {
-    var userDocURL = couch + '/_users/org.couchdb.user:' + userData.screen_name;
-    getOrCreate(userDocURL, userData, function(userDoc) {
-      request.post({
-          uri: couch + '/_session'
-        , headers: {"content-type": "application/x-www-form-urlencoded"}
-        , body: qs.encode({name: userDoc.name, password: userDoc.couch_token})
-      }
-      , function(e,r,b) {
-        getOrCreate(couch + '/datacouch-users/' + userDoc.screen_name, couchProfile(userDoc)
-          , function(profile) {
-            callback(userDoc, r.headers['set-cookie']);
-          });
-      })
-    })
-  }
-
-  function getOrCreate(url, userData, callback) {    
-    getDoc(url, function(doc) {
-      if(doc) {
-        callback(doc)
-      } else {
-        createDoc(url, userData
-          , function(doc) {
-              callback(doc);
-        })
-      }
-    })
-  }
-
-  function getDoc(url, callback) {
-    request.get({uri: url, json: true}
-      , function(e,r,b) { 
-        if (r.statusCode === 404) callback(false) 
-        else callback(b)
-      }
-    )
-  }
-  
-  function createDoc(url, userData, callback) {
-    request.put({uri: url, body: userData, json: true}
-      , function(e,r,b) { 
-        _.extend(userData
-          , { _id: r.id
-            , _rev: r.rev
-        })
-        callback(userData)
-      }
-    )
-  }  
    
 };
