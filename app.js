@@ -164,7 +164,7 @@ ddoc.lists = {
 
 ddoc.validate_doc_update = function (newDoc, oldDoc, userCtx) {
   if (userCtx.roles.indexOf('_admin') > -1) return;
-  if ( (newDoc.type !== "database") || (newDoc.couch_user !== userCtx.name) ) throw({forbidden : "You can't create datasets or apps for other users."});
+  if ( (newDoc.type !== "database") || (newDoc.user !== userCtx.name) ) throw({forbidden : "You can't create datasets or apps for other users."});
 };
 
 couchapp.loadAttachments(ddoc, path.join(__dirname, 'attachments'));

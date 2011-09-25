@@ -54,7 +54,7 @@ follow({db:db, include_docs:true}, function(error, change) {
         } else {
           pushCouchapp("../../db.js", couch + "/" + dbName).then(done);
         }
-        setAdmin(dbName, doc.couch_user); 
+        setAdmin(dbName, doc.user); 
       })
     }
   })

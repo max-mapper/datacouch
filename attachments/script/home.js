@@ -105,7 +105,6 @@ app.routes = {
               description: dataset.description,
               name: dataset.name,
               user: app.profile._id,
-              couch_user: app.session.userCtx.name,
               avatar: app.profile.avatar,
               createdAt: new Date()
             };
@@ -215,7 +214,6 @@ app.after = {
         description: form.description,
         type: "database",
         user: app.profile._id,
-        couch_user: app.session.userCtx.name,
         avatar: app.profile.avatar,
         createdAt: new Date()
       });
