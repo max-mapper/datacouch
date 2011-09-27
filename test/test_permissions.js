@@ -4,7 +4,6 @@
  * run via 'node test_permissions.js'. no output means everything passed!
  */
 
-
 // setup & test helpers
 
 var couch         = process.env['DATACOUCH_ROOT']
@@ -59,7 +58,9 @@ function verifyCreated(doc, url, callback) {
 
 var tests = [
   function newDatasetForUser(done) {
+    // should make a couch database with id equal to the metadata doc id
     verifyCreated(databaseDoc, couch + '/' + databaseDoc._id, function(ok) {
+      // cleanup
       async.parallel({
           db: function(cb) { request.del({uri: couch + '/' + databaseDoc._id, json: true}, cb) }
         , doc: function(cb) {
@@ -77,17 +78,21 @@ var tests = [
     })
   },
   function forkDatasetForUser(done) {
+    // make empty database
     request.put({uri: couch + '/dcpizzataco', json: true}
       , function(e,r,b) {
+        // put a doc in the database
         request.post({uri: couch + '/dcpizzataco', body: {_id: "cat_barrels"}, json: true}
           , function(e,r,b) {
             var forkedDataset = _.extend({}, databaseDoc, {
               forkedFrom: "dcpizzataco",
               forkedFromUser: "misterwendel"
             })
+            // should copy dcpizzataco with all the docs into the new database
             verifyCreated(forkedDataset, couch + '/' + forkedDataset._id, function(ok) {
               waitUntilExists(couch + '/' + forkedDataset._id + '/cat_barrels', function(created) {
                 it(created).equal(true);
+                // cleanup
                 async.parallel({
                     db: function(cb) { request.del({uri: couch + '/' + 'dcpizzataco', json: true}, cb) }
                   , forkedDB: function(cb) { request.del({uri: couch + '/' + forkedDataset._id, json: true}, cb) }
