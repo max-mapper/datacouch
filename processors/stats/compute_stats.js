@@ -1,5 +1,8 @@
 /**  Computes and stores database metadatas
-  *  Usage: export DATACOUCH_STATS="http://admin:admin@yourcouch" then run "node compute_stats.js"
+  *  Setup environment variables (see datacouch readme for more info):
+  *    export DATACOUCH_ROOT="http://admin:pass@localhost:5984"
+  *    export DATACOUCH_VHOST="couchdb.dev:5984"
+  *  then "node compute_stats.js"
   *  Author: Max Ogden (@maxogden)
  **/
 

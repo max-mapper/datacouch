@@ -1,5 +1,8 @@
 /**  Logs couchapp pageviews via a transparent image tracking thingy
-  *  Usage: export DATACOUCH_ANALYTICS="http://admin:admin@yourcouch/datacouch-analytics"  then "node collect_analytics.js"
+  *  Setup environment variables (see datacouch readme for more info):
+  *    export DATACOUCH_ROOT="http://admin:pass@localhost:5984"
+  *    export DATACOUCH_VHOST="couchdb.dev:5984"
+  *  then "node collect_analytics.js"
   *  Author: Max Ogden (@maxogden) forked from Dale Harvey (@daleharvey)
  **/
 

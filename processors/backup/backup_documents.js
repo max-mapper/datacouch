@@ -1,5 +1,8 @@
 /**  Copies all revisions of all documents to a separate backup database
-  *  Usage: export DATACOUCH_DATABASE="http://admin:admin@yourcouch/datacouch" then node backup_documents.js
+  *  Setup environment variables (see datacouch readme for more info):
+  *    export DATACOUCH_ROOT="http://admin:pass@localhost:5984"
+  *    export DATACOUCH_VHOST="couchdb.dev:5984"
+  *  then "node backup_documents.js"
   *  Author: Max Ogden (@maxogden)
  **/
  

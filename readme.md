@@ -6,13 +6,17 @@ A dataset collaboration network built on top of CouchDB. Very much a work in pro
 
 This will walk you through getting datacouch dev environment running on your local machine. Please note that datacouch makes extensive use of CouchDB rewrites and vhosts so there is a bit of configuration that needs to happen during the install.
 
-Requirements: node.js and CouchDB. To support log in with BrowserID you will need to compile Couch with this plugin: http://github.com/iriscouch/browserid_couchdb (default installed on every iriscouch.com instance). For testing purposes you don't need the plugin installed.
+Requirements: node.js ~0.4.8 and CouchDB >= 1.1
 
-get Couch >= 1.1 and set up an admin user account
+get Couch and set up an admin user account
+
+go to the `_users` db in [Futon](http://localhost:5984/_utils) and set the Security settings Member Roles to `["_admin"]`. This will make it so that only admins can view `_users` documents because Datacouch uses them to store private tokens and other things that shouldn't be shared publicly.
+
+![_users db security settings](http://i.imgur.com/vBMw7.png)
 
 create these databases:
 
-    // the main database. each document inside it will correspond to a user's dataset
+    // the main database. each document inside it will correspond to a user's dataset or app
     // and will contain metadata such as # docs, if it was forked, etc
     datacouch
     
@@ -21,13 +25,18 @@ create these databases:
     
     // unique visits to each dataset will be logged here
     datacouch-analytics
-
+    
+![couch databases](http://i.imgur.com/UFUxj.png)
+    
 setup the Couch configuration like so:
 
     httpd, allow_jsonp, true
     httpd, secure_rewrites, false
     vhosts, datacouch.dev, /datacouch/_design/datacouch/_rewrite
     httpd_global_handlers, _analytics, {couch_httpd_proxy, handle_proxy_req, <<"http://localhost:9876">>}
+    httpd_global_handlers, _twitter, {couch_httpd_proxy, handle_proxy_req, <<"http://localhost:9870">>}
+    
+![couch configuration from futon](http://i.imgur.com/QZ1MQ.png)
     
 add or edit the following line to/in your /etc/hosts file
 
@@ -46,26 +55,31 @@ install node.js v0.4.8 and npm
 install the required npm modules
 
     cd datacouch/
-    npm install couchapp
-    npm install couchapp -g
-    cd processors/
-    npm install couchapp request crypto deferred underscore follow
+    npm install (this installs the deps defined in `/package.json`)
+    npm install couchapp -g (this installs the `couchapp` binary command globally)
   
-deploy the various couchapps to your Couch. these mostly set data permissions and database views:
+deploy the various couchapps to your Couch. these mostly set database permissions and adds database views:
 
-    cd datacouch/
     couchapp push app.js http://admin:pass@localhost:5984/datacouch
     couchapp push users.js http://admin:pass@localhost:5984/datacouch-users
     couchapp push analytics.js http://admin:pass@localhost:5984/datacouch-analytics
-  
-start the various node async processes. these should always be running somewhere. think of them like async job workers
 
-    node provision_databases.js http://admin:pass@localhost:5984 datacouch
-    node compute_stats.js http://admin:pass@localhost:5984
-    node collect_analytics.js http://admin:pass@localhost:5984/datacouch-analytics
+go to dev.twitter.com and make an app and then add some environment variables to your `.bashrc`/`.bash_profile`:
+
+    export DATACOUCH_ROOT="http://admin:pass@localhost:5984"
+    export DATACOUCH_VHOST="couchdb.dev:5984"
+    export DATACOUCH_TWITTER_KEY="KEY FROM https://dev.twitter.com/ HERE"
+    export DATACOUCH_TWITTER_SECRET="SECRET FROM https://dev.twitter.com/ HERE"
+
+start the various node async processes. these should always be running somewhere. think of them like async job workers. you will want to run 'npm install' from each `processors` directory to install the various dependencies
+
+    node provision_databases.js
+    node compute_stats.js
+    node collect_analytics.js
+    node auth_server.js
 
 now you can launch datacouch:
 
     open http://datacouch.dev:5984
     
-to log in without browserid during development, visit futon at http://couchdb.dev:5984/api/couch/_utils and use the "sign up" and "login" buttons in the bottom right corner to create and log into non-admin local test user accounts
+to log in without twitter during development, uncomment the line in `/app.js` that contains `/fakelogin` and then `couchapp push app.js` into `/datacouch` again to enable 'fake' login. you can then visit `http://datacouch.dev:5984/fakelogin` to log in using the dummy twitter data from `mock_response.json`. make sure to never enable the `/fakelogin` route in production!

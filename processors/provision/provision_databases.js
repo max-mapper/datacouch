@@ -1,5 +1,8 @@
 /**  Creates databases for users
-  *  Usage: export DATACOUCH_DATABASE="http://admin:admin@yourcouch/datacouch"  then "node provision_databases.js"
+  *  Setup environment variables (see datacouch readme for more info):
+  *    export DATACOUCH_ROOT="http://admin:pass@localhost:5984"
+  *    export DATACOUCH_VHOST="couchdb.dev:5984"
+  *  then "node provision_databases.js"
   *  Author: Max Ogden (@maxogden)
  **/
  
