@@ -41,7 +41,7 @@ follow({db:db, include_docs:true}, function(error, change) {
     checkExistenceOf(dbPath + "/_design/" + app.ddoc).then(function(status) {
       if(status === 404) {
         replicate("apps", dbPath, "_design/" + app.ddoc).then(done);
-        addVhost(doc.user + "-" + app.ddoc + "." + vhostDomain, "/" + dbName + "/_design/" + app.ddoc + "/_rewrite")
+        addVhost(doc.user + "-" + app.ddoc + "." + vhostDomain, "/" + dbName + "/_design/" + app.ddoc + "/_rewrite");
       };
     })
   })

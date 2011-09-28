@@ -84,6 +84,13 @@ ddoc.views = {
   }
 };
 
+ddoc.filters = {
+  by_type: function(doc, req) {
+    if (!doc.type || !req.query.type) return false;
+    return doc.type === req.query.type;
+  }
+}
+
 ddoc.lists = {
   /**
    * Generates a CSV from all the rows in the view.
