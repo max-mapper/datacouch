@@ -1,3 +1,7 @@
+// utility to take a couchapp and bulk push it to many databases
+// depends on the by_date view in datacouch which returns a meta-doc that represents a real database
+// usage: set DATACOUCH_ROOT then node update_ddocs.js
+
 var request = require('request')
   , couchapp = require('couchapp')
   , deferred = require('deferred')
