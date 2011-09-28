@@ -17,7 +17,7 @@ ddoc =
     , {from:"/api/datasets", to:"_view/by_date", query:{include_docs:"true", descending: "true"}}
     , {from:"/api/profile/all", to:"../../../datacouch-users/_design/users/_list/all/users"}
     , {from:"/api/trending", to:"_view/popular", query:{include_docs: "true", descending: "true", limit: "10"}}
-    , {from:"/api/apps", to:"_view/apps", query:{include_docs: "true"}}
+    , {from:"/api/templates", to:"_view/templates", query:{include_docs: "true"}}
     , {from:"/api/users/search/:user", to:"../../../datacouch-users/_design/users/_view/users", query:{startkey:":user", endkey:":user", include_docs: "true"}}
     , {from:"/api/users", to:'../../../datacouch-users/'}
     , {from:"/api/users/*", to:'../../../datacouch-users/*'}
@@ -77,9 +77,9 @@ ddoc.views = {
       if(doc.hits) emit(doc.hits);
     }
   },
-  apps: {
+  templates: {
     map: function(doc) {
-      if(doc.type === "app") emit(doc.name);
+      if(doc.type === "template") emit(doc.name);
     }
   }
 };

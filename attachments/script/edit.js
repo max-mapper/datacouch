@@ -25,15 +25,15 @@ app.routes = {
   },
   modals: {
     browse: function() {
-      couch.request({url: app.baseURL + "api/apps"}).then(function(apps) {
-        var appData = {apps: _(apps.rows).map(function(row) { 
-          var appDoc = row.doc;
+      couch.request({url: app.baseURL + "api/templates"}).then(function(templates) {
+        var templateData = {templates: _(templates.rows).map(function(row) { 
+          var templateDoc = row.doc;
           return { 
-            ddoc: appDoc.ddoc,
-            screenshot: app.baseURL + "api/" + appDoc._id + '/screenshot.png'
+            ddoc: templateDoc.ddoc,
+            screenshot: app.baseURL + "api/" + templateDoc._id + '/screenshot.png'
           }
         })}
-        recline.showDialog("appTemplates", appData);
+        recline.showDialog("appTemplates", templateData);
       })
     },
     login: function() {
