@@ -117,8 +117,9 @@ ddoc.lists = {
 
 ddoc.validate_doc_update = function (newDoc, oldDoc, userCtx, dbCtx) {
   if (userCtx.roles.indexOf('_admin') > -1) return;
-  
-  if(!userCtx.name) {
+    
+  if (!userCtx.name) {
+    if ( !oldDoc && (newDoc.crowdsourced) ) return;
     throw({forbidden : "You have to be signed in to change stuff."});;  
   }
   
