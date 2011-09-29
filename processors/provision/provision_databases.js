@@ -42,7 +42,7 @@ follow({db: db, include_docs: true, filter: "datacouch/by_value", query_params: 
         if (doc.forkedFrom) {
           replicate(doc.forkedFrom, dbName).then(done);
         } else {
-          pushCouchapp("../../db.js", couch + "/" + dbName).then(done);
+          pushCouchapp("recline", dbPath).then(done);
         }
         setAdmin(dbName, doc.user); 
       })
@@ -70,8 +70,14 @@ function absolutePath(pathname) {
 }
 
 function pushCouchapp(app, target) {
-  var dfd = deferred();
-  couchapp.createApp(require(absolutePath(app)), target, function (app) { app.push(function(resp) { dfd.resolve() }) })
+  var dfd = deferred()
+    , source = couch + '/apps/_design/' + app + "?attachments=true"
+    , destination = target + '/_design/' + app + "?new_edits=false"
+    , headers = {'accept':"multipart/related,application/json"}
+    ;
+  request.get({url: source, headers: headers, json: true}).pipe(request.put(destination, function(err, resp, body) { 
+    dfd.resolve(body);
+  }));
   return dfd.promise();
 }
 
