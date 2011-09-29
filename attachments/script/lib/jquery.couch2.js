@@ -32,7 +32,7 @@
         dfd.resolve(successResponse);
       }, 
       function(errorResponse) {
-        app.emitter.emit("Fatal XHR Error", 'error');
+        if(ajaxOpts.type !== "HEAD") app.emitter.emit("Fatal XHR Error", 'error');
         dfd.reject(errorResponse);
       }
     )

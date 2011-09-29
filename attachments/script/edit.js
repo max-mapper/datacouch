@@ -56,7 +56,12 @@ app.routes = {
       recline.initializeTable(app.offset);
     },
     apps: function() {
-      util.render('appsTab', 'sidebar', util.formatProperties(app.datasetInfo))
+      couch.request({url: app.baseURL + 'api/applications/' + app.dbInfo.db_name}).then(function(resp) {
+        var apps = _.map(resp.rows, function(row) {
+          return {ddoc: row.doc.ddoc, docid: row.doc._id};
+        })
+        util.render('appsTab', 'sidebar', {apps: apps})        
+      })
     },
     history: function() {
       util.render('historyTab', 'sidebar')
@@ -292,6 +297,7 @@ app.after = {
     $('.root').live('click', function(e) {
       var clicked = $(e.target)
         , ddoc = clicked.attr('data-ddoc')
+        , docid = clicked.attr('data-docid')
         ;
       if(clicked.hasClass('selected')) return;
       $('.sidebar .selected').removeClass('selected');
@@ -299,7 +305,7 @@ app.after = {
       clicked.addClass('selected');
       if (ddoc) {
         var domain = $.url(window.location).attr('authority');
-        util.render("ddocIframe", "right-panel", {ddoc: ddoc, url: "http://" + app.datasetInfo.user + "-" + ddoc + "." + domain})
+        util.render("ddocIframe", "right-panel", {ddoc: ddoc, url: "http://" + docid + "." + domain})
         util.getDDocFiles("/_design/" + ddoc).then(function(folder) {
           app.fileHtmlElementByPath = {}
           app.stateByPath = {}

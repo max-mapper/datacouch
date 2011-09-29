@@ -202,6 +202,7 @@ var recline = function() {
   
   function showSessionButtons() {
     couch.session().then(function(session) {
+      app.session = session;
       if ( session.userCtx.name ) util.render('signOut', 'project-controls');
       else util.render('signIn', 'project-controls')
     })

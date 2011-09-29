@@ -692,25 +692,20 @@ var util = function() {
     return editor;
   }
   
-  function addApp(ddoc, id) {
-    var docURL = app.baseURL + "api/" + id;
-    couch.request({url: docURL}).then(function(doc) {
-      if(!doc.apps) doc.apps = [];
-      if(_.detect(doc.apps, function(appEntry) { return appEntry.ddoc === ddoc })) {
+  function addApp(ddoc, dataset) {
+    couch.request({url: app.baseURL + "api/applications/" + dataset}).then(function(result) {
+      var apps = result.rows;
+      if(_.detect(apps, function(appEntry) { return appEntry.ddoc === ddoc })) {
         util.hide('dialog');
-        util.notify('That app is already installed')
+        util.notify('That app is already installed');
       } else {
-        doc.apps.push({ddoc: ddoc});
-        couch.request({url: docURL, type: "PUT", data: JSON.stringify(doc)}).then(function(resp) {
-          var dbName = id + "/_design/" + ddoc;
+        var doc = {type: "app", user: app.session.userCtx.name, dataset: dataset, ddoc: ddoc};
+        couch.request({url: app.baseURL + "api", type: "POST", data: JSON.stringify(doc)}).then(function(resp) {
           function waitUntilExists(url) {
             couch.request({url: url, type: "HEAD"}).then(
               function(resp, status) {
-                couch.request({url: app.baseURL + "api/" + id}).then(function(datasetInfo) {
-                  util.hide('dialog');
-                  app.datasetInfo = datasetInfo;
-                  app.routes.tabs['apps']();
-                })
+                util.hide('dialog');
+                app.routes.tabs['apps']();
               },
               function(resp, status){
                 console.log("not created yet...", resp, status);
@@ -721,7 +716,7 @@ var util = function() {
             )
           }
           util.render('busy', 'dialog-content', {message: "Installing app..."});
-          waitUntilExists(couch.rootPath + "api/couch/" + dbName);
+          waitUntilExists(couch.rootPath + "api/couch/" + dataset + "/_design/" + ddoc);
         })
       }
     })

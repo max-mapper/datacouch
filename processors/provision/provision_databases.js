@@ -25,26 +25,13 @@ var configURL = url.parse(process.env['DATACOUCH_ROOT'] + "/datacouch")
   , h = {"Content-type": "application/json", "Accept": "application/json"}
   ;
 
-follow({db:db, include_docs:true}, function(error, change) {
+follow({db: db, include_docs: true, filter: "datacouch/by_value", query_params: {k: "type", v: "database"}}, function(error, change) {
   if (error || change.deleted || !("doc" in change)) return;
-  if (!("type" in change.doc)) return;
-  if (change.doc.type !== "database") return;
   
   var doc = change.doc
     , dbName = doc._id
     , dbPath = couch + "/" + dbName
     ;
-
-  _(doc.apps).each(function(app) {
-    var start_time = new Date();
-    function done() { console.log("installed " + app.ddoc + " into " + dbPath + " in " + (new Date() - start_time) + "ms") }
-    checkExistenceOf(dbPath + "/_design/" + app.ddoc).then(function(status) {
-      if(status === 404) {
-        replicate("apps", dbPath, "_design/" + app.ddoc).then(done);
-        addVhost(doc.user + "-" + app.ddoc + "." + vhostDomain, "/" + dbName + "/_design/" + app.ddoc + "/_rewrite");
-      };
-    })
-  })
   
   checkExistenceOf(dbPath).then(function(status) {
     if(status === 404) {
@@ -60,6 +47,20 @@ follow({db:db, include_docs:true}, function(error, change) {
         setAdmin(dbName, doc.user); 
       })
     }
+  })
+})
+
+follow({db: db, include_docs: true, filter: "datacouch/by_value", query_params: {k: "type", v: "app"}}, function(error, change) {
+  if (error || change.deleted || !("doc" in change)) return;
+  var start_time = new Date()
+    , dbPath = couch + '/' + change.doc.dataset
+    ;
+  function done() { console.log("installed " + change.doc.ddoc + " into " + dbPath + " in " + (new Date() - start_time) + "ms") }
+  checkExistenceOf(dbPath + "/_design/" + change.doc.ddoc).then(function(status) {
+    if(status === 404) {
+      replicate("apps", dbPath, "_design/" + change.doc.ddoc).then(done);
+      addVhost(change.doc._id + "." + vhostDomain, "/" + change.doc.dataset + "/_design/" + change.doc.ddoc + "/_rewrite");
+    };
   })
 })
 

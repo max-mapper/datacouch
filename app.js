@@ -13,6 +13,8 @@ ddoc =
     , {from:"/login/callback", to:"../../../_twitter/auth/twitter/callback"}
     , {from:"/logout", to:"../../../_twitter/logout"}
     , {from:"/api/token", to:"../../../_twitter/auth/token"}
+    , {from:"/api/applications/:dataset", to:"_view/applications", query:{endkey:":dataset", startkey:":dataset", include_docs:"true", descending: "true"}}
+    , {from:"/api/applications", to:"_view/applications", query:{include_docs:"true", descending: "true"}}
     , {from:"/api/datasets/:user", to:"_view/by_user", query:{endkey: [":user",null], startkey:[":user",{}], include_docs:"true", descending: "true"}}
     , {from:"/api/datasets", to:"_view/by_date", query:{include_docs:"true", descending: "true"}}
     , {from:"/api/profile/all", to:"../../../datacouch-users/_design/users/_list/all/users"}
@@ -81,13 +83,18 @@ ddoc.views = {
     map: function(doc) {
       if(doc.type === "template") emit(doc.name);
     }
+  },
+  applications: {
+    map: function(doc) {
+      if(doc.type === "app") emit(doc.dataset);
+    }
   }
 };
 
 ddoc.filters = {
-  by_type: function(doc, req) {
-    if (!doc.type || !req.query.type) return false;
-    return doc.type === req.query.type;
+  by_value: function(doc, req) {
+    if (!req.query.k || !req.query.v || !doc[req.query.k]) return false;
+    return doc[req.query.k] === req.query.v;
   }
 }
 
@@ -171,7 +178,8 @@ ddoc.lists = {
 
 ddoc.validate_doc_update = function (newDoc, oldDoc, userCtx) {
   if (userCtx.roles.indexOf('_admin') > -1) return;
-  if ( (newDoc.type !== "database") || (newDoc.user !== userCtx.name) ) throw({forbidden : "You can't create datasets or apps for other users."});
+  if (["app", "database", "template"].indexOf(newDoc.type) === -1) throw({forbidden : "Invalid doc type"});
+  if ( (newDoc.user !== userCtx.name) ) throw({forbidden : "You can't create datasets or apps for other users."});
 };
 
 couchapp.loadAttachments(ddoc, path.join(__dirname, 'attachments'));
