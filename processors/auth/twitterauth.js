@@ -1,5 +1,5 @@
 var couch         = process.env['DATACOUCH_ROOT']
-  , couchVhost    = process.env['DATACOUCH_VHOST']
+  , couchVhost    = process.env['DATACOUCH_TWITTER_VHOST']
   , twitterKey    = process.env['DATACOUCH_TWITTER_KEY']
   , twitterSecret = process.env['DATACOUCH_TWITTER_SECRET']
   , oauth   = require('oauth')
