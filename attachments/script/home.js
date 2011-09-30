@@ -19,7 +19,6 @@ couch.rootPath = couch.dbPath + "couch/";
       login
       logout
       cancel
-      fork
 */
 
 app.routes = {
@@ -89,47 +88,6 @@ app.routes = {
     },
     close: function() {
       window.close();
-    },
-    fork: function(id) {
-      monocles.ensureProfile().then(function(profile) {
-        util.show('dialog');
-        util.render('loadingMessage', 'modal', {message: "Forking to your account..."});
-        couch.request({url: app.baseURL + "api/" + id }).then( function( dataset ) { 
-          couch.request({url: couch.rootPath + "_uuids"}).then( function( data ) { 
-            var docID = data.uuids[ 0 ];
-            var doc = {
-              forkedFrom: dataset._id,
-              forkedFromUser: dataset.user,
-              _id: "dc" + docID,
-              type: "database",
-              description: dataset.description,
-              name: dataset.name,
-              user: app.profile._id,
-              avatar: app.profile.avatar,
-              createdAt: new Date()
-            };
-            couch.request({url: app.baseURL + "api/" + doc._id, type: "PUT", data: JSON.stringify(doc)}).then(function(resp) {
-              var dbID = resp.id
-                , dbName = dbID + "/_design/recline"
-                ;
-              function waitForDB(url) {
-                couch.request({url: url, type: "HEAD"}).then(
-                  function(resp, status) {
-                    window.location = app.baseURL + 'edit/#/' + dbID;
-                  },
-                  function(resp, status){
-                    console.log("not created yet...", resp, status);
-                    setTimeout(function() {
-                      waitForDB(url);
-                    }, 500);
-                  }
-                )
-              }
-              waitForDB(couch.rootPath + dbName);
-            });
-          });
-        });
-      })
     }
   }
 }

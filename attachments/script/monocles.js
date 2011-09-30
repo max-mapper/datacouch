@@ -48,17 +48,16 @@ $(function(){
     }
 
     // gets user's stored profile info from couch
-    // asks them to fill out a form if it's their first login
     function fetchProfile(session) {
       var dfd = $.Deferred();
-      couch.get( "users/" + session.userCtx.name ).then(
+      couch.request({url: app.baseURL + "api/users/" + session.userCtx.name}).then(
         function(profile) {
           app.profile = profile;
           dfd.resolve( profile );
         },
         function(error) {
           console.log('no profile?!')
-          window.location.href = "#/";
+          if(window.location.hash !== "#/activity") window.location.href = "#/";
         }
       )
       return dfd.promise();
@@ -75,7 +74,7 @@ $(function(){
         });
       }
       
-      couch.get( "users/" + profileDoc._id ).then(
+      couch.get( app.baseURL + "api/users/" + profileDoc._id ).then(
         function( profile ) {
           $.extend(profile, profileDoc);
           upload(profile);

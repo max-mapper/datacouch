@@ -180,6 +180,7 @@ ddoc.validate_doc_update = function (newDoc, oldDoc, userCtx) {
   if (userCtx.roles.indexOf('_admin') > -1) return;
   if (["app", "database", "template"].indexOf(newDoc.type) === -1) throw({forbidden : "Invalid doc type"});
   if ( (newDoc.user !== userCtx.name) ) throw({forbidden : "You can't create datasets or apps for other users."});
+  if( newDoc.forkedFromUser && ( newDoc.forkedFromUser === userCtx.name )) throw({forbidden : "You can't fork your own datasets."});
 };
 
 couchapp.loadAttachments(ddoc, path.join(__dirname, 'attachments'));

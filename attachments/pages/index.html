@@ -209,7 +209,7 @@
         Forking & Refining
       </dt>
       <dd>
-        You can create new datasets by uplooading CSV/JSON data or fork datasets from other users to your account. You can only edit data in datasets that are under your account. Soon you will be able to submit pull requests back to datasets owners.
+        You can create new datasets by uplooading CSV/JSON data or fork datasets from other users to your account. You can only edit data in datasets that are under your account. Soon you will be able to submit pull requests back to dataset owners.
       </dd>
       <dt>
         App/Visualization Templates
@@ -325,23 +325,20 @@
     <ol class="datasets detailed">
     {{#datasets}}
       <li>
-      <div class="name">
-        <a class="owner" href="#/{{user}}">{{user}}</a>&nbsp;/ <a class="dataset" href="edit/#/{{id}}">{{name}}</a>
-        {{#nouns}}
-        <a href="http://thenounproject.com/noun/{{noun}}/">{{{svg}}}</a>
-        {{/nouns}}
-      </div>
-      <div class="forkedFrom">
-        {{#forkedFrom}}
-        <span><span class="fork icon"></span>forked from <a href="#/{{forkedFromUser}}">{{forkedFromUser}}</a>&nbsp;/ <a class="dataset" href="#/{{forkedFrom}}">{{name}}</a></span>
-        {{/forkedFrom}}
-      </div>
-      <div class="metadata subtitle">Created <span class="timeago" title="{{date}}"></span>, {{count}} documents, {{size}}</div>
-      <div class="avatar"><a href="#/{{user}}"><img src="{{#avatar}}{{avatar}}{{/avatar}}{{^avatar}}images/avatar_default.png{{/avatar}}"></a></div>
-      {{#description}}<div><p>{{description}}</p></div>{{/description}}
-      <div class="datasetActions">
-        {{#loggedIn}}<a href="#/fork/{{id}}!" class="btn secondary small"><span class="fork icon"></span>Fork dataset</a>{{/loggedIn}}
-      </div>
+        <div class="name">
+          <a class="owner" href="#/{{user}}">{{user}}</a>&nbsp;/ <a class="dataset" href="edit/#/{{id}}">{{name}}</a>
+          {{#nouns}}
+          <a href="http://thenounproject.com/noun/{{noun}}/">{{{svg}}}</a>
+          {{/nouns}}
+        </div>
+        <div class="forkedFrom">
+          {{#forkedFrom}}
+          <span><span class="fork icon"></span>forked from <a href="#/{{forkedFromUser}}">{{forkedFromUser}}</a>&nbsp;/ <a class="dataset" href="#/{{forkedFrom}}">{{name}}</a></span>
+          {{/forkedFrom}}
+        </div>
+        <div class="metadata subtitle">Created <span class="timeago" title="{{date}}"></span>, {{count}} documents, {{size}}</div>
+        <div class="avatar"><a href="#/{{user}}"><img src="{{#avatar}}{{avatar}}{{/avatar}}{{^avatar}}images/avatar_default.png{{/avatar}}"></a></div>
+        {{#description}}<div><p>{{description}}</p></div>{{/description}}
       </li>
     {{/datasets}}
     </ol>
