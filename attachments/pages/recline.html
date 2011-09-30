@@ -6,6 +6,7 @@
   <link rel="stylesheet" href="/style/reset.css" media="screen">
   <link rel="stylesheet" href="/style/data-table.css" media="screen"> 
   <link rel="stylesheet" href="/style/recline.css" media="screen">
+  <link rel="stylesheet" href="/style/iconic.css" media="screen">
   <link rel="stylesheet" href="/style/codemirror.css">
   <link rel="stylesheet" href="/style/codemirror-default.css">
   <script type="text/javascript" src="/script/deps-min.js"></script>  
@@ -53,8 +54,31 @@
   </script>
   
   <script type='text/mustache' class="appTemplatesTemplate">
-    <div class="appTemplates">
-      {{#templates}}<img data-ddoc="{{ddoc}}" src="{{screenshot}}">{{/templates}}
+    <div class="infopanel">
+      <div class="top">
+        <div class="title">
+          App Directory
+        </div>
+        <div class="subtitle">
+          Choose an application to install on top of this dataset.
+        </div>
+      </div>
+      <div class="bottom">
+        <div class="appTemplates">
+          {{#templates}}
+            <div data-ddoc="{{ddoc}}" class="appTemplate">
+              <div class="title">
+                {{name}}
+              </div>
+              <div class="subtitle">
+                {{description}}
+              </div>
+              <img src="{{screenshot}}">
+            </div>
+          {{/templates}}
+        </div>
+      </div>
+      <a href="#/close!"><div class="close"></div></a>
     </div>
   </script>
 
@@ -154,7 +178,7 @@
   <script type='text/mustache' class="appsTabTemplate">
     <div class="top">
       {{^apps}}<div class="description">You haven't made any apps on top of this data yet.</div>{{/apps}}
-      <a href="#/browse!">Browse available apps</a>
+      <a class='iconic magnifying-glass'></a><a href="#/browse!">Browse available apps</a>
     </div>
     <div class="bottom">
       {{#apps}}

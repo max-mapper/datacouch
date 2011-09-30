@@ -27,11 +27,9 @@ app.routes = {
     browse: function() {
       couch.request({url: app.baseURL + "api/templates"}).then(function(templates) {
         var templateData = {templates: _(templates.rows).map(function(row) { 
-          var templateDoc = row.doc;
-          return { 
-            ddoc: templateDoc.ddoc,
-            screenshot: app.baseURL + "api/" + templateDoc._id + '/screenshot.png'
-          }
+          return _.extend({}, row.doc, { 
+            screenshot: app.baseURL + "api/" + row.doc._id + '/screenshot.png'
+          })
         })}
         recline.showDialog("appTemplates", templateData);
       })
@@ -88,6 +86,9 @@ app.routes = {
           });
         });
       })
+    },
+    close: function() {
+      util.hide('dialog');
     }
   },
   tabs: {
@@ -330,8 +331,8 @@ app.after = {
     tabs.find('a').first().click();
   },
   appTemplates: function() {
-    $('.appTemplates img').click(function(e) {
-      var ddoc = $(e.target).attr('data-ddoc');
+    $('.appTemplate').click(function(e) {
+      var ddoc = $(e.currentTarget).attr('data-ddoc');
       util.addApp(ddoc, app.datasetInfo._id);
     })
   },
