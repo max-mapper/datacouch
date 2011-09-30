@@ -208,6 +208,17 @@ var recline = function() {
     })
   }
   
+  function hasFork(callback) {
+    couch.request({url: app.baseURL + 'api/forks/' + app.dbInfo.db_name}).then(
+      function ( response ) {
+        var isOwner = _.detect(response.rows, function(row) {
+          return row.doc.user === app.session.userCtx.name;
+        })
+        if(isOwner) isOwner = isOwner.id;
+        callback(isOwner);
+      })
+  }
+  
   function initializeTable(offset) {
     util.render( 'tableContainer', 'right-panel' );
     showDialog('busy');
@@ -218,17 +229,20 @@ var recline = function() {
       });
       app.headers = headers;
       app.csvUrl = app.dbPath + '/csv?headers=' + escape(JSON.stringify(headers));
-      util.render( 'actions', 'project-actions', 
-        $.extend({}, app.dbInfo, {
-          url: app.csvUrl,
-          showForkButton: function() {
-            var loggedIn = ( app.session && app.session.userCtx.name )
-              , isntOwner = ( app.datasetInfo.user !== app.session.userCtx.name )
-              ;
-            return (loggedIn && isntOwner);
-          }
-        })
-      );
+      hasFork(function(fork) {
+        util.render( 'actions', 'project-actions', 
+          $.extend({}, app.dbInfo, {
+            url: app.csvUrl,
+            showForkButton: function() {
+              var loggedIn = ( app.session && app.session.userCtx.name )
+                , isntOwner = ( app.datasetInfo.user !== app.session.userCtx.name )
+                ;
+              return (loggedIn && isntOwner && !fork);
+            },
+            fork: fork
+          })
+        );
+      })
       fetchRows(false, offset);
     })
   }
@@ -244,6 +258,7 @@ var recline = function() {
     activateControls: activateControls,
     getPageSize: getPageSize,
     renderRows: renderRows,
+    hasFork: hasFork,
     initializeTable: initializeTable
   };
 }();

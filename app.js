@@ -17,6 +17,8 @@ ddoc =
     , {from:"/api/applications", to:"_view/applications", query:{include_docs:"true", descending: "true"}}
     , {from:"/api/datasets/:user", to:"_view/by_user", query:{endkey: [":user",null], startkey:[":user",{}], include_docs:"true", descending: "true"}}
     , {from:"/api/datasets", to:"_view/by_date", query:{include_docs:"true", descending: "true"}}
+    , {from:"/api/forks/:id", to:"_view/forks", query:{endkey:":id", startkey:":id", include_docs:"true", descending: "true"}}
+    , {from:"/api/forks", to:"_view/forks", query:{include_docs:"true", descending: "true"}}
     , {from:"/api/profile/all", to:"../../../datacouch-users/_design/users/_list/all/users"}
     , {from:"/api/trending", to:"_view/popular", query:{include_docs: "true", descending: "true", limit: "10"}}
     , {from:"/api/templates", to:"_view/templates", query:{include_docs: "true"}}
@@ -87,6 +89,11 @@ ddoc.views = {
   applications: {
     map: function(doc) {
       if(doc.type === "app") emit(doc.dataset);
+    }
+  },
+  forks: {
+    map: function(doc) {
+      if(doc.forkedFrom) emit(doc.forkedFrom);
     }
   }
 };
