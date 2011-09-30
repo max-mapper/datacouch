@@ -58,7 +58,7 @@ app.routes = {
     apps: function() {
       couch.request({url: app.baseURL + 'api/applications/' + app.dbInfo.db_name}).then(function(resp) {
         var apps = _.map(resp.rows, function(row) {
-          return {ddoc: row.doc.ddoc, docid: row.doc._id};
+          return {ddoc: row.doc.ddoc, url: row.doc.url};
         })
         util.render('appsTab', 'sidebar', {apps: apps})        
       })
@@ -297,15 +297,14 @@ app.after = {
     $('.root').live('click', function(e) {
       var clicked = $(e.target)
         , ddoc = clicked.attr('data-ddoc')
-        , docid = clicked.attr('data-docid')
+        , url = clicked.attr('data-url')
         ;
       if(clicked.hasClass('selected')) return;
       $('.sidebar .selected').removeClass('selected');
       $(this).find('li').removeClass('hidden');
       clicked.addClass('selected');
       if (ddoc) {
-        var domain = $.url(window.location).attr('authority');
-        util.render("ddocIframe", "right-panel", {ddoc: ddoc, url: "http://" + docid + "." + domain})
+        util.render("ddocIframe", "right-panel", {ddoc: ddoc, url: url});
         util.getDDocFiles("/_design/" + ddoc).then(function(folder) {
           app.fileHtmlElementByPath = {}
           app.stateByPath = {}

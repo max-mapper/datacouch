@@ -55,11 +55,16 @@ follow({db: db, include_docs: true, filter: "datacouch/by_value", query_params: 
   var start_time = new Date()
     , dbPath = couch + '/' + change.doc.dataset
     ;
-  function done() { console.log("installed " + change.doc.ddoc + " into " + dbPath + " in " + (new Date() - start_time) + "ms") }
   checkExistenceOf(dbPath + "/_design/" + change.doc.ddoc).then(function(status) {
     if(status === 404) {
-      replicate("apps", dbPath, "_design/" + change.doc.ddoc).then(done);
-      addVhost(change.doc._id + "." + vhostDomain, "/" + change.doc.dataset + "/_design/" + change.doc.ddoc + "/_rewrite");
+      var appURL = change.doc._id + "." + vhostDomain;
+      replicate("apps", dbPath, "_design/" + change.doc.ddoc).then(function() {
+        addVhost(appURL, "/" + change.doc.dataset + "/_design/" + change.doc.ddoc + "/_rewrite").then(function() {
+          request.post({url: db, body: _.extend({}, change.doc, {url: appURL}), json: true}, function(e,r,b) {
+            console.log("installed " + change.doc.ddoc + " into " + dbPath + " in " + (new Date() - start_time) + "ms");
+          })
+        });
+      });
     };
   })
 })

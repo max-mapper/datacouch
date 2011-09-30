@@ -701,22 +701,23 @@ var util = function() {
       } else {
         var doc = {type: "app", user: app.session.userCtx.name, dataset: dataset, ddoc: ddoc};
         couch.request({url: app.baseURL + "api", type: "POST", data: JSON.stringify(doc)}).then(function(resp) {
-          function waitUntilExists(url) {
-            couch.request({url: url, type: "HEAD"}).then(
-              function(resp, status) {
-                util.hide('dialog');
-                app.routes.tabs['apps']();
-              },
-              function(resp, status){
-                console.log("not created yet...", resp, status);
-                setTimeout(function() {
-                  waitUntilExists(url);
-                }, 500);
+          function waitUntilExists(docURL, property) {
+            couch.request({url: docURL}).then(
+              function(resp) {
+                if(resp[property]) {
+                  util.hide('dialog');
+                  app.routes.tabs['apps']();
+                } else {
+                  console.log("not created yet...", resp);
+                  setTimeout(function() {
+                    waitUntilExists(docURL, property);
+                  }, 500);
+                }
               }
             )
           }
           util.render('busy', 'dialog-content', {message: "Installing app..."});
-          waitUntilExists(couch.rootPath + "api/couch/" + dataset + "/_design/" + ddoc);
+          waitUntilExists(couch.rootPath + "api/" + resp.id, "url");
         })
       }
     })
