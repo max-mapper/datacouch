@@ -40,6 +40,7 @@ follow({db: db, include_docs: true, filter: "datacouch/by_value", query_params: 
       createDB(dbPath).then(function(response) {
         function done() { console.log("created " + dbName + " in " + (new Date() - start_time) + "ms") }
         if (doc.forkedFrom) {
+          // TODO prevent user from forking the same dataset twice
           replicate(doc.forkedFrom, dbName).then(done);
         } else {
           pushCouchapp("recline", dbPath).then(done);
