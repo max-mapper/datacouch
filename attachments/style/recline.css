@@ -318,6 +318,10 @@ span.tooltip-status {
   right: 10px;
 }
 
+.iframeContainer iframe {
+  position: absolute;
+}
+
 .iframeDetails {
   line-height: 30px;
 }
