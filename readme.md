@@ -1,6 +1,30 @@
 # DataCouch
 
-A dataset collaboration network built on top of CouchDB. Very much a work in progress/alpha software.
+A dataset collaboration network built on top of CouchDB. Developed as a free software @codeforamerica project for the City of Boston by @maxogden
+
+Very much a work in progress as of Fall 2011!
+
+## Features
+
+- Free public dataset hosting
+- Dataset forking
+- JSON and CSV data import and export
+- Bulk data cleanup interface based on Google Refine
+- Automatic REST JSON API powered by CouchDB
+- Real-time dataset replication and changes feed (SLEEP/syncable.org)
+- Geospatial queries
+- Data-driven HTML5 application hosting
+- Out of the box app templates
+- In-browser application source editor
+
+## Roadmap (fork and help out please!)
+
+- Data catalog functionality (search, categories)
+- UI for rolling back through different dataset revisions
+- Dataset pull requests and merging interface
+- XML, XLS and other import/export options
+- Additional bulk data editing helper functions  
+- Integration with BuzzData/CKAN/Infochimps (by convincing them to make better APIs)
 
 ## Installation
 
