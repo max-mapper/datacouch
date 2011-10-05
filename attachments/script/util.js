@@ -720,6 +720,11 @@ var util = function() {
     })
   }
   
+  function searchTwitter(term) {
+    var linkSearch = "http://search.twitter.com/search.json?rpp=4&page=1&q=filter:links%20";
+    return $.ajax({dataType: "jsonp", url: linkSearch + encodeURIComponent(term)}).promise();
+  }
+  
   return {
     inURL: inURL,
     formatDiskSize: formatDiskSize,
@@ -751,6 +756,7 @@ var util = function() {
     getDDocFiles: getDDocFiles,
     addHTMLElementForFileEntry: addHTMLElementForFileEntry,
     codeEditor: codeEditor,
-    addApp: addApp
+    addApp: addApp,
+    searchTwitter: searchTwitter
   };
 }();

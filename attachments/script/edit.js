@@ -94,6 +94,10 @@ app.routes = {
   tabs: {
     data: function() {
       util.render('dataTab', 'sidebar', util.formatProperties(app.datasetInfo))
+      util.searchTwitter("github.com").then(
+        function(results) {
+          util.render('tweetStream', 'tweetsContainer', results)
+        })
       recline.initializeTable(app.offset);
     },
     apps: function() {

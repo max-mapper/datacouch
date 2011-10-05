@@ -373,3 +373,56 @@ span.tooltip-status {
     overflow-x: auto;
     width: 100%;
 }
+
+/* BUBBRUBB STREAM FROM MONOCLES */
+
+.tweetStream {font-size: 12px; font-family: "Geneva", sans-serif;}
+.tweetStream a {
+  color: #556270;
+  color: #107fc9;
+  color: #019dbe;
+  text-decoration: none; }
+  a:hover {
+    color: white;
+    background-color: #556270;
+    background-color: #019dbe; }
+    
+.tweetsTitle {
+  font-size: 12px;
+  padding: 5px 15px 0px 15px;
+  color: black;}
+  
+.tweetsTitle iframe {
+  position: relative;
+  top: 4px;
+  margin-left: 5px;
+}
+
+ul.tweetStream {
+  margin: 0;
+  padding: 10px; }
+  ul.tweetStream > li {
+    list-style: none;
+    white-space: normal;
+    padding: 10px 0px 0px 0px;
+    border-bottom: 1px solid #eeeeee; }
+  ul.tweetStream > li:first-child {
+    padding-top: 0; }
+
+.tweetStream li.message {
+  position: relative;
+  line-height: 140%;
+  color: #999999; }
+  .tweetStream li.message .avatar {
+    float: left;}
+  .tweetStream li.message .delete:hover {
+    background: #eeeeee; }
+  .tweetStream li.message .content {
+    padding-left: 50px; }
+    .tweetStream li.message .content span.from {
+      color: black;
+      font-weight: normal;
+      font-size: 12px; }
+    .tweetStream li.message .content div.info {
+      color: #bababa;
+      font-size: 70%; }

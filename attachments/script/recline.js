@@ -230,13 +230,13 @@ var recline = function() {
       app.headers = headers;
       app.csvUrl = app.dbPath + '/csv?headers=' + escape(JSON.stringify(headers));
       hasFork(function(fork) {
+        var loggedIn = ( app.session && app.session.userCtx.name );
         util.render( 'actions', 'project-actions', 
           $.extend({}, app.dbInfo, {
             url: app.csvUrl,
+            loggedIn: loggedIn,
             showForkButton: function() {
-              var loggedIn = ( app.session && app.session.userCtx.name )
-                , isntOwner = ( app.datasetInfo.user !== app.session.userCtx.name )
-                ;
+              var isntOwner = ( app.datasetInfo.user !== app.session.userCtx.name );
               return (loggedIn && isntOwner && !fork);
             },
             fork: fork

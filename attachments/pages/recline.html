@@ -83,7 +83,7 @@
   </script>
 
   <script type='text/mustache' class="signInTemplate">
-    <a id="logged-in-status" href="#/login!" class="secondary">Sign in</a>
+    <a id="logged-in-status" href="#/login!" class="secondary"><img src="/images/sign-in-with-twitter.png"></a>
   </script>
   
   <script type='text/mustache' class="signOutTemplate">
@@ -101,7 +101,9 @@
         <span class="fork icon"></span><span>Your fork</span>
       </a>
     {{/fork}}
-    <a class="button" data-action="import" href="javascript:{}"><span data-action="import" class="button-menu">Import</span></a>
+    {{#loggedIn}}
+      <a class="button" data-action="import" href="javascript:{}"><span data-action="import" class="button-menu">Import</span></a>
+    {{/loggedIn}}
     <!-- <a class="button" data-action="edit" href="javascript:{}"><span data-action="transform" class="button-menu">Edit</span></a> -->
     <a class="button" data-action="export" href="javascript:{}"><span data-action="export" class="button-menu">Export</span></a>
   </script>
@@ -145,6 +147,7 @@
   <script type='text/mustache' class="dataTabTemplate">
     <div class="top">
       {{#description}}<div class="description">{{description}}</div>{{/description}}
+      {{^description}}<div class="description">This dataset doesn't have a description.</div>{{/description}}
       {{#hasNouns}}
       <div class="nounContainer">
       {{#nouns}}
@@ -161,7 +164,30 @@
         <div class="value {{classStyle}}">{{value}}</div>
       </div>
       {{/properties}}
+      <div class="tweetsContainer"></div>
     </div>
+  </script>
+  
+  <script type='text/mustache' class="tweetStreamTemplate">
+    <div class="tweetsTitle">
+      <span>Share this dataset!</span>
+      <a href="https://twitter.com/share" class="twitter-share-button" data-text="Check out this forkable dataset on DataCouch!" data-count="horizontal" data-via="maxogden">Tweet this page</a>
+    </div>
+    <ul class="tweetStream">
+      {{#results}}
+        <li class='message'>
+          <img class='avatar' width='35' height='35' src='{{profile_image_url}}'/>
+          <div class='content'>
+            <span class='from'>
+              <a href='http://twitter.com/{{from_user}}/status/{{id}}' class='hover_profile'>{{from_user}}</a>
+              {{text}}
+            </span>
+            <div class='info'>{{created_at}}</div>
+          </div>
+        </li>
+      {{/results}}
+    </ul>
+    <script type="text/javascript" src="//platform.twitter.com/widgets.js"></script>
   </script>
   
   <script type='text/mustache' class="ddocIframeTemplate">
