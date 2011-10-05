@@ -42,6 +42,10 @@ var util = function() {
     return userCtx.roles.indexOf("_admin") !== -1;
   }
   
+  function loggedIn() {
+    return app.session && app.session.userCtx.name;
+  }
+  
   function catchModals( route ) {
     
     // Trim off the #/ from the beginning of the route if it exists
@@ -493,26 +497,12 @@ var util = function() {
       
       if (datasets.length > 0) {
         util.render('datasets', 'trendingSetsContainer', {
-          loggedIn: function() {return app.session && app.session.userCtx.name },
+          loggedIn: loggedIn(),
           datasets: datasets,
           name: "Trending Datasets"
         });      
       }
     })
-  }
-
-  function formatProperties( properties ) {
-    var data = {properties: []};
-    _.each(_.keys(properties), function(prop) {
-      if (_.include(["name", "description", "source", "nouns", "apps"], prop)) {
-        data[prop] = properties[prop];
-      }
-    }) 
-    if(properties.nouns) data.hasNouns = true;
-    if(properties.hits) data.properties.push({key:'Unique Visitors', value: properties.hits});
-    if(properties.createdAt) data.properties.push({key:'Created', value: properties.createdAt});
-    if(properties.statsGenerated) data.properties.push({key:'Updated', value: properties.statsGenerated});
-    return data;
   }
   
   // transform couch _attachment objects into file trees that are compatible with the Nide editor
@@ -730,6 +720,7 @@ var util = function() {
     formatDiskSize: formatDiskSize,
     capitalize: capitalize,
     isAdminParty: isAdminParty,
+    loggedIn: loggedIn,
     catchModals: catchModals,
     registerEmitter: registerEmitter,
     cachedRequest: cachedRequest,
@@ -751,7 +742,6 @@ var util = function() {
     renderTree: renderTree,
     showDatasets: showDatasets,
     showTrendingsets: showTrendingsets,
-    formatProperties: formatProperties,
     mergeFileTree: mergeFileTree,
     getDDocFiles: getDDocFiles,
     addHTMLElementForFileEntry: addHTMLElementForFileEntry,

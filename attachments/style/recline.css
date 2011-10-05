@@ -382,12 +382,13 @@ span.tooltip-status {
   color: #107fc9;
   color: #019dbe;
   text-decoration: none; }
-  a:hover {
+  .tweetStream a:hover {
     color: white;
     background-color: #556270;
     background-color: #019dbe; }
     
 .tweetsTitle {
+  font-family: "Geneva";
   font-size: 12px;
   padding: 5px 15px 0px 15px;
   color: black;}

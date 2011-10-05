@@ -192,7 +192,6 @@ var recline = function() {
       couch.request({url: app.baseURL + "api/" + id}).then(function(datasetInfo) {
         app.datasetInfo = datasetInfo;
         app.ddocs = {};
-        util.render('title', 'project-title', datasetInfo);        
         util.render('sidebar', 'left-panel');
       })
 

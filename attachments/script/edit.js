@@ -44,9 +44,7 @@ app.routes = {
         util.render('signIn', 'project-controls');
       })
     },
-    loggedIn: function() {
-      
-    },
+    loggedIn: function() { },
     fork: function(id) {
       monocles.ensureProfile().then(function(profile) {
         recline.showDialog('busy', {message: "Forking to your account..."});
@@ -93,8 +91,10 @@ app.routes = {
   },
   tabs: {
     data: function() {
-      util.render('dataTab', 'sidebar', util.formatProperties(app.datasetInfo))
-      util.searchTwitter("github.com").then(
+      var datasetInfo = _.extend({}, app.datasetInfo, { loggedIn: util.loggedIn() });
+      if(datasetInfo.nouns) datasetInfo.hasNouns = true;
+      util.render('dataTab', 'sidebar', datasetInfo)
+      util.searchTwitter(window.location.href).then(
         function(results) {
           util.render('tweetStream', 'tweetsContainer', results)
         })
@@ -339,6 +339,9 @@ app.after = {
       var ddoc = $(e.currentTarget).attr('data-ddoc');
       util.addApp(ddoc, app.datasetInfo._id);
     })
+  },
+  dataTab: function() {
+    $('.timeago').timeago();
   },
   appsTab: function() {
     $('.root').live('click', function(e) {

@@ -22,7 +22,10 @@
     <ul class="menu">
     </ul>
     <div id="header">
-      <a class="homeButton" href="#/"><img id="couchLogo" src="/images/fancycouch-small.png"/></a>
+      <a class="homeButton" href="#/">
+        <img id="couchLogo" src="/images/fancycouch-small.png"/>
+        <span class="project-title">DataCouch — collaborative data</span>
+      </a>
       <div class="project-title"></div>
       <div class="project-actions"></div>
       <div class="project-controls"></div>
@@ -146,23 +149,33 @@
   
   <script type='text/mustache' class="dataTabTemplate">
     <div class="top">
-      {{#description}}<div class="description">{{description}}</div>{{/description}}
-      {{^description}}<div class="description">This dataset doesn't have a description.</div>{{/description}}
-      {{#hasNouns}}
-      <div class="nounContainer">
-      {{#nouns}}
-        <a href="http://thenounproject.com/noun/{{noun}}/">{{{svg}}}</a>
-      {{/nouns}}
-      </div>
-      {{/hasNouns}}
+      <div class="title">{{user}}&nbsp;/ {{name}}</div>
       {{#source}}<div class="datasource"><span class="strong">DATASOURCE:</span>{{source}}</div>{{/source}}
+      <div class="timestamp">
+        Created: <span class="timeago" title="{{createdAt}}"></span>,
+        Updated: <span class="timeago" title="{{statsGenerated}}"></span>
+      </div>
+      {{#loggedIn}}
+        <div class="controls">
+          <div class="edit"><a href="#/edit!">EDIT</a></div>
+        </div>
+      {{/loggedIn}}
     </div>
     <div class="bottom">
+      {{#hasNouns}}
+        <div class="nounContainer">
+          {{#nouns}}
+            <a href="http://thenounproject.com/noun/{{noun}}/">{{{svg}}}</a>
+          {{/nouns}}
+        </div>
+      {{/hasNouns}}
+      {{#description}}<div class="description">{{description}}</div>{{/description}}
+      {{^description}}<div class="description">This dataset doesn't have a description.</div>{{/description}}
       {{#properties}}
-      <div class="property">
-        <div class="key">{{key}}:</div>
-        <div class="value {{classStyle}}">{{value}}</div>
-      </div>
+        <div class="property">
+          <div class="key">{{key}}:</div>
+          <div class="value {{classStyle}}">{{value}}</div>
+        </div>
       {{/properties}}
       <div class="tweetsContainer"></div>
     </div>
@@ -224,7 +237,6 @@
   
   </script>
 
-  <script type='text/mustache' class="titleTemplate">{{user}}&nbsp;/ {{name}}</script>
   <script type='text/mustache' class="bulkTemplate">http://{{host}}/{{db_name}}/_bulk_docs</script>
   <script type='text/mustache' class="generatingTemplate"><div class="loading">Loading...</div></script>
   
