@@ -156,11 +156,11 @@
         Created <span class="timeago" title="{{createdAt}}"></span>,
         updated <span class="timeago" title="{{statsGenerated}}"></span>
       </div>
-      {{#loggedIn}}
+      {{#canEdit}}
         <div class="controls">
           <div class="edit"><a href="#/edit!">EDIT</a></div>
         </div>
-      {{/loggedIn}}
+      {{/canEdit}}
     </div>
     <div class="bottom">
       {{#hasNouns}}
