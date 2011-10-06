@@ -149,9 +149,9 @@
   <script type='text/mustache' class="dataTabTemplate">
     <div class="top">
       <div class="title">{{user}}&nbsp;/ {{name}}</div>
-      {{#source}}<div class="datasource"><span class="strong">DATASOURCE:</span>{{source}}</div>{{/source}}
       {{#description}}<div class="description">{{description}}</div>{{/description}}
       {{^description}}<div class="description">This dataset doesn't have a description.</div>{{/description}}
+      {{#source}}<div class="datasource"><span class="strong">DATASOURCE:</span>{{source}}</div>{{/source}}
       <div class="timestamp">
         Created <span class="timeago" title="{{createdAt}}"></span>,
         updated <span class="timeago" title="{{statsGenerated}}"></span>
@@ -199,6 +199,14 @@
               </label>
               <div class="input">
                 <input class="xlarge" id="name" name="name" size="30" type="text" value="{{name}}">
+              </div>
+            </div>
+            <div class="clearfix">
+              <label for="source">
+                Datasource
+              </label>
+              <div class="input">
+                <input class="xlarge" id="source" name="source" size="30" type="text" value="{{source}}">
               </div>
             </div>
             <div class="clearfix">
