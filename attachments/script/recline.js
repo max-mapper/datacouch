@@ -4,21 +4,22 @@ var recline = function() {
     return (parseFloat(bytes)/1024/1024).toString().substr(0,4) + "MB"
   }
   
-  function showDialog(template, data) {
+  function showDialog(template, data, modalWidth) {
     if (!data) data = {};
+    if (!modalWidth) modalWidth = ""
     util.show('dialog');
-    util.render(template, 'dialog-content', data);
-    util.observeExit($('.dialog-content'), function() {
+    $('.modal').css('width', modalWidth);
+    util.render(template, 'modal', data);
+    util.observeExit($('.modal'), function() {
       util.hide('dialog');
     })
-    $('.dialog').draggable({ handle: '.dialog-header', cursor: 'move' });
+    $('.dialog').draggable({ handle: '.top', cursor: 'move' });
   }
   
   function handleMenuClick() {
     $( '.menu li' ).click(function(e) {
       var actions = {
-        bulkEdit: function() { showDialog('bulkEdit', {name: app.currentColumn}) },
-        transform: function() { showDialog('transform') },
+        bulkEdit: function() { showDialog('bulkEdit', {name: app.currentColumn}, "800px") },
         csv: function() { window.location.href = app.csvUrl },
         json: function() { window.location.href = app.dbPath + "/json" },
         urlImport: function() { showDialog('urlImport') },

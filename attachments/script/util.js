@@ -173,23 +173,12 @@ var util = function() {
     $('.' + thing).show().css({top: position.top + $(elem.target).height(), left: position.left});
   }
 
-  function render( template, target, options ) {
-    if ( !options ) options = {};
-    if ( !options.data ) options.data = options;
-    var html = $.mustache( $( "." + template + "Template:first" ).html(), options.data );
-    if (target instanceof jQuery) {
-      var targetDom = target;
-    } else {
-      var targetDom = $( "." + target + ":first" );
-    }
-    if( options.append ) {
-      targetDom.append( html );
-    } else {
-      targetDom.html( html );
-    }
+  function render( template, target, data ) {
+    if (! (target instanceof jQuery)) target = $( "." + target + ":first" );
+    target.html( $.mustache( $( "." + template + "Template:first" ).html(), data ) );
     if (template in app.after) app.after[template]();
   }
-  
+
   function notify( message, options ) {
     if (!options) var options = {};
     $('#notification-container').show();
@@ -703,7 +692,7 @@ var util = function() {
               }
             )
           }
-          util.render('busy', 'dialog-content', {message: "Installing app..."});
+          util.render('busy', 'modal', {message: "Installing app..."});
           waitUntilExists(couch.rootPath + "api/" + resp.id, "url");
         })
       }

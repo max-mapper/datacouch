@@ -44,6 +44,7 @@ app.routes = {
         util.render('signIn', 'project-controls');
       })
     },
+    edit: function() { recline.showDialog('editDatasetInfo', app.datasetInfo) },
     loggedIn: function() { },
     fork: function(id) {
       monocles.ensureProfile().then(function(profile) {
@@ -85,6 +86,9 @@ app.routes = {
         });
       })
     },
+    cancel: function() {
+      util.hide('dialog');
+    },
     close: function() {
       util.hide('dialog');
     }
@@ -92,7 +96,7 @@ app.routes = {
   tabs: {
     data: function() {
       var datasetInfo = _.extend({}, app.datasetInfo, { loggedIn: util.loggedIn() });
-      if(datasetInfo.nouns) datasetInfo.hasNouns = true;
+      if (datasetInfo.nouns) datasetInfo.hasNouns = true;
       util.render('dataTab', 'sidebar', datasetInfo)
       util.searchTwitter(window.location.href).then(
         function(results) {
@@ -164,6 +168,17 @@ app.after = {
       cell.html(cell.data('previousContents')).siblings('.data-table-cell-edit').removeClass("hidden");
     })
   },
+  editDatasetInfo: function() {
+    $('.modal-footer .ok').click(function(e) {
+      _.extend(app.datasetInfo, $('.modal form').serializeObject());
+      couch.request({url: app.baseURL + "api", data: JSON.stringify(app.datasetInfo), type: "POST"}).then(function(resp) {
+        app.datasetInfo._rev = resp.rev;
+        app.routes.tabs.data();
+        util.notify('Updated dataset info');
+      })
+      util.hide('dialog');
+    })
+  },
   actions: function() {
     $('.button').click(function(e) { 
       var action = $(e.target).attr('data-action');
@@ -174,34 +189,8 @@ app.after = {
       }
     });
   },
-  signIn: function() {
-    
-    $('.dialog-content #username-input').focus();
-    
-    $('.dialog-content').find('#sign-in-form').submit(function(e) {
-      $('.dialog-content .okButton').click();
-      return false;
-    })
-    
-    $('.dialog-content .okButton').click(function(e) {
-      util.hide('dialog');
-      util.notify("Signing you in...", {persist: true, loader: true});
-      var form = $(e.target).parents('.dialog-content').find('#sign-in-form');
-      var credentials = {
-        name: form.find('#username-input').val(), 
-        password: form.find('#password-input').val()
-      }
-      couch.login(credentials).then(function(response) {
-        util.notify("Signed in");
-        util.render('signOut', 'project-controls');
-      }, function(error) {
-        if (error.statusText === "error") util.notify(JSON.parse(error.responseText).reason);
-      })
-    })
-    
-  },
   bulkEdit: function() {
-    $('.dialog-content .okButton').click(function(e) {
+    $('.modal-footer .ok').click(function(e) {
       var funcText = $('.expression-preview-code').val();
       var editFunc = costco.evalFunction(funcText);
       ;
@@ -232,7 +221,7 @@ app.after = {
     editor.keydown();
   },
   transform: function() {
-    $('.dialog-content .okButton').click(function(e) {
+    $('.modal-footer .ok').click(function(e) {
       util.notify("Not implemented yet, sorry! :D");
       util.hide('dialog');
     })
@@ -260,7 +249,7 @@ app.after = {
     editor.keydown();
   },
   urlImport: function() {
-    $('.dialog-content .okButton').click(function(e) {
+    $('.modal-footer .ok').click(function(e) {
       app.apiURL = $.url($('#url-input').val().trim());
       util.notify("Fetching data...", {persist: true, loader: true});
       var query = $.param($.extend({}, app.apiURL.data.param.query, {"callback": "?"}))
@@ -268,7 +257,7 @@ app.after = {
         function(docs) {
           app.apiDocs = docs;
           util.notify("Data fetched successfully!");
-          recline.showDialog('jsonTree');
+          recline.showDialog('jsonTree', {}, "800px");
         },
         function (err) {
           util.hide('dialog');
@@ -278,15 +267,16 @@ app.after = {
     })
   },
   uploadImport: function() {
-    $('.dialog-content .okButton').click(function(e) {
+    $('.modal-footer .ok').click(function(e) {
       util.hide('dialog');
       util.notify("Saving documents...", {persist: true, loader: true});
-      costco.uploadCSV();
+      var file = $('#file')[0].files[0];
+      costco.uploadCSV(file);
     })
   },
   jsonTree: function() {
     util.renderTree(app.apiDocs);
-    $('.dialog-content .okButton').click(function(e) {
+    $('.modal-footer .ok').click(function(e) {
       util.hide('dialog');
       util.notify("Saving documents...", {persist: true, loader: true});
       costco.uploadDocs(util.lookupPath(util.selectedTreePath())).then(function(msg) {
@@ -296,7 +286,7 @@ app.after = {
     })
   },
   pasteImport: function() {
-    $('.dialog-content .okButton').click(function(e) {
+    $('.modal-footer .ok').click(function(e) {
       util.notify("Uploading documents...", {persist: true, loader: true});
       try {
         var docs = JSON.parse($('.data-table-cell-copypaste-editor').val());        

@@ -3,7 +3,7 @@ section.even { background-color: #EEE; -webkit-border-radius: 6px; -moz-border-r
 article.example { margin: 20px 0px 20px 0px; padding: 10px 0px 10px 0px; border-top: 1px dotted #CCCCCC; border-bottom: 1px dotted #CCCCCC; }
 footer { font-size: 11px; color: #666; text-align: center; margin-top: 20px; }
 footer a { color: #666 }
-.container { margin: 0px auto; }
+.reclineContainer { margin: 0px auto; }
 #main { background-color: #FFFFFF; -webkit-border-radius: 6px; -moz-border-radius: 6px; border-radius: 6px; }
 code,
 blockquote,
@@ -32,8 +32,7 @@ blockquote,
 #database .database_oneline .message a{color:black;}
 #database .database_oneline .database,#database .database_oneline .tree{width:1%;font-family:Monaco,"Courier New","DejaVu Sans Mono","Bitstream Vera Sans Mono",monospace;font-size:90%;color:#808080;border-left:1px solid #bedce7;padding:.6em .5em;}
 #database .database_oneline .tree{border-right:1px solid #bedce7;}
-a{color:#4183c4;}
-a {text-decoration: none;}
+a {color:#4183c4;text-decoration: none; font-size: 14px}
 a:hover{text-decoration:underline;}
 .usingMouse a{outline:none;}
 a.button span.icon.loading { background-image: url(images/loader.gif); }
@@ -44,9 +43,12 @@ a.button:hover span.icon.loading { background-image: url(images/loader-blue.gif)
 .info { padding: 0px 0px 10px 0px}
 .large-loader { position: relative; }
 
+#import-api-form label {margin-right: 10px; width: auto;}
+#import-api-form input {width: auto;font-size: 12px;}
+
 #docCount {font-family: Lucida Grande;font-size: 17px; color: #084354}
 .nounContainer { margin: 10px 0 }
-.project-title {background-color: #FEE9CC;color: rgba(0, 0, 0, 0.75);padding: 1px 3px;font-family: Monaco, Andale Mono, Courier New, monospace;font-size: 17px;-webkit-border-radius: 3px;-moz-border-radius: 3px;border-radius: 3px;}
+.project-title {margin-top: 3px;line-height: 20px;background-color: #FEE9CC;color: rgba(0, 0, 0, 0.75);padding: 1px 3px;font-family: Monaco, Andale Mono, Courier New, monospace;font-size: 17px;-webkit-border-radius: 3px;-moz-border-radius: 3px;border-radius: 3px;}
 .gettingStarted { width: 809px; margin: 50px auto}
 .gettingStarted .bigCouch {float: right}
 .gettingStarted .welcomeMessage { float: left; width: 220px}

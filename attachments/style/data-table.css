@@ -1,14 +1,15 @@
 /*custom styles up top*/
 
 .sidebar {height:100%;width:299px;background-color:#F1FFFD;position:relative;overflow-x: hidden}
-.sidebar .title{font-family:"Lucida Grande", "Geneva";font-size:18px;line-height:22px;font-weight: 400; color: #084354; width: 240px; max-height: 44px; overflow: hidden}
+.sidebar .title{font-family:"Lucida Grande", "Geneva";font-size:18px;line-height:24px;font-weight: 400; color: #084354; width: 240px; max-height: 44px; overflow: hidden}
 .sidebar .controls a, .sidebar .controls a:hover {color: #252525; text-decoration: none; background: transparent;}
-.sidebar .timestamp{opacity:0.3;font-family:"Geneva";font-size:10px;line-height:16px;width: 240px}
-.sidebar .edit{opacity:0.3;font-family:"Geneva";font-size:10px;line-height:18px;padding-left:12px;background-image:url('images/edit.png');background-position:0 4px;background-repeat:no-repeat;}
+.sidebar .timestamp{opacity:0.6;font-family:"Geneva";font-size:10px;line-height:16px;width: 240px}
+.sidebar .edit {opacity:0.3;font-family:"Geneva";padding-left:12px;background-image:url('images/edit.png');background-position:0 4px;background-repeat:no-repeat;}
+.sidebar .edit, .sidebar .edit a { font-size:10px; line-height:18px; }
 .sidebar .close{position:absolute;right:10px;top:15px;width:16px;height:16px;opacity:0.2;background-image:url('images/close.png');}
 .sidebar .close:hover,.sidebar .edit:hover{opacity:1;cursor: pointer; cursor: hand;}
-.sidebar .top{background-color:#EBF9F7;border-bottom:1px solid #E1EEEC;padding:12px 16px 2px 16px;}
-.sidebar .description {font-family: "Geneva"; font-size: 11px; color: #252525; margin: 10px 15px}
+.sidebar .top{background-color:#EBF9F7;border-bottom:1px solid #E1EEEC;padding:10px 16px 2px 16px;}
+.sidebar .description {font-family: "Geneva"; font-size: 12px; color: #252525; margin: 10px 15px}
 .sidebar .datasource {height: 10px; background: url('images/tiny-triangle.png') no-repeat 0px 5px;padding-left: 7px; font-family: "Lucida Grande"; font-size: 10px; color: #959595; margin-top: 10px}
 .strong {font-weight: bold; margin-right: 5px}
 .sidebar .bottom{width: 100%; overflow-x: hidden}
@@ -101,15 +102,6 @@ h1 {
 h2 {
   font-size: 1.3em;
   font-weight: bold;
-}
-
-input[type=text], input[type=password]{
-  padding: 3px;
-  font-size: 1em;
-  font-family: inherit;
-  border: #ccc 1px solid;
-  border-top: #888 1px solid;
-  vertical-align: baseline;
 }
 
 a {
@@ -210,7 +202,6 @@ a img {
   display: inline-block;
   margin: 0 auto;
   padding: 5px 8px 4px;
-  font-size: 1.3em;
   text-align: left;
   font-weight: bold;
   background: #fe8;
@@ -454,7 +445,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   margin: 3px 2px 0px 0px;
   display: block;
   float: right;
-  font-size: 1.3em;
 }
 
 #project-name-button {
@@ -471,8 +461,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #logged-in-status {
   position: relative;
   bottom: 1px;
-  padding: 0 4px;
+  padding: 0 8px;
   font-size: 11px;
+  line-height: 24px;
+}
+#logged-in-status img {
+  position: relative;
+  bottom: 2px;
 }
 
 .left-panel {
@@ -583,7 +578,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 .viewpanel-header {
   position: relative;
   background: #DCF0F4;
-  font-size: 1.3em;
   padding: 7px;
   overflow: hidden;
   text-align: right;
@@ -616,7 +610,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 .data-table {
   margin: 0;
   padding: 0;
-  font-size: 1.1em;
   border-collapse: collapse;
 }
 
@@ -893,100 +886,6 @@ ul.sorting-dialog-blank-error-positions > li {
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
   border-radius: 3px;
-}
-
-/*
-
-Copyright 2010, Google Inc.
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are
-met:
-
-    * Redistributions of source code must retain the above copyright
-notice, this list of conditions and the following disclaimer.
-    * Redistributions in binary form must reproduce the above
-copyright notice, this list of conditions and the following disclaimer
-in the documentation and/or other materials provided with the
-distribution.
-    * Neither the name of Google Inc. nor the names of its
-contributors may be used to endorse or promote products derived from
-this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
-THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-*/
-
-.dialog-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: #666;
-  opacity: 0.5;
-}
-
-.dialog {
-  position: fixed;
-  left: 0;
-  width: 100%;
-  text-align: center;
-}
-
-.dialog-frame {
-  margin: 0 auto;
-  text-align: left;
-  background: white;
-  border: 1px solid #3a5774;
-}
-
-.dialog-border {
-  border: 4px solid #D0E8F0;
-}
-
-.dialog-header {
-  background: #DCF0F4;
-  padding: 10px;
-  font-weight: bold;
-  font-size: 1.6em;
-  color: #000;
-  cursor: move;
-}
-
-.dialog-body {
-  overflow: auto;
-  font-size: 1.3em;
-  padding: 15px;
-}
-
-.dialog-instruction {
-  padding: 0 0 7px;
-}
-
-.dialog-footer {
-  font-size: 1.3em;
-  background: #eee;
-  padding: 10px;
-}
-
-.dialog-busy {
-  width: 400px;
-  border: none;
-  -moz-border-radius: 5px;
-  -webkit-border-radius: 5px;
-  border-radius: 5px;
 }
 
 /*
@@ -1304,7 +1203,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 .ui-tabs .ui-tabs-nav .ui-widget-content .ui-state-active {
   border: 1px solid #D0E8F0;
   border-bottom: none;
-  background: #DCF0F4;
+  background: #EBF9F7;
 }
 
 .ui-tabs .ui-tabs-nav .ui-state-active a,

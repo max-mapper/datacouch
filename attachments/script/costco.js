@@ -114,8 +114,7 @@ var costco = function() {
     return updateDocs(deleteFunc);
   }
   
-  function uploadCSV() {
-    var file = $('#file')[0].files[0];
+  function uploadCSV(file) {
     if (file) {
       var reader = new FileReader();
       reader.readAsText(file);
