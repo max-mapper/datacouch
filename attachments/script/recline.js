@@ -29,6 +29,10 @@ var recline = function() {
           var msg = "Are you sure? This will delete '" + app.currentColumn + "' from all documents.";
           if (confirm(msg)) costco.deleteColumn(app.currentColumn);
         },
+        wipe: function() {
+          var msg = "Are you sure? This will permanently delete all data in this dataset.";
+          if (confirm(msg)) costco.updateDocs(function(doc) { return _.extend(doc, {_deleted: true}) });
+        },
         deleteRow: function() {
           var doc = _.find(app.cache, function(doc) { return doc._id === app.currentRow });
           doc._deleted = true;

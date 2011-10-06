@@ -51,7 +51,7 @@ a.button:hover span.icon.loading { background-image: url(images/loader-blue.gif)
 .project-title {margin-top: 3px;line-height: 20px;background-color: #FEE9CC;color: rgba(0, 0, 0, 0.75);padding: 1px 3px;font-family: Monaco, Andale Mono, Courier New, monospace;font-size: 17px;-webkit-border-radius: 3px;-moz-border-radius: 3px;border-radius: 3px;}
 .gettingStarted { width: 809px; margin: 50px auto}
 .gettingStarted .bigCouch {float: right}
-.gettingStarted .welcomeMessage { float: left; width: 220px}
+.gettingStarted .welcomeMessage { float: left; width: 240px}
 .gettingStarted h1 {font-size: 3.3em}
 .gettingStarted p {font-size: 13px; color: gray}
 .menu-overlay {
@@ -84,6 +84,7 @@ ul.menu {
     padding: 0; }
   ul.menu a {
     line-height: 14px;
+    font-size: 12px;
     color: black;
     display: block;
     padding: 5px 7px;

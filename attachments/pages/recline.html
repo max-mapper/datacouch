@@ -106,7 +106,7 @@
     {{#loggedIn}}
       <a class="button" data-action="import" href="javascript:{}"><span data-action="import" class="button-menu">Import</span></a>
     {{/loggedIn}}
-    <!-- <a class="button" data-action="edit" href="javascript:{}"><span data-action="transform" class="button-menu">Edit</span></a> -->
+    <a class="button" data-action="edit" href="javascript:{}"><span data-action="transform" class="button-menu">Edit</span></a>
     <a class="button" data-action="export" href="javascript:{}"><span data-action="export" class="button-menu">Export</span></a>
   </script>
 
@@ -122,7 +122,7 @@
   </script>
   
   <script type='text/mustache' class="transformActionsTemplate">
-    <li><a data-action="transform" class="menuAction" href="JavaScript:void(0);">Global transform...</a></li>
+    <li><a data-action="wipe" class="menuAction" href="JavaScript:void(0);">Delete all docs</a></li>
   </script>
   
   <script type='text/mustache' class="columnActionsTemplate">
@@ -150,6 +150,8 @@
     <div class="top">
       <div class="title">{{user}}&nbsp;/ {{name}}</div>
       {{#source}}<div class="datasource"><span class="strong">DATASOURCE:</span>{{source}}</div>{{/source}}
+      {{#description}}<div class="description">{{description}}</div>{{/description}}
+      {{^description}}<div class="description">This dataset doesn't have a description.</div>{{/description}}
       <div class="timestamp">
         Created <span class="timeago" title="{{createdAt}}"></span>,
         updated <span class="timeago" title="{{statsGenerated}}"></span>
@@ -168,8 +170,6 @@
           {{/nouns}}
         </div>
       {{/hasNouns}}
-      {{#description}}<div class="description">{{description}}</div>{{/description}}
-      {{^description}}<div class="description">This dataset doesn't have a description.</div>{{/description}}
       {{#properties}}
         <div class="property">
           <div class="key">{{key}}:</div>

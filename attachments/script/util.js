@@ -175,7 +175,7 @@ var util = function() {
 
   function render( template, target, data ) {
     if (! (target instanceof jQuery)) target = $( "." + target + ":first" );
-    target.html( $.mustache( $( "." + template + "Template:first" ).html(), data ) );
+    target.html( $.mustache( $( "." + template + "Template:first" ).html(), data || {} ) );
     if (template in app.after) app.after[template]();
   }
 
