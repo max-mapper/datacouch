@@ -133,6 +133,11 @@ app.after = {
       util.render('columnActions', 'menu');
     });
     
+    $('.column-header').click(function(e) {
+      $(e.currentTarget).find('.collapsed').removeClass('collapsed');
+      $('td[data-header="' + $(e.currentTarget).find('.column-header-name').text() + '"] .collapsed').removeClass('collapsed');
+    })
+    
     $('.row-header-menu').click(function(e) { 
       app.currentRow = $(e.target).parents('tr:first').attr('data-id');
       util.position('menu', e);

@@ -70,14 +70,23 @@ var recline = function() {
           value = row.value[header];
           if (typeof(value) == "object") value = JSON.stringify(value);
         }
-        cells.push({header: header, value: value});
+        var cell = {header: header, value: value};
+        if (_.include(["_id", "_rev"], header)) cell.state = "collapsed";
+        cells.push(cell);
       })
       tableRows.push({id: row.value._id, cells: cells});
+      
+    })
+    
+    var headers = app.headers.map(function(header) {
+      var header = {header: header};
+      if (_.include(["_id", "_rev"], header.header)) header.state = "collapsed";
+      return header;
     })
     
     util.render('dataTable', 'data-table-container', {
       rows: tableRows,
-      headers: app.headers,
+      headers: headers,
       notEmpty: function() { return app.headers.length > 0 }
     })
     

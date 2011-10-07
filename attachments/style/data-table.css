@@ -2,7 +2,7 @@
 
 .sidebar {height:100%;width:299px;background-color:#F1FFFD;position:relative;overflow-x: hidden}
 .sidebar hr { margin: 10px 15px 2px}
-.sidebar .title{font-family:"Lucida Grande", "Geneva";font-size:20px;line-height:24px;font-weight: 400; color: #084354; width: 240px; max-height: 44px; overflow: hidden}
+.sidebar .title, .sidebar .title a{font-family:"Lucida Grande", "Geneva";font-size:20px;line-height:24px;font-weight: 400; color: #084354; width: 240px; max-height: 44px; overflow: hidden}
 .sidebar .controls a, .sidebar .controls a:hover {color: #252525; text-decoration: none; background: transparent;}
 .sidebar .timestamp{opacity:0.6;font-family:"Geneva";font-size:10px;line-height:16px;width: 240px}
 .sidebar .edit {opacity:0.3;font-family:"Geneva";padding-left:12px;background-image:url('images/edit.png');background-position:0 4px;background-repeat:no-repeat;}
@@ -20,7 +20,8 @@
 .sidebar .value{width: 170px; float: left; color: #707070; }
 .sidebar .link{text-decoration: underline}
 .sidebar p{font-family:"Geneva";font-size:11px;line-height:12px;padding-bottom:10px;color:#252525;}
-
+.collapsed {width: 75px; overflow: auto;}
+.column-header-title.collapsed { background: url('images/raquo.png') no-repeat right 8px; }
 /*end custom styles*/
 
 /*
