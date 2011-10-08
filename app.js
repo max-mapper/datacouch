@@ -83,7 +83,7 @@ ddoc.views = {
   },
   applications: {
     map: function(doc) {
-      if(doc.type === "app") emit(doc.dataset);
+      if(doc.type === "app" && doc.url) emit(doc.dataset);
     }
   },
   applications_by_user: {

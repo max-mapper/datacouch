@@ -20,8 +20,9 @@
 .sidebar .value{width: 170px; float: left; color: #707070; }
 .sidebar .link{text-decoration: underline}
 .sidebar p{font-family:"Geneva";font-size:11px;line-height:12px;padding-bottom:10px;color:#252525;}
-.collapsed {width: 75px; overflow: auto;}
+td.collapsed {width: 5%; overflow: auto;}
 .column-header-title.collapsed { background: url('images/raquo.png') no-repeat right 8px; }
+.data-table-cell-value.collapsed {width: 60px; overflow: hidden;}
 /*end custom styles*/
 
 /*

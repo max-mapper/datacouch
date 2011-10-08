@@ -323,14 +323,14 @@
       </div>
     </div>
   </script>
-  
+
   <script type='text/mustache' class="dataTableTemplate">
     <table class="data-table" cellspacing="0">
       <tbody>
         <tr>
           {{#notEmpty}}<td class="column-header"></td>{{/notEmpty}}
           {{#headers}}
-            <td class="column-header">
+            <td class="column-header {{state}}">
               <div class="column-header-title {{state}}">
                 <a class="column-header-menu"></a>
                 <span class="column-header-name">{{header}}</span>
@@ -342,10 +342,10 @@
           <tr data-id="{{id}}">
             <td><a class="row-header-menu"></a></td>
             {{#cells}}
-            <td data-header="{{header}}">
+            <td data-header="{{header}}" class="{{state}}">
               <div class="data-table-cell-content {{state}}">
                 <a href="javascript:{}" class="data-table-cell-edit" title="Edit this cell">&nbsp;</a>
-                <div class="data-table-cell-value">{{value}}</div>
+                <div class="data-table-cell-value {{state}}">{{value}}</div>
               </div>
             </td>
             {{/cells}}

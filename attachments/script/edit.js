@@ -131,11 +131,18 @@ app.after = {
       app.currentColumn = $(e.target).siblings().text();
       util.position('menu', e);
       util.render('columnActions', 'menu');
+      e.stopPropagation();
     });
     
     $('.column-header').click(function(e) {
-      $(e.currentTarget).find('.collapsed').removeClass('collapsed');
-      $('td[data-header="' + $(e.currentTarget).find('.column-header-name').text() + '"] .collapsed').removeClass('collapsed');
+      var header = $(e.currentTarget);
+      if(header.hasClass('collapsed') || ( header.width() > 60 ) ) {
+        header.toggleClass('collapsed');
+        header.find('.column-header-title').toggleClass('collapsed');
+        var td = $('td[data-header="' + header.find('.column-header-name').text() + '"]');
+        td.toggleClass('collapsed');
+        td.find('.data-table-cell-value').toggleClass('collapsed');
+      }
     })
     
     $('.row-header-menu').click(function(e) { 
