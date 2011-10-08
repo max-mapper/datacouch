@@ -29,6 +29,7 @@
 
 .bio .media-grid {padding: 10px 0px 0px 10px }
 .bio .item {display: block}
+.bio h2 {text-shadow: #EAE8E8 1px 1px 1px; font-size:32px; font-family: Baskerville, 'Baskerville old face', 'Hoefler Text', Garamond, 'Times New Roman', serif; font-weight: normal;}
 
 .screenshot{
   margin-bottom: 20px;
@@ -62,6 +63,13 @@
   border: 1px solid #1D181A;
 }
 
+.applications-label {margin: 0 auto; width: 115px; height: 20px; background: url('images/applications-label.png')}
+.datasets-label {margin: 0 auto; width: 79px; height: 20px; background: url('images/datasets-label.png')}
+.doohicky {float: left; margin: 0px 0px 0px 22px; width: 79px; height: 20px; background: url('images/doohicky.png'); position: relative; bottom: 13px;}
+
+.infoContainer { margin-left: 20px; overflow: auto }
+
+.ornament-hr {width: 290px; height: 13px; background: url('images/ornament-hr.png'); margin: 5px auto 0px auto;}
 .datasetsContainer h2, .trendingSetsContainer h2 {
   padding-left: 22px;
   margin-top: 15px;
@@ -82,6 +90,13 @@
 .datasets li:hover .datasetActions {display: block; position: absolute; top: 17px; right: 10px;}
 .datasets li:hover {background-color: #EEEEEE;}
 .datasets li:hover .dataset {color: #2B547D}
+
+.resource-list{min-height:400px;position:relative;}
+.resources{margin-bottom:75px;}
+.resources .individual{border:3px solid #eee;min-height:375px;margin-top:40px;-webkit-border-radius:5px;-moz-border-radius:5px;border-radius:5px;-webkit-box-shadow:0 1px 5px rgba(0, 0, 0, 0.25),inset 0 -1px 0 rgba(0, 0, 0, 0.1);-moz-box-shadow:0 1px 5px rgba(0, 0, 0, 0.25),inset 0 -1px 0 rgba(0, 0, 0, 0.1);box-shadow:0 1px 5px rgba(0, 0, 0, 0.25),inset 0 -1px 0 rgba(0, 0, 0, 0.1);}
+.resources .thumbnail{background:url(images/placeholder.png) no-repeat center center;background-size:180px;display:block;margin:20px auto;height:150px;}
+.resources .description{padding:0 20px;}
+
 
 .wrapper {background:url('../images/diagonals.png'); overflow: auto}
 

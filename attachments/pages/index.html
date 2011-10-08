@@ -32,6 +32,7 @@
   <title>DataCouch | Collaborative Data</title>
   <link rel='shortcut icon' href='images/favicon.ico' type='image/x-icon' />
   <link rel='stylesheet' media='all' href='style/reset.css' />
+  <link rel='stylesheet' media='all' href='style/common.css' />
   <link rel='stylesheet' media='all' href='style/home.css' />
   <link rel="stylesheet" href="style/bootstrap.css">
   
@@ -186,7 +187,8 @@
         </div>
         <div class="container">
           <div class="row">
-            <div class="span7 infoContainer"></div>
+            <div class="infoContainer"></div>
+            <div class="span7 appsContainer"></div>
             <div class="span9 datasetsContainer"></div>
           </div>
         </div>
@@ -232,6 +234,7 @@
           <a href="JavaScript:void(0);">
             <img class="thumbnail" src="{{avatar}}" alt="">
           </a>
+          <div class="doohicky"></div>
         </li>
       </ul>
       <div class="span5">
@@ -316,30 +319,47 @@
     </form>
   </script>
   
+  <script type="text/mustache" class="appsTemplate">  
+    <div class="applications-label"></div>
+    <div class="ornament-hr"></div>
+    <div class="resources">
+      {{#apps}}
+        <div class="individual span4">
+          <a href="http://{{url}}" class="thumbnail" alt="Project Name"></a>
+          <div class="description">
+            <strong><a href="http://{{url}}">{{ddoc}}</a></strong>
+            <p class="user"><small>Max Ogden</small></p>
+            <p>{{description}}</p>
+          </div>
+          <hr />
+          <div class="stats"></div>
+        </div>
+      {{/apps}}
+    </div>
+  </script>
   
   <script type="text/mustache" class="datasetsTemplate">
-    {{^datasets}}<center><h1>{{name}} doesn't have any datasets yet!</h1></center>{{/datasets}}
-    {{#name}}<h2>{{name}}'s datasets</h2>{{/name}}
-    {{^name}}<h2>Recent Datasets</h2>{{/name}}
+    <div class="datasets-label"></div>
+    <div class="ornament-hr"></div>
     <ol class="datasets detailed">
-    {{#datasets}}
-      <li>
-        <div class="name">
-          <a class="owner" href="#/{{user}}">{{user}}</a>&nbsp;/ <a class="dataset" href="edit/#/{{id}}">{{name}}</a>
-          {{#nouns}}
-          <a href="http://thenounproject.com/noun/{{noun}}/">{{{svg}}}</a>
-          {{/nouns}}
-        </div>
-        <div class="forkedFrom">
-          {{#forkedFrom}}
-          <span><span class="fork icon"></span>forked from <a href="#/{{forkedFromUser}}">{{forkedFromUser}}</a>&nbsp;/ <a class="dataset" href="#/{{forkedFrom}}">{{name}}</a></span>
-          {{/forkedFrom}}
-        </div>
-        <div class="metadata subtitle">Created <span class="timeago" title="{{date}}"></span>, {{count}} documents, {{size}}</div>
-        <div class="avatar"><a href="#/{{user}}"><img src="{{#avatar}}{{avatar}}{{/avatar}}{{^avatar}}images/avatar_default.png{{/avatar}}"></a></div>
-        {{#description}}<div><p>{{description}}</p></div>{{/description}}
-      </li>
-    {{/datasets}}
+      {{#datasets}}
+        <li>
+          <div class="name">
+            <a class="owner" href="#/{{user}}">{{user}}</a>&nbsp;/ <a class="dataset" href="edit/#/{{id}}">{{name}}</a>
+            {{#nouns}}
+            <a href="http://thenounproject.com/noun/{{noun}}/">{{{svg}}}</a>
+            {{/nouns}}
+          </div>
+          <div class="forkedFrom">
+            {{#forkedFrom}}
+            <span><span class="fork icon"></span>forked from <a href="#/{{forkedFromUser}}">{{forkedFromUser}}</a>&nbsp;/ <a class="dataset" href="#/{{forkedFrom}}">{{name}}</a></span>
+            {{/forkedFrom}}
+          </div>
+          <div class="metadata subtitle">Created <span class="timeago" title="{{date}}"></span>, {{count}} documents, {{size}}</div>
+          <div class="avatar"><a href="#/{{user}}"><img src="{{#avatar}}{{avatar}}{{/avatar}}{{^avatar}}images/avatar_default.png{{/avatar}}"></a></div>
+          {{#description}}<div><p>{{description}}</p></div>{{/description}}
+        </li>
+      {{/datasets}}
     </ol>
   </script>
   
@@ -355,29 +375,57 @@
   </script>
   
   <script type="text/mustache" class="userActionsTemplate">
-  <a href="#/new!" class="btn primary">
-    New Dataset
-  </a>
+    <a href="#/new!" class="btn primary">
+      New Dataset
+    </a>
   </script>
   
   <script type="text/mustache" class="newDatasetFormTemplate">
-    <form class="dataset_setup">
-      <div class="modal-header">
-        <h3>Create a new dataset</h3>
-        <a href="#/cancel!" class="close cancel">×</a>
+    <div class="infopanel">
+      <div class="top">
+        <div class="title">
+          Create a new dataset
+        </div>
+        <div class="subtitle">
+          Give it a proper name and description so that it can be discovered!
+        </div>
       </div>
-      <div class="modal-body">
-        <h4>Name:</h4>
-        <input type="text" name="name" value="">
-        <h4>Description:</h4>
-        <textarea name="description" rows=5 value=""></textarea>
+      <div class="bottom">
+        <form>
+          <fieldset>
+            <div class="clearfix">
+              <label for="name">
+                Name
+              </label>
+              <div class="input">
+                <input class="xlarge" id="name" name="name" size="30" type="text" value="{{name}}">
+              </div>
+            </div>
+            <div class="clearfix">
+              <label for="source">
+                Datasource
+              </label>
+              <div class="input">
+                <input class="xlarge" id="source" name="source" size="30" type="text" value="{{source}}">
+              </div>
+            </div>
+            <div class="clearfix">
+              <label for="description">
+                Description
+              </label>
+              <div class="input">
+                <textarea class="xlarge" id="description" name="description" rows="3">{{description}}</textarea>
+              </div>
+            </div>
+          </fieldset>
+        </form>
         <div class="nounContainer"></div>
       </div>
       <div class="modal-footer">
-        <input type="submit" class="btn primary" value="Save">
+        <input type="submit" class="btn primary ok" value="Upload">
         <a href="#/cancel!" class="btn secondary cancel">Cancel</a>
-      </div>        
-    </form>
+      </div>
+    </div>
   </script>
 
    <script type="text/mustache" class="nounsTemplate">

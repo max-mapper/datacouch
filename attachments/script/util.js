@@ -463,6 +463,17 @@ var util = function() {
       }
     })
   }
+  
+  function showApps(name) {
+    var url = app.baseURL + "api/applications";
+    if (name) url += "/user/" + name;
+    return couch.request({url: url}).then(function(resp) {
+      util.render('apps', 'appsContainer', {
+        loggedIn: loggedIn(),
+        apps: _(resp.rows).map(function(row) { return row.doc })
+      });
+    })
+  }
 
   function showTrendingsets(name) {
     var url = app.baseURL + "api/trending";
@@ -729,6 +740,7 @@ var util = function() {
     lookupPath: lookupPath,
     selectedTreePath: selectedTreePath,
     renderTree: renderTree,
+    showApps: showApps,
     showDatasets: showDatasets,
     showTrendingsets: showTrendingsets,
     mergeFileTree: mergeFileTree,

@@ -15,6 +15,7 @@ ddoc =
     , {from:"/api/token", to:"../../../_twitter/auth/token"}
     , {from:"/api/applications/:dataset", to:"_view/applications", query:{endkey:":dataset", startkey:":dataset", include_docs:"true", descending: "true"}}
     , {from:"/api/applications", to:"_view/applications", query:{include_docs:"true", descending: "true"}}
+    , {from:"/api/applications/user/:user", to:"_view/applications_by_user", query:{endkey:":user", startkey:":user", include_docs:"true", descending: "true"}}
     , {from:"/api/datasets/:user", to:"_view/by_user", query:{endkey: [":user",null], startkey:[":user",{}], include_docs:"true", descending: "true"}}
     , {from:"/api/datasets", to:"_view/by_date", query:{include_docs:"true", descending: "true"}}
     , {from:"/api/forks/:id", to:"_view/forks", query:{endkey:":id", startkey:":id", include_docs:"true", descending: "true"}}
@@ -83,6 +84,11 @@ ddoc.views = {
   applications: {
     map: function(doc) {
       if(doc.type === "app") emit(doc.dataset);
+    }
+  },
+  applications_by_user: {
+    map: function(doc) {
+      if(doc.type === "app" && doc.url) emit(doc.user);
     }
   },
   forks: {

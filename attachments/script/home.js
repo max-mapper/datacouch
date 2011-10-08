@@ -41,6 +41,7 @@ app.routes = {
           avatar : profile.avatar
         });
         util.showDatasets(username);
+        util.showApps(username);
         if (username) {
           couch.request({url: app.baseURL + 'api/users/' + username}).then(function(profile) {
             profile.avatar = profile.avatar.replace('_normal.', '_bigger.');
@@ -164,17 +165,19 @@ app.after = {
         $.when.apply(null, requests).then(function() { inputs.removeClass('loading') })
       }, 1000);
     inputs.keyup(renderIcons);
-    $( '.dataset_setup' ).submit( function( e ) {
-      var form = $( e.target ).serializeObject();
-      $.extend(doc, {
+    
+    $('.modal-footer .ok').click(function(e) {
+      var defaultProperties = {
         _id: "dc" + docID,
-        name: form.name,
-        description: form.description,
         type: "database",
         user: app.profile._id,
         avatar: app.profile.avatar,
         createdAt: new Date()
-      });
+      };
+      
+      _.extend(doc, $('.modal form').serializeObject(), defaultProperties);
+      
+      util.hide('dialog');
       couch.request({url: app.baseURL + "api/" + doc._id, type: "PUT", data: JSON.stringify(doc)}).then(function(resp) {
         var dbID = resp.id
           , dbName = dbID + "/_design/recline"
@@ -192,12 +195,11 @@ app.after = {
             }
           )
         }
+        util.show('dialog');
         util.render('loadingMessage', 'modal', {message: "Creating dataset..."});
         waitForDB(couch.rootPath + dbName);
       })
-      e.preventDefault();
-      return false;
-    });
+    })
   },
   datasets: function() {
     $('.timeago').timeago();
