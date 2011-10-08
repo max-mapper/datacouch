@@ -212,6 +212,9 @@ app.after = {
 
 $(function() {
   
+  var user = $.url(window.location.href).segment(1);
+  if (user.length > 0) window.location.href = "/#/" + user;
+  
   $('a').live('click', function(event) {
     var route =  $(this).attr('href');
     util.catchModals(route);
