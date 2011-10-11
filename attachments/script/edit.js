@@ -1,3 +1,9 @@
+// redirect /edit/somedatasetid to /edit/#/somedatasetid
+(function() {
+  var id = $.url(window.location.href).segment(2);
+  if (id && id.length > 0) window.location.href = $.url(window.location.href).attr('base') + '/edit/#/' + id;
+})()
+
 var app = {
   baseURL: util.getBaseURL(window.location.href),
   container: 'main_content',
@@ -390,6 +396,14 @@ $(function() {
     '/': {on: 'noID'},
     '/(\\w+)!': {on: function(modal) { util.catchModals("#/" + modal + "!") }},
     '/:dataset': {on: 'dataset'}
-  }).use({ resource: app.routes.pages }).init('/');
+  }).use({ resource: app.routes.pages });
+  
+  // see if route matches /edit/#/somedatasetid
+  var id = $.url(window.location.href).fsegment(1);
+  if (id.length > 0) {
+    app.router.init("/" + id);
+  } else {
+    app.router.init('/');
+  }
   
 })

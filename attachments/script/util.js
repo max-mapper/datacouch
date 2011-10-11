@@ -715,11 +715,6 @@ var util = function() {
     return $.ajax({dataType: "jsonp", url: linkSearch + encodeURIComponent(term)}).promise();
   }
   
-  function redirectUsers() {
-    var user = $.url(window.location.href).segment(1)
-    if (user.length > 0) window.location.href = $.url(window.location.href).attr('base') + '/#/' + user;  
-  }
-  
   return {
     inURL: inURL,
     formatDiskSize: formatDiskSize,
@@ -753,7 +748,6 @@ var util = function() {
     addHTMLElementForFileEntry: addHTMLElementForFileEntry,
     codeEditor: codeEditor,
     addApp: addApp,
-    searchTwitter: searchTwitter,
-    redirectUsers: redirectUsers
+    searchTwitter: searchTwitter
   };
 }();

@@ -1,5 +1,8 @@
 // redirect /someuser to /#/someuser
-util.redirectUsers();
+(function() {
+  var user = $.url(window.location.href).segment(1)
+  if (user.length > 0) window.location.href = $.url(window.location.href).attr('base') + '/#/' + user;  
+})()
 
 var app = {
   baseURL: util.getBaseURL(window.location.href),
