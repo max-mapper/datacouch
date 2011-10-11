@@ -56,7 +56,7 @@ var recline = function() {
     var rows = response.rows;
     
     if (rows.length < 1) {
-      util.render('dataTable', 'data-table-container');
+      util.render('dataTable', 'data-table-container', {loggedIn: util.loggedIn()});
       return;
     };
     
@@ -87,7 +87,8 @@ var recline = function() {
     util.render('dataTable', 'data-table-container', {
       rows: tableRows,
       headers: headers,
-      notEmpty: function() { return app.headers.length > 0 }
+      notEmpty: function() { return app.headers.length > 0 },
+      loggedIn: util.loggedIn()
     })
     
     app.newest = rows[0].id;
@@ -243,14 +244,13 @@ var recline = function() {
       app.headers = headers;
       app.csvUrl = app.dbPath + '/csv?headers=' + escape(JSON.stringify(headers));
       hasFork(function(fork) {
-        var loggedIn = ( app.session && app.session.userCtx.name );
         util.render( 'actions', 'project-actions', 
           $.extend({}, app.dbInfo, {
             url: app.csvUrl,
-            loggedIn: loggedIn,
+            loggedIn: util.loggedIn(),
             showForkButton: function() {
               var isntOwner = ( app.datasetInfo.user !== app.session.userCtx.name );
-              return (loggedIn && isntOwner && !fork);
+              return (util.loggedIn() && isntOwner && !fork);
             },
             fork: fork
           })

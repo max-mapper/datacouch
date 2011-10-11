@@ -264,8 +264,13 @@
   
   <script type='text/mustache' class="appsTabTemplate">
     <div class="top">
-      {{^apps}}<div class="description">You haven't made any apps on top of this data yet.</div>{{/apps}}
-      <a href="#/browse!" class="btn"><span class="iconic magnifying-glass"></span>Browse available apps</a>
+      {{^apps}}
+        <div class="description">
+          {{#loggedIn}}You haven't made any apps on top of this data yet.{{/loggedIn}}
+          {{^loggedIn}}There aren't any applications on top of this data yet.{{/loggedIn}}
+        </div>
+      {{/apps}}
+      {{#loggedIn}}<a href="#/browse!" class="btn"><span class="iconic magnifying-glass"></span>Browse available apps</a>{{/loggedIn}}
     </div>
     <div class="bottom">
       {{#apps}}
@@ -355,7 +360,8 @@
           <div class="gettingStarted">
             <div class="welcomeMessage">
               <h1>Hello there!</h1>
-              <p>You haven't uploaded any data yet. Check out the Import menu up top to get started.</p>
+              {{#loggedIn}}<p>You haven't uploaded any data yet. Check out the Import menu up top to get started.</p>{{/loggedIn}}
+              {{^loggedIn}}<p>The owner of this dataset hasn't uploaded any data yet! Perhaps you should check back later.</p>{{/loggedIn}}
             </div>
             <img class="bigCouch" src="/images/couch-big.png">
           </div>

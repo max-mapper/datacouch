@@ -67,7 +67,7 @@
 .datasets-label {margin: 0 auto; width: 79px; height: 20px; background: url('images/datasets-label.png')}
 .doohicky {float: left; margin: 0px 0px 0px 22px; width: 79px; height: 20px; background: url('images/doohicky.png'); position: relative; bottom: 13px;}
 
-.infoContainer { margin-left: 20px; overflow: auto }
+.infoContainer { margin: 0px 0px 20px 20px; overflow: auto }
 
 .ornament-hr {width: 290px; height: 13px; background: url('images/ornament-hr.png'); margin: 5px auto 0px auto;}
 .datasetsContainer h2, .trendingSetsContainer h2 {

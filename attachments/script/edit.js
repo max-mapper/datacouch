@@ -113,7 +113,7 @@ app.routes = {
         var apps = _.map(resp.rows, function(row) {
           return {ddoc: row.doc.ddoc, url: row.doc.url};
         })
-        util.render('appsTab', 'sidebar', {apps: apps})        
+        util.render('appsTab', 'sidebar', {apps: apps, loggedIn: util.loggedIn()})        
       })
     },
     history: function() {
