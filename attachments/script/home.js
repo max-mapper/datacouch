@@ -1,3 +1,6 @@
+// redirect /someuser to /#/someuser
+util.redirectUsers();
+
 var app = {
   baseURL: util.getBaseURL(window.location.href),
   container: 'main_content',
@@ -10,15 +13,8 @@ couch.rootPath = couch.dbPath + "couch/";
 
 /*
   app.routes
-    pages (URL routed with SugarSkull, hrefs like "#/" or "#/bob")
-      home
-      activity
-    actions (no URL change triggered, hrefs like "#/cancel!" or "#/logout!")
-      new
-      settings
-      login
-      logout
-      cancel
+    - pages (URL routed with SugarSkull, hrefs like "#/" or "#/bob")
+    - modals (no URL change triggered, hrefs like "#/cancel!" or "#/logout!")
 */
 
 app.routes = {
@@ -27,6 +23,11 @@ app.routes = {
       util.render( 'welcome', 'content' );
       util.render( 'banner', 'bannerContainer' );
       util.render( 'loginButton', 'userButtons' );
+      
+      couch.request({url: app.baseURL + 'api/datasets/maxogden?limit=5'}).then(function(response) {
+        var datasets = _(response.rows).map(function(dataset) { return dataset.doc });
+        util.render('recentDatasets', 'featured-datasets', {datasets: datasets});
+      })
 
       app.emitter.on('login', function(name) {
         window.location.href = "#/activity";
@@ -34,24 +35,30 @@ app.routes = {
     },
     activity: function(username) {
       util.render('stream', 'content');
-      util.render('userControls', 'userControls');
-      monocles.ensureProfile().then(function(profile) {      
-        util.render( 'loggedIn', 'session_status', {
-          username : profile._id,
-          avatar : profile.avatar
-        });
-        util.showDatasets(username);
-        util.showApps(username);
-        if (username) {
-          couch.request({url: app.baseURL + 'api/users/' + username}).then(function(profile) {
-            profile.avatar = profile.avatar.replace('_normal.', '_bigger.');
-            util.render('bio', 'infoContainer', profile);
+      monocles.fetchSession().then(function() {
+        if(util.loggedIn()) {
+          monocles.ensureProfile().then(function(profile) {
+            util.render('userControls', 'userControls');
+            util.render('userActions', 'userButtons');
+            util.render( 'loggedIn', 'session_status', {
+              username : profile._id,
+              avatar : profile.avatar
+            });
           })
         } else {
-          util.render('info', 'infoContainer');
+          util.render('smallLogin', 'userControls');
         }
-        util.render('userActions', 'userButtons')
-      });
+      })
+      util.showDatasets(username);
+      util.showApps(username);
+      if (username) {
+        couch.request({url: app.baseURL + 'api/users/' + username}).then(function(profile) {
+          profile.avatar = profile.avatar.replace('_normal.', '_bigger.');
+          util.render('bio', 'infoContainer', profile);
+        })
+      } else {
+        util.render('info', 'infoContainer');
+      }
     }
   },
   modals: {
@@ -212,9 +219,7 @@ app.after = {
 
 $(function() {
   
-  var user = $.url(window.location.href).segment(1);
-  if (user.length > 0) window.location.href = "/#/" + user;
-  
+  // route all link clicks through the catchModals function
   $('a').live('click', function(event) {
     var route =  $(this).attr('href');
     util.catchModals(route);
@@ -238,6 +243,14 @@ $(function() {
     '/activity': {on: 'activity'},
     '/(\\w+)!': {on: function(modal) { util.catchModals("#/" + modal + "!") }},
     '/:username': {on: 'activity'},
-  }).use({ resource: app.routes.pages, notfound: function() {console.log('notfound')} }).init('/');
-  
+  }).use({ resource: app.routes.pages, notfound: function() { console.log('notfound') } })
+
+  // see if route matches /#/someuser
+  var user = $.url(window.location.href).fsegment(1);
+  if (user.length > 0) {
+    app.router.init("/" + user);
+  } else {
+    app.router.init('/');
+  }
+
 })

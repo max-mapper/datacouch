@@ -82,24 +82,46 @@
           Datacouch is still being built and tested. Be aware that your stuff might get deleted randomly! Watch progress <a href="http://github.com/maxogden/datacouch">on Github</a>
         </p>
       </div>
+      
+      <div class="row">
+        <div class="span4">
+          <h2>
+            <a href="#/newurbanmechs">@newurbanmechs</a>
+          </h2>
+          <p>
+            <code>
+              Featured User
+            </code>
+          </p>
+          <p>
+            The City of Boston Mayor's Office of New Urban Mechanics works to bridge the gap between technology and local government by connecting citizen developers with open data feeds.
+          </p>
+          <p>
+            <a class="btn js-btn" href="#/newurbanmechs">See their profile</a>
+          </p>
+        </div>
+        <div class="span12">
+          <h3>Newest datasets from @newurbanmechs</h3>
+          <div class="featured-datasets"></div>
+        </div>
+      </div>
 
       <section id="examples">
         <div class="page-header">
           <h1>
-            How it works
+            Collaborative tools
             <small>
-              if you have some data you want to share
+              to help share the burden of releasing and formatting messy data
             </small>
           </h1>
         </div>
-        <!-- Fixed layout -->
         <div class="row">
           <div class="span4 columns">
             <h2>
               Upload data
             </h2>
             <p>
-              You can upload CSV files or JSON data using a few different methods.
+              You can upload CSV files or JSON data using a few different methods. Once uploaded, anyone will be able to fork your datasets and help clean them up.
             </p>
           </div>
           <div class="span12 columns">
@@ -112,7 +134,7 @@
               Refine your data
             </h2>
             <p>
-              Use the HTML5 data editor to clean up or add to your dataset.
+              Use the HTML5 data editor to clean up or update any datasets that you have uploaded or forked to your account.
             </p>
           </div>
           <div class="span12 columns">
@@ -125,7 +147,7 @@
               Share & visualize
             </h2>
             <p>
-              Build HTML5 apps using the in-browser editor or consume data from the API.
+              Build HTML5 apps using the in-browser editor or consume data from the API. 
             </p>
           </div>
           <div class="span12 columns">
@@ -134,6 +156,26 @@
         </div>
       </section>
     </div>
+    
+    <footer class="footer">
+      <div class="container">
+        <p>
+          Built by
+          <a href="http://twitter.com/maxogden" target="_blank">@maxogden</a>
+          at
+          <a href="http://twitter.com/codeforamerica" target="_blank">@codeforamerica</a>.
+          Beautiful illustrations courtesy of
+          <a href="http://twitter.com/kriesse" target="_blank">@kriesse</a>.
+          <br>
+          Code available on
+          <a href="http://github.com/maxogden/datacouch" target="_blank">Github</a>.
+          Powered by 
+          <a href="http://couchdb.org">Apache CouchDB</a>
+          and
+          <a href="http://nodejs.org">node.js</a>.
+        </p>
+      </div>
+    </footer>
   </script>
   
   <script type="text/mustache" class="emptyTemplate">
@@ -175,15 +217,15 @@
   <script class="streamTemplate" type="text/mustache">
     <div class="wrapper">
       <div class="stream">
-        <a href="#/">
           <div class="top_bar">
-            <img id="couchLogo" src="images/fancycouch-small.png">
-            <span class="project-title">DataCouch</span>
+            <a href="#/">
+              <img id="couchLogo" src="images/fancycouch-small.png">
+              <span class="project-title">DataCouch</span>
+            </a>
             <span class="separator"> — </span>
             <span class="lightest_gray">collaborative data</span>
             <div class="userControls"></div>
           </div>
-        </a>
         <div class="showbar" id="showbar">
           <div class="userButtons"></div>
         </div>
@@ -282,6 +324,10 @@
       </div>
     </div>
   </script>
+  
+  <script type="text/mustache" class="smallLoginTemplate">
+    <a id="logged-in-status" href="#/login!" class="secondary"><img src="/images/sign-in-with-twitter.png"></a>
+  </script>
 
   <script type="text/mustache" class="editProfileFormTemplate">
     <form class="profile_setup">
@@ -363,6 +409,18 @@
         </li>
       {{/datasets}}
     </ol>
+  </script>
+  
+  <script type="text/mustache" class="recentDatasetsTemplate">
+    {{#datasets}}
+      <a href="/edit/#/{{_id}}">
+        <div class="breadcrumb">
+          {{name}}
+          <span class="divider">-</span>
+          {{description}}
+        </div>
+      </a>
+    {{/datasets}}
   </script>
   
   <script type="text/mustache" class="noUserTemplate">
