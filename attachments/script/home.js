@@ -27,7 +27,7 @@ app.routes = {
       util.render( 'banner', 'bannerContainer' );
       util.render( 'loginButton', 'userButtons' );
       
-      couch.request({url: app.baseURL + 'api/datasets/maxogden?limit=5'}).then(function(response) {
+      couch.request({url: app.baseURL + 'api/datasets/newurbanmechs?limit=5'}).then(function(response) {
         var datasets = _(response.rows).map(function(dataset) { return dataset.doc });
         util.render('recentDatasets', 'featured-datasets', {datasets: datasets});
       })
