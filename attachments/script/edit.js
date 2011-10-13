@@ -122,8 +122,8 @@ app.routes = {
         util.render('appsTab', 'sidebar', {apps: apps, loggedIn: util.loggedIn()})        
       })
     },
-    history: function() {
-      util.render('historyTab', 'sidebar')
+    wiki: function() {
+      util.render('wikiTab', 'sidebar', {loggedIn: util.loggedIn()});
     }
   }
 }
@@ -378,6 +378,23 @@ app.after = {
         }); 
       }
     })
+  },
+  wikiTab: function() {
+    sharejs.open(app.dbInfo.db_name, 'text', function(doc, error) {
+      if (error) {
+        console.log(error);
+      } else {
+        var elem = document.getElementById('editor');
+        elem.disabled = false;
+        if (util.loggedIn()) {
+          doc.attach_textarea(elem);
+        } else {
+          var update = function() { elem.innerHTML = doc.snapshot };
+          update();
+          doc.on('change', update);
+        }
+      }
+    });
   }
 }
 

@@ -12,6 +12,10 @@ ddoc =
     , {from:"/login", to:"../../../_twitter/auth/twitter"}
     , {from:"/login/callback", to:"../../../_twitter/auth/twitter/callback"}
     , {from:"/logout", to:"../../../_twitter/logout"}
+    , {from:"/wiki", to:"../../../_wiki/"}
+    , {from:"/wiki/*", to:"../../../_wiki/*"}
+    , {from:"/socket.io", to:"../../../_wiki/socket.io"}
+    , {from:"/socket.io/*", to:"../../../_wiki/socket.io/*"}
     , {from:"/api/token", to:"../../../_twitter/auth/token"}
     , {from:"/api/applications/:dataset", to:"_view/applications", query:{endkey:":dataset", startkey:":dataset", include_docs:"true", descending: "true"}}
     , {from:"/api/applications", to:"_view/applications", query:{include_docs:"true", descending: "true"}}

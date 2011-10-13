@@ -15,6 +15,7 @@
 .sidebar .datasource {overflow: auto;background: url('images/tiny-triangle.png') no-repeat 0px 6px;padding-left: 7px; font-family: "Lucida Grande"; font-size: 10px; color: #959595;}
 .strong {font-weight: bold; margin-right: 5px}
 .sidebar .bottom{width: 100%; overflow-x: hidden}
+.sidebar .bottom #editor { position: absolute;margin: 10px;right: 0px;left: 0px;width: auto;bottom: 10px;top: 55px; font-size: 12px;}
 .sidebar .property {padding: 10px 16px; border-bottom: 1px solid #DDEFEC; overflow: auto}
 .sidebar .key{width: 90px; float: left; font-family: "Lucida Grande"; font-size: 13px; font-weight: bold; color: #464646}
 .sidebar .value{width: 170px; float: left; color: #707070; }
