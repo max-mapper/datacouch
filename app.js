@@ -8,15 +8,15 @@ ddoc =
     [ {from:"/", to:'pages/index.html'}
     , {from:"/edit", to:"pages/recline.html"}
     , {from:"/edit/*", to:"pages/recline.html"}
-    // , {from:"/fakelogin", to:"../../../_twitter/auth/fakelogin"} // only enable when testing offline
-    , {from:"/login", to:"../../../_twitter/auth/twitter"}
-    , {from:"/login/callback", to:"../../../_twitter/auth/twitter/callback"}
-    , {from:"/logout", to:"../../../_twitter/logout"}
-    , {from:"/wiki", to:"../../../_wiki/"}
-    , {from:"/wiki/*", to:"../../../_wiki/*"}
-    , {from:"/socket.io", to:"../../../_wiki/socket.io"}
-    , {from:"/socket.io/*", to:"../../../_wiki/socket.io/*"}
-    , {from:"/api/token", to:"../../../_twitter/auth/token"}
+    , {from:"/fakelogin", to:"../../../_twitter/auth/fakelogin"} // only enable when testing offline
+    , {from:"/proxy", to:"../../../_smalldata/"}
+    , {from:"/proxy/*", to:"../../../_smalldata/*"}
+    , {from:"/socket.io", to:"../../../_smalldata/wiki/socket.io"}
+    , {from:"/socket.io/*", to:"../../../_smalldata/wiki/socket.io/*"}
+    , {from:"/login", to:"../../../_smalldata/twitter/auth/twitter"}
+    , {from:"/login/callback", to:"../../../_smalldata/twitter/auth/twitter/callback"}
+    , {from:"/logout", to:"../../../_smalldata/twitter/logout"}
+    , {from:"/api/token", to:"../../../_smalldata/twitter/auth/token"}
     , {from:"/api/applications/:dataset", to:"_view/applications", query:{endkey:":dataset", startkey:":dataset", include_docs:"true", descending: "true"}}
     , {from:"/api/applications", to:"_view/applications", query:{include_docs:"true", descending: "true"}}
     , {from:"/api/applications/user/:user", to:"_view/applications_by_user", query:{endkey:":user", startkey:":user", include_docs:"true", descending: "true"}}

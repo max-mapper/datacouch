@@ -1,0 +1,11 @@
+{
+  "name": "dc_reverseproxy",
+  "subdomain": "dcreverseproxy",
+  "scripts": {
+    "start": "server.js"
+  },
+  "dependencies": {
+    "http-proxy": "0.7.3"
+  },
+  "version": "0.0.1"
+}
