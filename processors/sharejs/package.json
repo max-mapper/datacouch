@@ -1,0 +1,12 @@
+{
+  "name": "dc_sharejs",
+  "subdomain": "dcsharejs",
+  "scripts": {
+    "start": "sharejs_server.js"
+  },
+  "dependencies": {
+    "share": "0.4.1",
+    "pkginfo": "0.2.2"
+  },
+  "version": "0.0.1"
+}
