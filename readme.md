@@ -14,6 +14,7 @@ Very much a work in progress as of Fall 2011!
 - Real-time dataset replication and changes feed (SLEEP/syncable.org)
 - Geospatial queries
 - Data-driven HTML5 application hosting
+- Etherpad/Google docs style collaborative wiki
 - Out of the box app templates
 - In-browser application source editor
 
@@ -81,6 +82,7 @@ install the required npm modules
     cd datacouch/
     npm install (this installs the deps defined in `/package.json`)
     npm install couchapp -g (this installs the `couchapp` binary command globally)
+    npm install forever -g (a node process manager similar to god or monit)
   
 deploy the various couchapps to your Couch. these mostly set database permissions and adds database views:
 
@@ -95,14 +97,16 @@ go to dev.twitter.com and make an app and then add some environment variables to
     export DATACOUCH_TWITTER_KEY="KEY FROM https://dev.twitter.com/ HERE"
     export DATACOUCH_TWITTER_SECRET="SECRET FROM https://dev.twitter.com/ HERE"
 
-start the various node async processes. these should always be running somewhere. think of them like async job workers. you will want to run 'npm install' from each `processors` directory to install the various dependencies
+to setup the real-time wiki tab you need to do the following:
 
-    node provision_databases.js
-    node compute_stats.js
-    node collect_analytics.js
-    node auth_server.js
+    cd processors/sharejs
+    node setup_couch.js
 
-now you can launch datacouch:
+start the various node async processes. these should always be running somewhere. think of them like async job workers. you will want to run 'npm install' from each `processors` directory to install the various dependencies. then to launch all the node processors:
+
+    chmod +x launch.sh && ./launch.sh
+
+now you can open datacouch!
 
     open http://datacouch.dev:5984
     
