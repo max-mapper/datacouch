@@ -74,14 +74,31 @@ module.exports = function() {
 
   function createDoc(url, userData, callback) {
     request.put({uri: url, body: userData, json: true}
-      , function(e,r,b) { 
-        _.extend(userData
-          , { _id: r.id
-            , _rev: r.rev
-        })
-        callback(userData)
+      , function(e,r,b) {
+        if(b.error) throw new Error(url + " - " + JSON.stringify(b));
+        callback(_.extend({}, userData
+          , { _id: b.id
+            , _rev: b.rev
+        }))
       }
     )
+  }
+  
+  function waitUntilExists(url, callback) {
+    var start = new Date();
+    (function headRequest() {
+      request.head(url
+        , function(e,r,b) {
+          if( (new Date() - start) > 5000 ) callback(true, "timed out waiting for " + url)
+          if(r.statusCode === 404) {
+            setTimeout(function() {
+              headRequest(url);
+            }, 100)
+          } else {
+            callback(false, {'ok': true})
+          }
+        })
+    }())
   }
 
   return {
@@ -90,6 +107,7 @@ module.exports = function() {
     logUserIn: logUserIn,
     getOrCreate: getOrCreate,
     getDoc: getDoc,
-    createDoc: createDoc
+    createDoc: createDoc,
+    waitUntilExists: waitUntilExists
   }
 }()

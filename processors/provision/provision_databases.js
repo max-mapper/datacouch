@@ -59,7 +59,7 @@ follow({db: db, include_docs: true, filter: "datacouch/by_value", query_params: 
   checkExistenceOf(dbPath + "/_design/" + change.doc.ddoc).then(function(status) {
     if(status === 404) {
       var appURL = change.doc._id + "." + vhostDomain;
-      replicate("apps", dbPath, "_design/" + change.doc.ddoc).then(function() {
+      replicate("apps", dbPath, "_design/" + change.doc.ddoc).then(function(resp) {
         addVhost(appURL, "/" + change.doc.dataset + "/_design/" + change.doc.ddoc + "/_rewrite").then(function() {
           request.post({url: db, body: _.extend({}, change.doc, {url: appURL}), json: true}, function(e,r,b) {
             console.log("installed " + change.doc.ddoc + " into " + dbPath + " in " + (new Date() - start_time) + "ms");
@@ -89,7 +89,7 @@ function pushCouchapp(app, target) {
 
 function replicate(source, target, ddoc) {
   var dfd = deferred();
-  var reqData = {"source": source,"target": target};
+  var reqData = {"source": source,"target": target, "create_target": true};
   if (ddoc) reqData["doc_ids"] = [ddoc];
   request({uri: couch + "/_replicate", method: "POST", headers: h, body: JSON.stringify(reqData)}, function (err, resp, body) {
     if (err) throw new Error('ahh!! ' + err);
