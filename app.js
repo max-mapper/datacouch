@@ -8,7 +8,7 @@ ddoc =
     [ {from:"/", to:'pages/index.html'}
     , {from:"/edit", to:"pages/recline.html"}
     , {from:"/edit/*", to:"pages/recline.html"}
-    , {from:"/fakelogin", to:"../../../_twitter/auth/fakelogin"} // only enable when testing offline
+    // , {from:"/fakelogin", to:"../../../_twitter/auth/fakelogin"} // only enable when testing offline
     , {from:"/proxy", to:"../../../_smalldata/"}
     , {from:"/proxy/*", to:"../../../_smalldata/*"}
     , {from:"/socket.io", to:"../../../_smalldata/wiki/socket.io"}

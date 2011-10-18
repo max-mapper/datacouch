@@ -73,8 +73,8 @@ $(function(){
           dfd.resolve(updatedDoc);
         });
       }
-      
-      couch.get( app.baseURL + "api/users/" + profileDoc._id ).then(
+
+      couch.request({ url: app.baseURL + "api/users/" + profileDoc._id }).then(
         function( profile ) {
           $.extend(profile, profileDoc);
           upload(profile);

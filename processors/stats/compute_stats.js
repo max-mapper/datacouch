@@ -46,6 +46,7 @@ function getHits(id) {
   var key = "[%22"+id+"%22,null]";
   var hitsURL = couch + "/datacouch-analytics/_design/analytics/_view/popular_datasets?group=true&startkey="+key+"&endkey="+key+"&limit=1";
   request({uri: hitsURL, headers: h}, function(err, resp, body) {
+    console.log(body)
     var rows = JSON.parse(body).rows;
     if (rows.length > 0) {
       dfd.resolve(rows[0].value);
