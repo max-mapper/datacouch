@@ -213,10 +213,9 @@ app.after = {
   },
   datasets: function() {
     $('.timeago').timeago();
-    $('svg').height('15px').width('25px');
   },
   nouns: function() {
-    $('svg').height('30px').width('50px');
+
   }
 }
 

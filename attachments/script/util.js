@@ -444,6 +444,7 @@ var util = function() {
           size: util.formatDiskSize(row.doc.disk_size),
           name: row.value,
           date: row.doc.createdAt,
+          description: row.doc.description,
           nouns: row.doc.nouns,
           forkedFrom: row.doc.forkedFrom,
           forkedFromUser: row.doc.forkedFromUser,
