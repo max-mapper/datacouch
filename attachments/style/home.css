@@ -156,24 +156,25 @@ ul#landing_nav {
     line-height: 12px;}
     ul#landing_nav > li a {
       color: #000; }
+      
 
-.settings {
-  }
-  .settings p.welcome {overflow: auto}
-  .settings .available {background-color: #AEFFA8 !important}
-  .settings .notAvailable {background-color: #FFC1BF !important}
-  .settings .loading {background-image:url('images/loader.gif'); background-repeat: no-repeat; background-position: 97% center;}
-  .settings img {float: left}
-  .settings .welcome-text {line-height: 37px;height: 37px;display: block;float: left;margin-left: 10px}
-  .settings .username-message {height: 38px; line-height: 38px; padding-left: 10px;display: inline;}
-  .settings h4 {clear: left; margin-bottom: 5px}
-  .settings .submitContainer {margin-top: 10px}
-  .settings input[type='hidden'] {
-    display: none; }
-  .settings input, .settings p {
-    float: left;
-    margin-bottom: 10px }
-    
+
+.settings p.welcome {overflow: auto}
+.settings .welcome-text {line-height: 37px;height: 37px;display: block;float: left;margin-left: 10px}
+.settings .username-message {height: 38px; line-height: 38px; padding-left: 10px;display: inline;}
+.settings h4 {clear: left; margin-bottom: 5px}
+.settings .submitContainer {margin-top: 10px}
+.settings input[type='hidden'] {
+  display: none; }
+.settings input, .settings p {
+  float: left;
+  margin-bottom: 10px }
+  
+.infopanel .available {background-color: #AEFFA8 !important}
+.infopanel .notAvailable {background-color: #FFC1BF !important}
+.infopanel .loading {background-image:url('images/loader.gif'); background-repeat: no-repeat; background-position: 97% center;}
+.infopanel img {float: left}
+.infopanel .help-block { color: #666; }
 
 
 /* NOUN PROJECT STYLES */

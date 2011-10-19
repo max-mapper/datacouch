@@ -503,7 +503,7 @@
             </div>
             <div class="clearfix">
               <label for="source">
-                Datasource
+                Data source
               </label>
               <div class="input">
                 <input class="xlarge" id="source" name="source" size="30" type="text" value="{{source}}">
@@ -515,6 +515,20 @@
               </label>
               <div class="input">
                 <textarea class="xlarge" id="description" name="description" rows="3">{{description}}</textarea>
+              </div>
+            </div>
+            <div class="clearfix">
+              <label for="icon">
+                Icon
+              </label>
+              <div class="input">
+                <div class="input-prepend">
+                  <span class="add-on"><span class="magnifier icon"></span></span>
+                  <input class="medium" id="icon-picker" name="icon" size="16" type="text" value="{{icon}}">
+                </div>
+                <span class="help-block">
+                  Pick one icon from the <a href="http://thenounproject.com">Noun Project</a> that represents this dataset.
+                </span>
               </div>
             </div>
           </fieldset>
