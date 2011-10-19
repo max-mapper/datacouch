@@ -213,34 +213,34 @@
   </script>
 
   <script type="text/mustache" class="infoTemplate">
-    <h4>
-      Datacouch
-      <code>
-        alpha test!
-      </code>
-    </h4>
-    <p>
-      Thanks for testing Datacouch out. If you have any suggestions feel free to open issues <a href="https://github.com/maxogden/datacouch/issues">on Github</a>.
-    <dl>
-      <dt>
-        Forking & Refining
-      </dt>
-      <dd>
-        You can create new datasets by uplooading CSV/JSON data or fork datasets from other users to your account. You can only edit data in datasets that are under your account. Soon you will be able to submit pull requests back to dataset owners.
-      </dd>
-      <dt>
-        App/Visualization Templates
-      </dt>
-      <dd>
-        From the <code>Applications</code> tab inside a dataset you can install some HTML5 application templates and edit them from your browser. This is pretty half-baked right now and will be improving soon. If you have ideas for useful app templates open an issue on Github with the recommendation!
-      </dd>
-      <dt>
-        Full CouchDB API
-      </dt>
-      <dd>
-        Every dataset is it's own CouchDB database under the ownership of your user account. This means you can take advantage of all the fun real-time sync and replication features offered by CouchDB. There will be API documentation soon but you can get started by using <a href="/api/token">your token</a> to make authenticated requests to any of your datasets via the Couch endpoint: <code>http://datacouch.com/api/couch/database-id-here</code>
-      </dd>
-    </dl>
+    <div class="alert-message block-message warning">
+      <p>
+        <strong>
+          This is an alpha test!
+        </strong>
+        If you find bugs or have suggestions please open issues <a href="https://github.com/maxogden/datacouch/issues">on Github</a>. Here are some things to try:
+      </p>
+      <ul>
+        <li>
+          <strong>
+            Forking & Refining
+          </strong>
+          You can create new datasets by uplooading CSV/JSON data or fork datasets from other users to your account. You can only edit data in datasets that are under your account. Soon you will be able to submit pull requests back to dataset owners.
+        </li>
+        <li>
+          <strong>
+            App/Visualization Templates
+          </strong>
+          From the <code>Applications</code> tab inside a dataset you can install some HTML5 application templates and edit them from your browser. This is pretty half-baked right now and will be improving soon. If you have ideas for useful app templates open an issue on Github with the recommendation!
+        </li>
+        <li>
+          <strong>
+            Full CouchDB API
+          </strong>
+          Every dataset is it's own CouchDB database under the ownership of your user account. This means you can take advantage of all the fun real-time sync and replication features offered by CouchDB. There will be API documentation soon but you can get started by using <a href="/api/token">your token</a> to make authenticated requests to any of your datasets via the Couch endpoint: <code>http://datacouch.com/api/couch/database-id-here</code>
+        </li>
+      </ul>
+    </div>
   </script>
   
   <script type="text/mustache" class="bioTemplate">
@@ -359,7 +359,6 @@
   </script>
   
   <script type="text/mustache" class="datasetsTemplate">
-    <div class="datasets-label"></div>
     <div class="ornament-hr"></div>
     
     <ol class="datasets detailed">
@@ -422,22 +421,26 @@
                         <span class="timeago" title="{{date}}"></span>
                       </td>
                     </tr>
-                    <tr>
-                      <td>
-                        Documents
-                      </td>
-                      <td>
-                        {{count}}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        Size
-                      </td>
-                      <td>
-                        {{size}}
-                      </td>
-                    </tr>
+                    {{#count}}
+                       <tr>
+                        <td>
+                          Documents
+                        </td>
+                        <td>
+                          {{count}}
+                        </td>
+                      </tr>
+                    {{/count}}
+                    {{#size}}
+                       <tr>
+                        <td>
+                          Size
+                        </td>
+                        <td>
+                          {{size}}
+                        </td>
+                      </tr>
+                    {{/size}}
                   </tbody>
                 </table>
               </div>
