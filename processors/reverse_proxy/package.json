@@ -2,7 +2,7 @@
   "name": "dc_reverseproxy",
   "subdomain": "dcreverseproxy",
   "scripts": {
-    "start": "server.js"
+    "start": "proxy_server.js"
   },
   "dependencies": {
     "http-proxy": "0.7.3",

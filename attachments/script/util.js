@@ -448,7 +448,7 @@ var util = function() {
           nouns: row.doc.nouns,
           forkedFrom: row.doc.forkedFrom,
           forkedFromUser: row.doc.forkedFromUser,
-          count: row.doc.doc_count - 1 // TODO calculate this programatically
+          count: row.doc.doc_count
         };
       })
       if (datasets.length > 0) {

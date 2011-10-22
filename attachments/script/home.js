@@ -142,41 +142,28 @@ app.after = {
   newDatasetForm: function() {
     var doc = {}, docID;
     couch.request({url: couch.rootPath + "_uuids"}).then( function( data ) { docID = data.uuids[ 0 ] });
-    var inputs = $(".modal #icon-picker");
+    var input = $(".modal #icon-picker");
     var renderIcons = _.throttle(function() {
-        var input = $(this);
-        console.log(input)
-        input.addClass('loading');
-        app.cache.words = {};
-        var words = _.reduce(inputs, function(memo, el) { 
-          return memo + " " + $(el).val()
-        }, "")
-          .replace(/[^\w\s]|_/g, "")
-          .replace(/\s+/g, ' ')
-          .trim()
-          .split(' ');
-        // var requests = _.map(words, function(word) {
-        //   var request = util.lookupIcon(word);
-        //   request.then(function(resp) {
-        //     var matches = _.map(_.keys(resp.svg), function(match) {
-        //       return {
-        //         noun: match.toLowerCase(),
-        //         svg: resp.svg[match]
-        //       };
-        //     })
-        //     matches = _.select(matches, function(match){ return word === match.noun });
-        //     _.each(matches, function(match) {
-        //       app.cache.words[match.noun] = match;
-        //     })
-        //     doc.nouns = _.map(app.cache.words, function(word) {return word});
-        //     util.render('nouns', 'nounContainer', {nouns: doc.nouns, nounsExist: function() {return doc.nouns.length > 0}});
-        //   })
-        //   return request.promise();
-        // })
-        // $.when.apply(null, requests).then(function() { inputs.removeClass('loading') })
-        console.log('words', words)
-      }, 1000);
-    inputs.keyup(renderIcons);
+      var input = $(this);
+      input.addClass('loading');
+      var word = input.val()
+       .replace(/[^\w\s]|_/g, "")
+       .replace(/\s+/g, ' ')
+       .trim()
+       .split(' ');
+      util.lookupIcon(word).then(function(resp) {
+       input.removeClass('loading');
+       console.log(resp)
+       var matches = _.map(_.keys(resp.svg), function(match) {
+         return {
+           noun: match.toLowerCase(),
+           svg: resp.svg[match]
+         };
+       })
+       util.render('nouns', 'nounContainer', {nouns: matches, nounsExist: function() {return doc.nouns.length > 0}});
+      })
+    }, 1000);
+    input.keyup(renderIcons);
     
     $('.modal-footer .ok').click(function(e) {
       var defaultProperties = {

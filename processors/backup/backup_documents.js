@@ -91,6 +91,7 @@ function absolutePath(pathname) {
 function checkExistenceOf(url) {
   var dfd = deferred();
   request({uri: url, method: "HEAD", headers: h}, function(err, resp, body) {
+    if (err) throw new Error(err);
     dfd.resolve(resp.statusCode);
   })
   return dfd.promise();

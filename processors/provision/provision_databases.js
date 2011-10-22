@@ -5,7 +5,7 @@
   *  then "node provision_databases.js"
   *  Author: Max Ogden (@maxogden)
  **/
- 
+
 if(!process.env['DATACOUCH_ROOT'] || !process.env['DATACOUCH_VHOST']) throw ("OMGZ YOU HAVE TO SET $DATACOUCH_ROOT and $DATACOUCH_VHOST");
 
 var follow = require('follow')
