@@ -524,7 +524,7 @@
               <div class="input">
                 <div class="input-prepend">
                   <span class="add-on"><span class="magnifier icon"></span></span>
-                  <input class="medium" id="icon-picker" name="icon" size="16" type="text" value="{{icon}}">
+                  <input class="medium" id="icon-picker" size="16" type="text">
                 </div>
                 <span class="help-block">
                   Pick one icon from the <a href="http://thenounproject.com">Noun Project</a> that represents this dataset.
@@ -542,12 +542,16 @@
     </div>
   </script>
 
-   <script type="text/mustache" class="nounsTemplate">
-     {{#nounsExist}}{{title}}{{/nounsExist}}
-     {{#nouns}}
-       <a href="http://thenounproject.com/noun/{{noun}}/">{{{svg}}}</a>
-     {{/nouns}}
-   </script>
+  <script type="text/mustache" class="nounsTemplate">
+    <div class="nounsBoundary">
+      {{#nouns}}
+        <div class="nounWrapper">
+          <div class="noun-icon">{{{svg}}}</div>
+          <span class="icon-subtitle">{{noun}}</span>
+        </div>
+      {{/nouns}}
+      </script>
+  </script>
   
   <script type="text/mustache" class="formLoadingTemplate">
     <h1>Loading! Please hold on...</h1>

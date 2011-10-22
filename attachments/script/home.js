@@ -150,17 +150,19 @@ app.after = {
        .replace(/[^\w\s]|_/g, "")
        .replace(/\s+/g, ' ')
        .trim()
-       .split(' ');
       util.lookupIcon(word).then(function(resp) {
        input.removeClass('loading');
-       console.log(resp)
        var matches = _.map(_.keys(resp.svg), function(match) {
          return {
            noun: match.toLowerCase(),
            svg: resp.svg[match]
          };
        })
-       util.render('nouns', 'nounContainer', {nouns: matches, nounsExist: function() {return doc.nouns.length > 0}});
+
+       app.nouns = {};
+       _.each(matches, function(noun) { app.nouns[noun.noun] = noun; })
+
+       util.render('nouns', 'nounContainer', {nouns: matches});
       })
     }, 1000);
     input.keyup(renderIcons);
@@ -176,6 +178,9 @@ app.after = {
       
       _.extend(doc, $('.modal form').serializeObject(), defaultProperties);
       
+      var selectedNoun = $('.nounWrapper.selected .icon-subtitle').text()
+      if (selectedNoun.length > 0) doc.nouns = [app.nouns[selectedNoun]];
+
       util.hide('dialog');
       couch.request({url: app.baseURL + "api/" + doc._id, type: "PUT", data: JSON.stringify(doc)}).then(function(resp) {
         var dbID = resp.id
@@ -204,7 +209,10 @@ app.after = {
     $('.timeago').timeago();
   },
   nouns: function() {
-
+    $('.nounContainer svg').click(function(e) {
+      $('.nounWrapper.selected').removeClass('selected');
+      $(e.currentTarget).parents('.nounWrapper').toggleClass('selected')
+    })
   }
 }
 

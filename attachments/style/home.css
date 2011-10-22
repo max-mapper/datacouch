@@ -176,6 +176,12 @@ ul#landing_nav {
 .infopanel img {float: left}
 .infopanel .help-block { color: #666; }
 
+.nounContainer {max-height: 200px;overflow: scroll;}
+.nounsBoundary { margin: 10px 10px 0px 10px}
+.nounsBoundary svg { border: 1px solid white}
+.nounsBoundary svg:hover { fill: salmon; cursor: pointer; cursor: hand; }
+.nounsBoundary .selected { background-color: #f9f9f9}
+.nounWrapper { float: left; margin-right: 5px; text-align: center;}
 
 /* NOUN PROJECT STYLES */
 .container .column-main{
