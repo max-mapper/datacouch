@@ -47,7 +47,17 @@ a.button:hover span.icon.loading { background-image: url(images/loader-blue.gif)
 #import-api-form input {width: auto;font-size: 12px;}
 
 #docCount {font-family: Lucida Grande;font-size: 17px; color: #084354}
-.nounContainer { margin: 10px 0 }
+
+.datasetNoun { margin: 10px }
+
+.modal .loading {background-image:url('images/loader.gif'); background-repeat: no-repeat; background-position: 97% center;}
+.modal .nounContainer {max-height: 200px;overflow: scroll;}
+.modal .nounsBoundary { margin: 10px 10px 0px 10px}
+.modal .nounsBoundary svg { border: 1px solid white}
+.modal .nounsBoundary svg:hover { fill: salmon; cursor: pointer; cursor: hand; }
+.modal .nounsBoundary .selected { background-color: #f9f9f9}
+.modal .nounWrapper { float: left; margin-right: 5px; text-align: center;}
+
 .project-title {margin-top: 3px;line-height: 20px;background-color: #FEE9CC;color: rgba(0, 0, 0, 0.75);padding: 1px 3px;font-family: Monaco, Andale Mono, Courier New, monospace;font-size: 17px;-webkit-border-radius: 3px;-moz-border-radius: 3px;border-radius: 3px;}
 .gettingStarted { width: 809px; margin: 50px auto}
 .gettingStarted .bigCouch {float: right}
@@ -360,6 +370,73 @@ span.tooltip-status {
     overflow-x: auto;
     width: 100%;
 }
+
+/* CSS3BUTTONS*/
+
+span.icon { display: inline-block; width: 14px; height: 12px; margin: auto; position: relative; top: 0; *top: 0px; background-image: url('images/iconic-sprite.png'); background-repeat: no-repeat; }
+span.icon { top: 1px }
+span.icon.book { background-position: 0 0 }
+.action:hover span.icon.book { background-position: 0 -15px }
+span.icon.calendar { background-position: 0 -30px }
+.action:hover span.icon.calendar { background-position: 0 -45px }
+span.icon.chat { background-position: 0 -60px }
+.action:hover span.icon.chat { background-position: 0 -75px }
+span.icon.check { background-position: 0 -90px }
+.action:hover span.icon.check { background-position: 0 -103px }
+span.icon.clock { background-position: 0 -116px }
+.action:hover span.icon.clock { background-position: 0 -131px }
+span.icon.cog { background-position: 0 -146px }
+.action:hover span.icon.cog { background-position: 0 -161px }
+span.icon.comment { background-position: 0 -176px }
+.action:hover span.icon.comment { background-position: 0 -190px }
+span.icon.cross { background-position: 0 -204px }
+.action:hover span.icon.cross { background-position: 0 -219px }
+span.icon.downarrow { background-position: 0 -234px }
+.action:hover span.icon.downarrow { background-position: 0 -249px }
+span.icon.fork { background-position: 0 -264px }
+.action:hover span.icon.fork { background-position: 0 -279px }
+span.icon.heart { background-position: 0 -294px }
+.action:hover span.icon.heart { background-position: 0 -308px }
+span.icon.home { background-position: 0 -322px }
+.action:hover span.icon.home { background-position: 0 -337px }
+span.icon.key { background-position: 0 -352px }
+.action:hover span.icon.key { background-position: 0 -367px }
+span.icon.leftarrow { background-position: 0 -382px }
+.action:hover span.icon.leftarrow { background-position: 0 -397px }
+span.icon.lock { background-position: 0 -412px }
+.action:hover span.icon.lock { background-position: 0 -427px }
+span.icon.loop { background-position: 0 -442px }
+.action:hover span.icon.loop { background-position: 0 -457px }
+span.icon.magnifier { background-position: 0 -472px }
+.action:hover span.icon.magnifier { background-position: 0 -487px }
+span.icon.mail { background-position: 0 -502px }
+.action:hover span.icon.mail { background-position: 0 -514px }
+span.icon.move { background-position: 0 -526px }
+.action:hover span.icon.move { background-position: 0 -541px }
+span.icon.pen { background-position: 0 -556px }
+.action:hover span.icon.pen { background-position: 0 -571px }
+span.icon.pin { background-position: 0 -586px }
+.action:hover span.icon.pin { background-position: 0 -601px }
+span.icon.plus { background-position: 0 -616px }
+.action:hover span.icon.plus { background-position: 0 -631px }
+span.icon.reload { background-position: 0 -646px }
+.action:hover span.icon.reload { background-position: 0 -660px }
+span.icon.rightarrow { background-position: 0 -674px }
+.action:hover span.icon.rightarrow { background-position: 0 -689px }
+span.icon.rss { background-position: 0 -704px }
+.action:hover span.icon.rss { background-position: 0 -719px }
+span.icon.tag { background-position: 0 -734px }
+.action:hover span.icon.tag { background-position: 0 -749px }
+span.icon.trash { background-position: 0 -764px }
+.action:hover span.icon.trash { background-position: 0 -779px }
+span.icon.unlock { background-position: 0 -794px }
+.action:hover span.icon.unlock { background-position: 0 -809px }
+span.icon.uparrow { background-position: 0 -824px }
+.action:hover span.icon.uparrow { background-position: 0 -839px }
+span.icon.user { background-position: 0 -854px }
+.action:hover span.icon.user { background-position: 0 -869px }
+
+
 
 /* BUBBRUBB STREAM FROM MONOCLES */
 

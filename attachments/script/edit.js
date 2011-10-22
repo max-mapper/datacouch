@@ -191,8 +191,16 @@ app.after = {
     })
   },
   editDatasetInfo: function() {
+    var input = $(".modal #icon-picker")
+      , iconThrottler = _.throttle(util.renderIcons, 1000);
+    input.keyup(iconThrottler);
+    
     $('.modal-footer .ok').click(function(e) {
       _.extend(app.datasetInfo, $('.modal form').serializeObject());
+      
+      var selectedNoun = $('.nounWrapper.selected .icon-subtitle').text()
+      if (selectedNoun.length > 0) app.datasetInfo.nouns = [app.nouns[selectedNoun]];
+      
       couch.request({url: app.baseURL + "api", data: JSON.stringify(app.datasetInfo), type: "POST"}).then(function(resp) {
         app.datasetInfo._rev = resp.rev;
         app.routes.tabs.data();
@@ -395,6 +403,12 @@ app.after = {
         }
       }
     });
+  },
+  nouns: function() {
+    $('.nounContainer svg').click(function(e) {
+      $('.nounWrapper.selected').removeClass('selected');
+      $(e.currentTarget).parents('.nounWrapper').toggleClass('selected')
+    })
   }
 }
 

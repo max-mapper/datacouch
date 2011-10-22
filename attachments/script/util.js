@@ -716,6 +716,29 @@ var util = function() {
     return $.ajax({dataType: "jsonp", url: linkSearch + encodeURIComponent(term)}).promise();
   }
   
+  function renderIcons() {
+    var input = $(this);
+    input.addClass('loading');
+    var word = input.val()
+     .replace(/[^\w\s]|_/g, "")
+     .replace(/\s+/g, ' ')
+     .trim()
+    util.lookupIcon(word).then(function(resp) {
+     input.removeClass('loading');
+     var matches = _.map(_.keys(resp.svg), function(match) {
+       return {
+         noun: match.toLowerCase(),
+         svg: resp.svg[match]
+       };
+     })
+
+     app.nouns = {};
+     _.each(matches, function(noun) { app.nouns[noun.noun] = noun; })
+
+     util.render('nouns', 'nounContainer', {nouns: matches});
+    })
+  }
+  
   return {
     inURL: inURL,
     formatDiskSize: formatDiskSize,
@@ -749,6 +772,7 @@ var util = function() {
     addHTMLElementForFileEntry: addHTMLElementForFileEntry,
     codeEditor: codeEditor,
     addApp: addApp,
-    searchTwitter: searchTwitter
+    searchTwitter: searchTwitter,
+    renderIcons: renderIcons
   };
 }();

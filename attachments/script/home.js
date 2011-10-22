@@ -142,30 +142,9 @@ app.after = {
   newDatasetForm: function() {
     var doc = {}, docID;
     couch.request({url: couch.rootPath + "_uuids"}).then( function( data ) { docID = data.uuids[ 0 ] });
-    var input = $(".modal #icon-picker");
-    var renderIcons = _.throttle(function() {
-      var input = $(this);
-      input.addClass('loading');
-      var word = input.val()
-       .replace(/[^\w\s]|_/g, "")
-       .replace(/\s+/g, ' ')
-       .trim()
-      util.lookupIcon(word).then(function(resp) {
-       input.removeClass('loading');
-       var matches = _.map(_.keys(resp.svg), function(match) {
-         return {
-           noun: match.toLowerCase(),
-           svg: resp.svg[match]
-         };
-       })
-
-       app.nouns = {};
-       _.each(matches, function(noun) { app.nouns[noun.noun] = noun; })
-
-       util.render('nouns', 'nounContainer', {nouns: matches});
-      })
-    }, 1000);
-    input.keyup(renderIcons);
+    var input = $(".modal #icon-picker")
+      , iconThrottler = _.throttle(util.renderIcons, 1000);
+    input.keyup(iconThrottler);
     
     $('.modal-footer .ok').click(function(e) {
       var defaultProperties = {
