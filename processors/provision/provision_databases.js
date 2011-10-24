@@ -9,7 +9,7 @@
 if(!process.env['DATACOUCH_ROOT'] || !process.env['DATACOUCH_VHOST']) throw ("OMGZ YOU HAVE TO SET $DATACOUCH_ROOT and $DATACOUCH_VHOST");
 
 var follow = require('follow')
-  , request = require('request')
+  , request = require('request').defaults({json: true})
   , couchapp = require('couchapp')
   , deferred = require('deferred')
   , http = require('http')
@@ -22,19 +22,17 @@ var configURL = url.parse(process.env['DATACOUCH_ROOT'] + "/datacouch")
   , vhostDomain = process.env['DATACOUCH_VHOST']
   , couch = configURL.protocol + "//" + configURL.host
   , db = couch + configURL.pathname
-  , h = {"Content-type": "application/json", "Accept": "application/json"}
   ;
 
 follow({db: db, include_docs: true, filter: "datacouch/by_value", query_params: {k: "type", v: "database"}}, function(error, change) {
-  if (error || change.deleted || !("doc" in change)) return;
+  if (error || !("doc" in change)) return;
   
   var doc = change.doc
     , dbName = doc._id
     , dbPath = couch + "/" + dbName
     ;
-  
   checkExistenceOf(dbPath).then(function(status) {
-    if(status === 404) {
+    if( (status === 404) && (!change.deleted) ) {
       console.log('creating ' + dbName);
       var start_time = new Date();
       createDB(dbPath).then(function(response) {
@@ -46,6 +44,10 @@ follow({db: db, include_docs: true, filter: "datacouch/by_value", query_params: 
           pushCouchapp("recline", dbPath).then(done);
         }
         setAdmin(dbName, doc.user); 
+      })
+    } else if ( (status < 299) && (change.deleted) ) {
+      request.del({uri: dbPath, json: true}, function(e,r,b) {
+        console.log('deleted', dbPath, b)
       })
     }
   })
@@ -61,7 +63,7 @@ follow({db: db, include_docs: true, filter: "datacouch/by_value", query_params: 
       var appURL = change.doc._id + "." + vhostDomain;
       replicate("apps", dbPath, "_design/" + change.doc.ddoc).then(function(resp) {
         addVhost(appURL, "/" + change.doc.dataset + "/_design/" + change.doc.ddoc + "/_rewrite").then(function() {
-          request.post({url: db, body: _.extend({}, change.doc, {url: appURL}), json: true}, function(e,r,b) {
+          request.post({url: db, body: _.extend({}, change.doc, {url: appURL})}, function(e,r,b) {
             console.log("installed " + change.doc.ddoc + " into " + dbPath + " in " + (new Date() - start_time) + "ms");
           })
         });
@@ -81,7 +83,7 @@ function pushCouchapp(app, target) {
     , destination = target + '/_design/' + app + "?new_edits=false"
     , headers = {'accept':"multipart/related,application/json"}
     ;
-  request.get({url: source, headers: headers, json: true}).pipe(request.put(destination, function(err, resp, body) { 
+  request.get({url: source, headers: headers}).pipe(request.put(destination, function(err, resp, body) { 
     dfd.resolve(body);
   }));
   return dfd.promise();
@@ -91,18 +93,17 @@ function replicate(source, target, ddoc) {
   var dfd = deferred();
   var reqData = {"source": source,"target": target, "create_target": true};
   if (ddoc) reqData["doc_ids"] = [ddoc];
-  request({uri: couch + "/_replicate", method: "POST", headers: h, body: JSON.stringify(reqData)}, function (err, resp, body) {
+  request({uri: couch + "/_replicate", method: "POST", body: reqData}, function (err, resp, body) {
     if (err) throw new Error('ahh!! ' + err);
-    var response = JSON.parse(body);
-    if (response.doc_write_failures > 0) throw new Error('error creating: ' + body);
-    dfd.resolve(response);
+    if (body.doc_write_failures > 0) throw new Error('error creating: ' + body);
+    dfd.resolve(body);
   })
   return dfd.promise();
 }
 
 function checkExistenceOf(url) {
   var dfd = deferred();
-  request({uri: url, method: "HEAD", headers: h}, function(err, resp, body) {
+  request({uri: url, method: "HEAD"}, function(err, resp, body) {
     dfd.resolve(resp.statusCode);
   })
   return dfd.promise();
@@ -110,13 +111,10 @@ function checkExistenceOf(url) {
 
 function createDB(url) {
   var dfd = deferred();
-  request({uri: url, method: "PUT", headers: h}, function (err, resp, body) {
+  request({uri: url, method: "PUT"}, function (err, resp, body) {
     if (err) throw new Error('ahh!! ' + err);
-    try {
-      var response = JSON.parse(body);
-    } catch(e) {
-      var response = {"ok": true};
-    }
+    var response = body;
+    if (!response) response = {"ok": true};
     if (!response.ok) throw new Error(url + " - " + body);
     dfd.resolve(resp.statusCode);
   })
@@ -125,7 +123,7 @@ function createDB(url) {
 
 function addVhost(url, couchapp) {
   var dfd = deferred();
-  request({uri: couch + "/_config/vhosts/" + encodeURIComponent(url), method: "PUT", headers: h, body: JSON.stringify(couchapp)}, function (err, resp, body) {
+  request({uri: couch + "/_config/vhosts/" + encodeURIComponent(url), method: "PUT", body: couchapp}, function (err, resp, body) {
     if (err) throw new Error('ahh!! ' + err);
     dfd.resolve(body);
   })
@@ -135,11 +133,10 @@ function addVhost(url, couchapp) {
 function setAdmin(dbName, username) {
   var dfd = deferred();
   var data = {"admins":{"names":[username],"roles":[]},"members":{"names":[],"roles":[]}};
-  request({uri: couch + "/" + dbName + "/_security", method: "PUT", headers: h, body: JSON.stringify(data)}, function (err, resp, body) {
+  request({uri: couch + "/" + dbName + "/_security", method: "PUT", body: data}, function (err, resp, body) {
     if (err) throw new Error('ahh!! ' + err);
-    var response = JSON.parse(body);
-    if (!response.ok) throw new Error('error setting admin: ' + body);
-    dfd.resolve(response);
+    if (!body.ok) throw new Error('error setting admin: ' + body);
+    dfd.resolve(body);
   })
   return dfd.promise(); 
 }

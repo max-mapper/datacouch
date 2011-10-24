@@ -83,19 +83,19 @@ module.exports = function() {
       }
     )
   }
-  
-  function waitUntilExists(url, callback) {
+
+  function waitForStatusCode(url, statusCode, callback) {
     var start = new Date();
     (function headRequest() {
       request.head(url
         , function(e,r,b) {
-          if( (new Date() - start) > 5000 ) callback(true, "timed out waiting for " + url)
-          if(r.statusCode === 404) {
+          if( (new Date() - start) > 5000 ) callback(true, {"statusCode": r.statusCode})
+          if(r.statusCode !== statusCode) {
             setTimeout(function() {
               headRequest(url);
             }, 100)
           } else {
-            callback(false, {'ok': true})
+            callback(false, {"statusCode": statusCode})
           }
         })
     }())
@@ -108,6 +108,6 @@ module.exports = function() {
     getOrCreate: getOrCreate,
     getDoc: getDoc,
     createDoc: createDoc,
-    waitUntilExists: waitUntilExists
+    waitForStatusCode: waitForStatusCode
   }
 }()

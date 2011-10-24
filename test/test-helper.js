@@ -5,14 +5,14 @@ var _ = require('underscore')
 exports.run = function(testObjects) {
   var tests = _.map(testObjects, function(test) {
     return function(done) {
-      test.setup(function(ok) {
-        if (ok) {
-          async.series(test.requests, function(err, results) {
+      async.series(test.setup, function(err, results) {
+        if(err) throw new Error("setup error: " + err);
+        async.series(test.requests, function(err, results) {
+          async.series(test.cleanup, function(e, r) {
+            if(e) throw new Error("cleanup error: " + r);
             test.asserts(err, results, done);
-          });
-        } else {
-          throw new Error("setup failed on " + test.description);
-        }
+          })
+        });
       })
     }
   })
