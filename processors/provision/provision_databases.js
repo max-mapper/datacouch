@@ -98,7 +98,7 @@ function replicate(source, target, ddoc) {
 
 function checkExistenceOf(url) {
   var dfd = deferred();
-  request({uri: url, method: "HEAD"}, function(err, resp, body) {
+  request({uri: url, method: "HEAD", json: false}, function(err, resp, body) {
     dfd.resolve(resp.statusCode);
   })
   return dfd.promise();

@@ -30,8 +30,17 @@ var recline = function() {
           if (confirm(msg)) costco.deleteColumn(app.currentColumn);
         },
         wipe: function() {
-          var msg = "Are you sure? This will permanently delete all data in this dataset.";
+          var msg = "Are you sure? This will permanently delete all documents in this dataset.";
           if (confirm(msg)) costco.updateDocs(function(doc) { return _.extend(doc, {_deleted: true}) });
+        },
+        destroy: function() {
+          var msg = "Are you sure? This will permanently delete this entire dataset.";
+          if ( confirm(msg) ) {
+            var datasetDoc = _.extend({}, app.datasetInfo, {_deleted: true})
+            couch.request({url: app.baseURL + 'api', data: JSON.stringify(datasetDoc), type: "POST"}).then(function(b) { 
+              window.location.href = "/";
+            });
+          }
         },
         deleteRow: function() {
           var doc = _.find(app.cache, function(doc) { return doc._id === app.currentRow });
