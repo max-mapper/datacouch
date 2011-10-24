@@ -26,7 +26,6 @@ var configURL = url.parse(process.env['DATACOUCH_ROOT'] + "/datacouch")
 
 follow({db: db, include_docs: true, filter: "datacouch/by_value", query_params: {k: "type", v: "database"}}, function(error, change) {
   if (error || !("doc" in change)) return;
-  
   var doc = change.doc
     , dbName = doc._id
     , dbPath = couch + "/" + dbName
@@ -44,10 +43,6 @@ follow({db: db, include_docs: true, filter: "datacouch/by_value", query_params: 
           pushCouchapp("recline", dbPath).then(done);
         }
         setAdmin(dbName, doc.user); 
-      })
-    } else if ( (status < 299) && (change.deleted) ) {
-      request.del({uri: dbPath, json: true}, function(e,r,b) {
-        console.log('deleted', dbPath, b)
       })
     }
   })

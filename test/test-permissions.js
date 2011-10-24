@@ -44,9 +44,11 @@ asyncTester.run([
     ],
     requests: {
       created: function(cb) { util.waitForStatusCode(couch + '/' + data.newDoc._id, 200, cb) }
+    , recline: function(cb) { util.waitForStatusCode(couch + '/' + data.newDoc._id + '/_design/recline', 200, cb) }
     },
     asserts: function(err, results, done) {
       it(results.created.statusCode).equal(200);
+      it(results.recline.statusCode).equal(200);
       done(null, "create");
     },
     cleanup: [
@@ -89,36 +91,6 @@ asyncTester.run([
     , function(next) {
         request.post({uri: couch + '/datacouch', body: _.extend({}, data.forkedDoc, {_deleted: true}), json: true}, next)
       }
-    ]
-  },
-  {
-    description: "delete a dataset",
-    setup: [
-      function(next) {
-        // should make a couch database with id equal to the metadata doc id
-        data.deleteDoc = _.extend({_id: "delete_dataset_test"}, data.sampleDoc);
-        next(false);
-      },
-      function(next) {
-        util.createDoc(couch + '/datacouch/delete_dataset_test', data.deleteDoc, function(doc) {
-          data.deleteDoc = doc;
-          next(false);
-        });
-      },
-      function(next) { util.waitForStatusCode(couch + '/' + data.deleteDoc._id, 200, next) },
-      function(next) {
-        request.post({uri: couch + '/datacouch', body: _.extend({}, data.deleteDoc, {_deleted: true}), json: true}, next)
-      }
-    ],
-    requests: {
-      deleted: function(cb) { util.waitForStatusCode(couch + '/' + data.deleteDoc._id, 404, cb) }
-    },
-    asserts: function(err, results, done) {
-      it(results.deleted.statusCode).equal(404);
-      done(null, "delete");
-    },
-    cleanup: [
-      function(next) { request.del({uri: couch + '/' + data.deleteDoc._id, json: true}, next) }
     ]
   }
 ])
