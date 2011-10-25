@@ -150,7 +150,11 @@ var recline = function() {
   function getPageSize() {
     var pagination = $(".viewpanel-pagesize .selected");
     if (pagination.length > 0) {
-      return parseInt(pagination.text())
+      if (pagination.hasClass("show-all")){
+        return app.docCount;
+      } else {
+        return parseInt(pagination.text())
+      }
     } else {
       return 10;
     }
@@ -184,7 +188,8 @@ var recline = function() {
     return couch.request({url: app.dbPath + '/_all_docs?' + $.param({startkey: '"_design/"', endkey: '"_design0"'})}).then(
       function ( data ) {
         var ddocCount = data.rows.length;
-        $('#docCount').text(totalDocs - ddocCount + " documents");
+        app.docCount = totalDocs - data.rows.length;
+        $('#docCount').text(app.docCount + " documents");
       }
     )    
   }
