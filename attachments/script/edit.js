@@ -65,6 +65,7 @@ app.routes = {
               forkedFromUser: dataset.user,
               _id: "dc" + docID,
               type: "database",
+              nouns: dataset.nouns,
               description: dataset.description,
               name: dataset.name,
               user: app.profile._id,
