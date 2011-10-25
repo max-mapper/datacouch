@@ -110,18 +110,23 @@ var util = function() {
   }
   
   function cachedRequest(opts) {
+    if (!app.cache.promises) app.cache.promises = {};
     var dfd = $.Deferred();
     var key = JSON.stringify(opts);
     if (app.cache[key]) {
       dfd.resolve(jQuery.extend(true, {}, app.cache[key]));
+      return dfd.promise();
+    } else if (app.cache.promises[key]) {
+      return app.cache.promises[key]();
     } else {
       var ajaxOpts = $.extend({}, opts);
       $.ajax(ajaxOpts).then(function(data) {
         app.cache[key] = data;
         dfd.resolve(data);
       })
+      app.cache.promises[key] = dfd.promise;
+      return dfd.promise();
     }
-    return dfd.promise();
   }
   
   function listenFor(keys) {
@@ -739,6 +744,15 @@ var util = function() {
     })
   }
   
+  function projectToGeoJSON(epsg, coordinates, callback) {
+    var epsgDB = "http://datacouch.com/api/couch/dc3f7e36e4807fa7656de9c6a94d6ff790";
+    util.cachedRequest({url: epsgDB + '/' + epsg, dataType: "jsonp"}).then(function(epsgData) {
+      Proj4js.defs["EPSG:" + epsg] = epsgData.proj4;
+      transformation = HodgeProj4.transform(coordinates[0], coordinates[1]).from("EPSG:" + epsg).to('WGS84');
+      callback(false, {type: "Point", coordinates: [transformation.point.x, transformation.point.y]});
+    }, callback)
+  }
+  
   return {
     inURL: inURL,
     formatDiskSize: formatDiskSize,
@@ -773,6 +787,7 @@ var util = function() {
     codeEditor: codeEditor,
     addApp: addApp,
     searchTwitter: searchTwitter,
-    renderIcons: renderIcons
+    renderIcons: renderIcons,
+    projectToGeoJSON: projectToGeoJSON
   };
 }();

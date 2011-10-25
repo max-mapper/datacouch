@@ -20,6 +20,7 @@ var recline = function() {
     $( '.menu li' ).click(function(e) {
       var actions = {
         bulkEdit: function() { showDialog('bulkEdit', {name: app.currentColumn}, "800px") },
+        reproject: function() { showDialog('reproject', {}, "800px") },
         csv: function() { window.location.href = app.csvUrl },
         json: function() { window.location.href = app.dbPath + "/json" },
         urlImport: function() { showDialog('urlImport') },
@@ -31,7 +32,7 @@ var recline = function() {
         },
         wipe: function() {
           var msg = "Are you sure? This will permanently delete all documents in this dataset.";
-          if (confirm(msg)) costco.updateDocs(function(doc) { return _.extend(doc, {_deleted: true}) });
+          if (confirm(msg)) costco.updateDocs(function(doc, emit) { emit(_.extend(doc, {_deleted: true})) });
         },
         destroy: function() {
           var msg = "Are you sure? This will permanently delete this entire dataset.";

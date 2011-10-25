@@ -233,7 +233,7 @@ app.after = {
     })
     
     var editor = $('.expression-preview-code');
-    editor.val("function(doc) {\n  doc['"+ app.currentColumn+"'] = doc['"+ app.currentColumn+"'];\n  return doc;\n}");
+    editor.val("function(doc, emit) {\n  doc['"+ app.currentColumn+"'] = doc['"+ app.currentColumn+"'];\n  emit(doc);\n}");
     editor.focus().get(0).setSelectionRange(18, 18);
     editor.keydown(function(e) {
       // if you don't setTimeout it won't grab the latest character if you call e.target.value
@@ -250,27 +250,34 @@ app.after = {
     });
     editor.keydown();
   },
-  transform: function() {
+  reproject: function() {
     $('.modal-footer .ok').click(function(e) {
-      util.notify("Not implemented yet, sorry! :D");
       util.hide('dialog');
+      costco.updateDocs(app.reprojectFunction);
     })
     
     var editor = $('.expression-preview-code');
-    editor.val("function(val) {\n  if(_.isString(val)) this.update(\"pizza\")\n}");
-    editor.focus().get(0).setSelectionRange(62,62);
+    editor.val("function(doc, emit) {\n  emit(doc['lat'], doc['lon']);\n}");
+    editor.focus().get(0).setSelectionRange(18, 18);
     editor.keydown(function(e) {
       // if you don't setTimeout it won't grab the latest character if you call e.target.value
       window.setTimeout( function() {
         var errors = $('.expression-preview-parsing-status');
+        app.epsgCode = $('#epsg-code').val();
         var editFunc = costco.evalFunction(e.target.value);
+        app.reprojectFunction = function(editDoc, emit) {
+          editFunc(editDoc, function(lat, lon) {
+            if (lat && lon) {
+              util.projectToGeoJSON(app.epsgCode, [lat, lon], function(err, geometry) {
+                editDoc.geometry = geometry;
+                emit(editDoc);
+              })
+            }
+          })
+        }
         if (!editFunc.errorMessage) {
           errors.text('No syntax error.');
-          var traverseFunc = function(doc) {
-            util.traverse(doc).forEach(editFunc);
-            return doc;
-          }
-          costco.previewTransform(app.cache, traverseFunc);
+          costco.previewTransform(app.cache, app.reprojectFunction, 'geometry');
         } else {
           errors.text(editFunc.errorMessage);
         }

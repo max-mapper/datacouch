@@ -13,51 +13,57 @@ var costco = function() {
   
   function previewTransform(docs, editFunc, currentColumn) {
     var preview = [];
-    var updated = mapDocs($.extend(true, {}, docs), editFunc);
-    for (var i = 0; i < updated.docs.length; i++) {      
-      var before = docs[i]
-        , after = updated.docs[i]
-        ;
-      if (!after) after = {};
-      if (currentColumn) {
-        preview.push({before: JSON.stringify(before[currentColumn]), after: JSON.stringify(after[currentColumn])});      
-      } else {
-        preview.push({before: JSON.stringify(before), after: JSON.stringify(after)});      
+    mapDocs(_.clone(docs), editFunc, function(updated) {
+      console.log(updated)
+      for (var i = 0; i < updated.docs.length; i++) {      
+        var before = docs[i]
+          , after = updated.docs[i]
+          ;
+        if (!after) after = {};
+        if (currentColumn) {
+          preview.push({before: JSON.stringify(before[currentColumn]), after: JSON.stringify(after[currentColumn])});      
+        } else {
+          preview.push({before: JSON.stringify(before), after: JSON.stringify(after)});      
+        }
       }
-    }
-    util.render('editPreview', 'expression-preview-container', {rows: preview});
+      util.render('editPreview', 'expression-preview-container', {rows: preview});
+    });
   }
 
-  function mapDocs(docs, editFunc) {
+  function mapDocs(docs, editFunc, callback) {
     var edited = []
-      , deleted = []
       , failed = []
+      , updatedDocs = []
       ;
-    
-    var updatedDocs = _.map(docs, function(doc) {
+  
+    var q = async.queue(function (doc, done) {
       try {
-        var updated = editFunc(_.clone(doc));
+        editFunc(_.clone(doc), function(updated) {
+          if (updated && !_.isEqual(updated, doc)) {
+            edited.push(updated);
+          }
+          updatedDocs.push(updated);
+          done();
+        });
       } catch(e) {
-        failed.push(doc);
-        return;
+        failed.push(doc)
+        done(e);
       }
-      if(updated === null) {
-        updated = {_deleted: true};
-        edited.push(updated);
-        deleted.push(doc);
-      }
-      else if(updated && !_.isEqual(updated, doc)) {
-        edited.push(updated);
-      }
-      return updated;      
-    });
-    
-    return {
-      edited: edited, 
-      docs: updatedDocs, 
-      deleted: deleted, 
-      failed: failed
-    };
+    }, 20);
+
+    q.drain = function() {
+      callback({
+        edited: edited, 
+        docs: updatedDocs, 
+        failed: failed
+      })
+    }
+
+    _.map(docs, function(doc) {
+      q.push(doc, function(err) {
+        if (err) console.log('processing error', err)
+      })
+    })
   }
   
   function updateDocs(editFunc) {
@@ -65,17 +71,18 @@ var costco = function() {
     util.notify("Download entire database into Recline. This could take a while...", {persist: true, loader: true});
     couch.request({url: app.dbPath + "/json"}).then(function(docs) {
       util.notify("Updating " + docs.docs.length + " documents. This could take a while...", {persist: true, loader: true});
-      var toUpdate = costco.mapDocs(docs.docs, editFunc).edited;
-      costco.uploadDocs(toUpdate).then(
-        function(updatedDocs) { 
-          util.notify(updatedDocs.length + " documents updated successfully");
-          recline.initializeTable(app.offset);
-          dfd.resolve(updatedDocs);
-        },
-        function(err) {
-          dfd.reject(err);
-        }
-      );
+      mapDocs(docs.docs, editFunc, function(transformed) {
+        uploadDocs(transformed.edited).then(
+          function(updatedDocs) { 
+            util.notify(updatedDocs.length + " documents updated successfully");
+            recline.initializeTable(app.offset);
+            dfd.resolve(updatedDocs);
+          },
+          function(err) {
+            dfd.reject(err);
+          }
+        );
+      });
     });
     return dfd.promise();
   }
@@ -107,9 +114,9 @@ var costco = function() {
   }
   
   function deleteColumn(name) {
-    var deleteFunc = function(doc) {
+    var deleteFunc = function(doc, emit) {
       delete doc[name];
-      return doc;
+      emit(doc);
     }
     return updateDocs(deleteFunc);
   }

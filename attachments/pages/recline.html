@@ -129,6 +129,7 @@
   <script type='text/mustache' class="transformActionsTemplate">
     <li><a data-action="wipe" class="menuAction" href="JavaScript:void(0);">Delete all docs</a></li>
     <li><a data-action="destroy" class="menuAction" href="JavaScript:void(0);">Delete dataset</a></li>
+    <li><a data-action="reproject" class="menuAction" href="JavaScript:void(0);">Reproject geometry...</a></li>
   </script>
   
   <script type='text/mustache' class="columnActionsTemplate">
@@ -546,6 +547,71 @@
       </div>
       <div class="modal-footer">
         <input type="submit" class="btn primary ok" value="Update All">
+        <a href="#/cancel!" class="btn secondary cancel">Cancel</a>
+      </div>
+    </div>
+  </script>
+  
+  <script type='text/mustache' class="reprojectTemplate">
+    <div class="infopanel">
+      <div class="top">
+        <div class="title">
+          Reproject coordinates
+        </div>
+        <div class="subtitle">
+          Write a JavaScript function that emits your x and y geometries
+        </div>
+      </div>
+      <div class="bottom">
+       <div class="clearfix">
+          <label for="xlInput">Source EPSG code:</label>
+          <div class="input">
+            <input class="xlarge" id="epsg-code" name="epsg-code" size="30" type="text">
+          </div>
+        </div>
+        <table>
+          <tbody>
+            <tr>
+              <td colspan="4">
+                <div class="grid-layout layout-tight layout-full">
+                  <table rows="4" cols="4">
+                  <tbody>
+                  <tr style="vertical-align: bottom;">
+                    <td colspan="4">
+                      Expression
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="3">
+                      <div class="input-container">
+                        <textarea class="expression-preview-code"></textarea>
+                      </div>
+                    </td>
+                    <td class="expression-preview-parsing-status" width="150" style="vertical-align: top;">
+                      No syntax error.
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="4">
+                      <div id="expression-preview-tabs" class="refine-tabs ui-tabs ui-widget ui-widget-content ui-corner-all">
+                        <span>Preview</span>
+                        <div id="expression-preview-tabs-preview" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
+                          <div class="expression-preview-container" style="width: 652px; ">
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  </tbody>
+                  </table>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <input type="submit" class="btn primary ok" value="Reproject">
         <a href="#/cancel!" class="btn secondary cancel">Cancel</a>
       </div>
     </div>
