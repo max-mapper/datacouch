@@ -14,7 +14,6 @@ var costco = function() {
   function previewTransform(docs, editFunc, currentColumn) {
     var preview = [];
     mapDocs(_.clone(docs), editFunc, function(updated) {
-      console.log(updated)
       for (var i = 0; i < updated.docs.length; i++) {      
         var before = docs[i]
           , after = updated.docs[i]

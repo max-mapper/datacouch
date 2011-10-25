@@ -30,6 +30,7 @@ var recline = function() {
           var msg = "Are you sure? This will delete '" + app.currentColumn + "' from all documents.";
           if (confirm(msg)) costco.deleteColumn(app.currentColumn);
         },
+        renameColumn: function() { showDialog('rename', {name: app.currentColumn}) },
         wipe: function() {
           var msg = "Are you sure? This will permanently delete all documents in this dataset.";
           if (confirm(msg)) costco.updateDocs(function(doc, emit) { emit(_.extend(doc, {_deleted: true})) });
@@ -98,7 +99,8 @@ var recline = function() {
       rows: tableRows,
       headers: headers,
       notEmpty: function() { return app.headers.length > 0 },
-      loggedIn: util.loggedIn()
+      loggedIn: util.loggedIn(),
+      isOwner: isOwner()
     })
     
     app.newest = rows[0].id;
@@ -243,6 +245,10 @@ var recline = function() {
       })
   }
   
+  function isOwner() {
+    return app.datasetInfo.user === app.session.userCtx.name;
+  }
+  
   function initializeTable(offset) {
     util.render( 'tableContainer', 'right-panel' );
     showDialog('busy');
@@ -282,6 +288,7 @@ var recline = function() {
     getPageSize: getPageSize,
     renderRows: renderRows,
     hasFork: hasFork,
+    isOwner: isOwner,
     initializeTable: initializeTable
   };
 }();

@@ -30,9 +30,8 @@
     <div id="header">
       <a class="homeButton" href="#/">
         <img id="couchLogo" src="/images/fancycouch-small.png"/>
-        <span class="project-title">DataCouch — collaborative data</span>
+        <span class="project-title">DataCouch - collaborative data</span>
       </a>
-      <div class="project-title"></div>
       <div class="project-actions"></div>
       <div class="project-controls"></div>
     </div>
@@ -134,6 +133,7 @@
   
   <script type='text/mustache' class="columnActionsTemplate">
     <li><a data-action="bulkEdit" class="menuAction" href="JavaScript:void(0);">Transform...</a></li>
+    <li><a data-action="renameColumn" class="menuAction" href="JavaScript:void(0);">Rename this column</a></li>
     <li><a data-action="deleteColumn" class="menuAction" href="JavaScript:void(0);">Delete this column</a></li>
   </script>
 
@@ -381,19 +381,19 @@
           {{#headers}}
             <td class="column-header {{state}}">
               <div class="column-header-title {{state}}">
-                <a class="column-header-menu"></a>
-                <span class="column-header-name">{{header}}</span>
+                {{#isOwner}}<a class="column-header-menu"></a>{{/isOwner}}
+                <span class="column-header-name{{^isOwner}} slim{{/isOwner}}">{{header}}</span>
               </div>
             </td>
           {{/headers}}
         </tr>
         {{#rows}}
           <tr data-id="{{id}}">
-            <td><a class="row-header-menu"></a></td>
+            <td>{{#isOwner}}<a class="row-header-menu"></a>{{/isOwner}}</td>
             {{#cells}}
             <td data-header="{{header}}" class="{{state}}">
               <div class="data-table-cell-content {{state}}">
-                <a href="javascript:{}" class="data-table-cell-edit" title="Edit this cell">&nbsp;</a>
+                {{#isOwner}}<a href="javascript:{}" class="data-table-cell-edit" title="Edit this cell">&nbsp;</a>{{/isOwner}}
                 <div class="data-table-cell-value {{state}}">{{value}}</div>
               </div>
             </td>
@@ -493,6 +493,27 @@
     </div>
   </script>
   
+  <script type='text/mustache' class="renameTemplate">
+    <div class="infopanel">
+      <div class="top">
+        <div class="title">
+          Rename column {{name}}
+        </div>
+        <div class="subtitle">
+          You might clobber data if you overwrite an existing column
+        </div>
+      </div>
+      <div class="bottom">
+        <strong>New column name:</strong><br />
+        <input type="text" id="columnName" value="{{name}}" />
+      </div>
+      <div class="modal-footer">
+        <input type="submit" class="btn primary ok" value="Rename">
+        <a href="#/cancel!" class="btn secondary cancel">Cancel</a>
+      </div>
+    </div>
+  </script>
+  
   <script type='text/mustache' class="bulkEditTemplate">
     <div class="infopanel">
       <div class="top">
@@ -559,7 +580,7 @@
           Reproject coordinates
         </div>
         <div class="subtitle">
-          Write a JavaScript function that emits your x and y geometries
+          Write a JavaScript function that emits your EPSG X and Y coordinates and they will be converted to lat+lon GeoJSON
         </div>
       </div>
       <div class="bottom">

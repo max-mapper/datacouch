@@ -285,6 +285,17 @@ app.after = {
     });
     editor.keydown();
   },
+  rename: function() {
+    $('.modal-footer .ok').click(function(e) {
+      util.notify("Renaming column...", {persist: true, loader: true});
+      var columnName = $('#columnName').val();
+      costco.updateDocs(function(doc, emit) {
+        doc[columnName] = doc[app.currentColumn];
+        delete doc[app.currentColumn];
+        emit(doc);
+      });
+    })
+  },
   urlImport: function() {
     $('.modal-footer .ok').click(function(e) {
       app.apiURL = $.url($('#url-input').val().trim());

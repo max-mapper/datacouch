@@ -47,7 +47,7 @@ var util = function() {
   }
   
   function catchModals( route ) {
-    
+    if(!route) return;
     // Trim off the #/ from the beginning of the route if it exists
     route = route.replace('#/', '');
     
