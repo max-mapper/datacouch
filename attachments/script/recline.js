@@ -263,10 +263,9 @@ var recline = function() {
         util.render( 'actions', 'project-actions', 
           $.extend({}, app.dbInfo, {
             url: app.csvUrl,
-            loggedIn: util.loggedIn(),
+            isOwner: recline.isOwner(),
             showForkButton: function() {
-              var isntOwner = ( app.datasetInfo.user !== app.session.userCtx.name );
-              return (util.loggedIn() && isntOwner && !fork);
+              return (util.loggedIn() && !recline.isOwner() && !fork);
             },
             fork: fork
           })

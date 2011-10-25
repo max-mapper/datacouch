@@ -107,10 +107,10 @@
         <span class="fork icon"></span><span>Your fork</span>
       </a>
     {{/fork}}
-    {{#loggedIn}}
+    {{#isOwner}}
       <a class="button" data-action="import" href="javascript:{}"><span data-action="import" class="button-menu">Import</span></a>
       <a class="button" data-action="edit" href="javascript:{}"><span data-action="transform" class="button-menu">Edit</span></a>
-    {{/loggedIn}}
+    {{/isOwner}}
     <a class="button" data-action="export" href="javascript:{}"><span data-action="export" class="button-menu">Export</span></a>
   </script>
 
