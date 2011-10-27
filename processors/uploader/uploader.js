@@ -30,12 +30,16 @@ http.createServer(function (req, res) {
     rows.push(row);
   })
   .on('end',function(count) {
-    bulkUpload(rows.slice(0, 50), function(e,r,b) {
+    var chunk = count;
+    if (chunk > 500) chunk = 500;
+    bulkUpload(rows.slice(0, chunk), function(e,r,b) {
       res.writeHead(r.statusCode);
       res.end(JSON.stringify(b));
-      bulkUpload(rows.slice(50, rows.length), function(e,r,b) {
-        console.log("saved " + b.length + 50)
-      })      
+      if (count > chunk) {
+        bulkUpload(rows.slice(chunk, rows.length), function(e,r,b) {
+          if(e) console.log('upload error on ' + dataset + ': ' + e);
+        })
+      }
     })
   })
   .on('error',function(error){

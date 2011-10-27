@@ -186,7 +186,7 @@ var util = function() {
 
   function notify( message, options ) {
     if (!options) var options = {};
-    if (!options.showFor) options.showtime = 3000;
+    if (!options.showFor) options.showFor = 3000;
     $('#notification-container').show();
     $('#notification-message').text(message);
     if (!options.loader) $('.notification-loader').hide();
@@ -746,8 +746,7 @@ var util = function() {
   }
   
   function projectToGeoJSON(epsg, coordinates, callback) {
-    var epsgDB = "http://datacouch.com/api/couch/dc3f7e36e4807fa7656de9c6a94d6ff790";
-    util.cachedRequest({url: epsgDB + '/' + epsg, dataType: "jsonp"}).then(function(epsgData) {
+    util.cachedRequest({url: app.baseURL + '/api/epsg/' + epsg, dataType: "jsonp"}).then(function(epsgData) {
       Proj4js.defs["EPSG:" + epsg] = epsgData.proj4;
       transformation = HodgeProj4.transform(coordinates[0], coordinates[1]).from("EPSG:" + epsg).to('WGS84');
       callback(false, {type: "Point", coordinates: [transformation.point.x, transformation.point.y]});

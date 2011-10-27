@@ -133,12 +133,18 @@ var costco = function() {
         var resp = JSON.parse(e.currentTarget.response)
           , status = e.currentTarget.status;
         if (status > 299) { 
-          util.notify("Error! " + resp.error);
+          util.notify("Error! " + e.error);
+        } else if (resp[0].error) {
+          util.notify("Error! " + JSON.stringify(resp[0]), {showFor: 6000});
         } else {
-          util.notify("Here are the first " + resp.length + 
-          " new documents. If your CSV contained more they will appear in a few moments.", {showFor: 6000});
-          recline.initializeTable(app.offset);
+          if (resp.length > 499) {
+            util.notify("Here are the first " + resp.length + 
+            " new documents. The rest of the CSV data is being processed and will appear in a few minutes.", {showFor: 6000});
+          } else {
+            util.notify(resp.length + " documents created successfully");
+          }
         }
+        recline.initializeTable(app.offset);
       }
       xhr.open('PUT', app.baseURL + "api/upload/" + app.datasetInfo._id);
       xhr.setRequestHeader('Content-Type', file.type);

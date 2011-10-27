@@ -33,6 +33,7 @@ ddoc =
     , {from:"/api/users/*", to:'../../../datacouch-users/*'}
     , {from:"/api/couch", to:"../../../"}
     , {from:"/api/couch/*", to:"../../../*"}
+    , {from:"/api/epsg/:code", to:"../../../epsg/:code"}
     , {from:"/api", to:"../../"}
     , {from:"/api/*", to:"../../*"}
     , {from:"/analytics.gif", to:"../../../_analytics/spacer.gif"}
