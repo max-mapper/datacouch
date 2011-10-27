@@ -127,12 +127,7 @@ var costco = function() {
       var xhr = new XMLHttpRequest();
       xhr.upload.onprogress = function (e) {
         var percent = (e.loaded / e.total) * 100;
-
-        if (percent === 100) {
-          util.notify("Waiting for server to finish... for large CSVs this may take a few minutes", {persist: true, loader: true})
-        } else {
-          util.notify("Uploading file... " + percent + "%", {persist: true, loader: true});
-        }
+        util.notify("Uploading file... " + percent + "%", {persist: true, loader: true});
       }
       xhr.onload = function (e) { 
         var resp = JSON.parse(e.currentTarget.response)
@@ -140,7 +135,8 @@ var costco = function() {
         if (status > 299) { 
           util.notify("Error! " + resp.error);
         } else {
-          util.notify("Data uploaded successfully! Added " + resp.length + " new documents.");
+          util.notify("Here are the first " + resp.length + 
+          " new documents. If your CSV contained more they will appear in a few moments.", {showFor: 6000});
           recline.initializeTable(app.offset);
         }
       }

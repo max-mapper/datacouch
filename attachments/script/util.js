@@ -186,11 +186,12 @@ var util = function() {
 
   function notify( message, options ) {
     if (!options) var options = {};
+    if (!options.showFor) options.showtime = 3000;
     $('#notification-container').show();
     $('#notification-message').text(message);
     if (!options.loader) $('.notification-loader').hide();
     if (options.loader) $('.notification-loader').show();
-    if (!options.persist) setTimeout(function() { $('#notification-container').hide() }, 3000);
+    if (!options.persist) setTimeout(function() { $('#notification-container').hide() }, options.showFor);
   }
 
   function formatMetadata(data) {

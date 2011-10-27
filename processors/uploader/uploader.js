@@ -30,14 +30,20 @@ http.createServer(function (req, res) {
     rows.push(row);
   })
   .on('end',function(count) {
-    request({url: couch + '/' + dataset + '/_bulk_docs', method: "POST", body: {docs: rows}, headers: {cookie: req.headers.cookie}}
-      , function(e,r,b) {
-        res.writeHead(r.statusCode);
-        res.end(JSON.stringify(b));
-      })
+    bulkUpload(rows.slice(0, 50), function(e,r,b) {
+      res.writeHead(r.statusCode);
+      res.end(JSON.stringify(b));
+      bulkUpload(rows.slice(50, rows.length), function(e,r,b) {
+        console.log("saved " + b.length + 50)
+      })      
+    })
   })
   .on('error',function(error){
     console.log("csv error!", error.message);
   });
+  
+  function bulkUpload(docs, callback) {
+    request({url: couch + '/' + dataset + '/_bulk_docs', method: "POST", body: {docs: docs}, headers: {cookie: req.headers.cookie}}, callback)
+  }
   
 }).listen(9878, "localhost");
