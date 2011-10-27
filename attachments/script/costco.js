@@ -122,37 +122,44 @@ var costco = function() {
   
   function uploadCSV(file) {
     if (file) {
-      var reader = new FileReader();
-      reader.readAsText(file);
-      reader.onload = function(event) {
-        var payload = {
-          url: app.dbPath + "/_bulk_docs", // todo more robust url composition
-          data: event.target.result
-        };
-        var worker = new Worker('/script/costco-csv-worker.js');
-        worker.onmessage = function(message) {
-           message = JSON.parse(message.data);
-           if (message.done) {
-             var error = couch.responseError(JSON.parse(message.response))
-             if (error) {
-               app.emitter.emit(error, 'error');
-             } else {
-               util.notify("Data uploaded successfully!");
-               recline.initializeTable(app.offset);
-             }
-             util.hide('dialog');
-           } else if (message.percent) {
-             if (message.percent === 100) {
-               util.notify("Waiting for CouchDB...", {persist: true, loader: true})
-             } else {
-               util.notify("Uploading... " + message.percent + "%");            
-             }
-           } else {
-             util.notify(JSON.stringify(message));
-           }
-         };
-         worker.postMessage(payload);
-      };
+      util.notify("Uploading file...", {persist: true, loader: true});
+      
+      var xhr = new XMLHttpRequest();
+      xhr.upload.onprogress = function (e) {
+        var percent = (e.loaded / e.total) * 100;
+
+        if (percent === 100) {
+          util.notify("Waiting for server to finish... for large CSVs this may take a few minutes", {persist: true, loader: true})
+        } else {
+          util.notify("Uploading file... " + percent + "%", {persist: true, loader: true});
+        }
+      }
+      xhr.onload = function (e) { 
+        var resp = JSON.parse(e.currentTarget.response)
+          , status = e.currentTarget.status;
+        if (status > 299) { 
+          util.notify("Error! " + resp.error);
+        } else {
+          util.notify("Data uploaded successfully! Added " + resp.length + " new documents.");
+          recline.initializeTable(app.offset);
+        }
+      }
+      xhr.open('PUT', app.baseURL + "api/upload/" + app.datasetInfo._id);
+      xhr.setRequestHeader('Content-Type', file.type);
+      xhr.send(file)
+      
+      // var reader = new FileReader();
+      // reader.readAsText(file);
+      // reader.onload = function(event) {
+      //   couch.request({
+      //     url: app.baseURL + "api/upload/" + app.datasetInfo._id,
+      //     type: "POST", 
+      //     data: event.target.result
+      //   }).then(function(done) {
+      //     util.notify("Data uploaded successfully!");
+      //     recline.initializeTable(app.offset);
+      //   })
+      // };
     } else {
       util.notify('File not selected. Please try again');
     }

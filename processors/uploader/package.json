@@ -1,0 +1,12 @@
+{
+  "name": "dc_uploader",
+  "subdomain": "dcuploader",
+  "scripts": {
+    "start": "uploader.js"
+  },
+  "dependencies": {
+    "request": "2.1.1",
+    "csv": "0.0.10"
+  },
+  "version": "0.0.1"
+}

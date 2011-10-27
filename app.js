@@ -17,6 +17,7 @@ ddoc =
     , {from:"/login/callback", to:"../../../_smalldata/twitter/auth/twitter/callback"}
     , {from:"/logout", to:"../../../_smalldata/twitter/logout"}
     , {from:"/api/token", to:"../../../_smalldata/twitter/auth/token"}
+    , {from:"/api/upload/*", to:"../../../_smalldata/upload/*"}
     , {from:"/api/applications/:dataset", to:"_view/applications", query:{endkey:":dataset", startkey:":dataset", include_docs:"true", descending: "true"}}
     , {from:"/api/applications", to:"_view/applications", query:{include_docs:"true", descending: "true"}}
     , {from:"/api/applications/user/:user", to:"_view/applications_by_user", query:{endkey:":user", startkey:":user", include_docs:"true", descending: "true"}}
@@ -187,7 +188,7 @@ ddoc.lists = {
   }
 }
 
-ddoc.validate_doc_update = function (newDoc, oldDoc, userCtx) {
+ddoc.validate_doc_update = function (newDoc, oldDoc, userCtx, securityObj) {
   if (userCtx.roles.indexOf('_admin') > -1) return;
   if (["app", "database", "template"].indexOf(newDoc.type) === -1) throw({forbidden : "Invalid doc type"});
   if ( !userCtx.name ) throw({forbidden : "You have to sign in to do that."});

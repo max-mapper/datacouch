@@ -18,33 +18,38 @@ function computeStats(couch, datasetsURL, callback) {
   request({url: datasetsURL}, function(err, resp, data) {
     _.each(data.rows, function(db) {
       request({url: couch + "/" + db.id}, function(err, resp, data) {
+        if (err) console.log('dataset info err', err)
         var dbInfo = data;
-        getHits(db.doc._id).then(function(hits) {
+        // getHits(db.doc._id).then(function(hits) {
           request({url: couch + "/" + db.id + '/_all_docs?startkey=%22_design/%22&endkey=%22_design0%22'}, function(err, resp, data) {
-            
-            var ddocCount = data.rows.length
-              , docCount = dbInfo.doc_count
-              , important = {hits: hits, disk_size: dbInfo.disk_size}
-              , changed = false;
-              
-            important.doc_count = docCount - ddocCount;
-            if ( (docCount - ddocCount) < 0 ) important.doc_count = 0;
+            if (err) {
+              console.log(err, resp, data);
+              return;
+            } else {
+              var ddocCount = data.rows.length
+                , docCount = dbInfo.doc_count
+                , important = {disk_size: dbInfo.disk_size}
+                , changed = false;
 
-            _.each(_.keys(important), function(prop) {
-              if (db.doc[prop] !== important[prop]) {
-                db.doc[prop] = important[prop];
-                changed = true;
-              }
-            })
-            
-            if (changed) {
-              db.doc.statsGenerated = new Date();
-              request.post({uri: couch + '/datacouch', body: db.doc}, function(err, resp, data) {
-                console.log("updated stats on " + db.doc._id + " in " + (new Date() - start_time) + "ms");
+              important.doc_count = docCount - ddocCount;
+              if ( (docCount - ddocCount) < 0 ) important.doc_count = 0;
+
+              _.each(_.keys(important), function(prop) {
+                if (db.doc[prop] !== important[prop]) {
+                  db.doc[prop] = important[prop];
+                  changed = true;
+                }
               })
+
+              if (changed) {
+                db.doc.statsGenerated = new Date();
+                request.post({uri: couch + '/datacouch', body: db.doc}, function(err, resp, data) {
+                  console.log("updated stats on " + db.doc._id + " in " + (new Date() - start_time) + "ms");
+                })
+              }
             }
           })
-        })
+        // })
       })
     })
   })
