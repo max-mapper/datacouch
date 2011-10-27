@@ -118,7 +118,7 @@ function createDB(url) {
 
 function addVhost(url, couchapp) {
   var dfd = deferred();
-  request({uri: couch + "/_config/vhosts/" + encodeURIComponent(url), method: "PUT", body: couchapp}, function (err, resp, body) {
+  request({uri: couch + "/_config/vhosts/" + encodeURIComponent(url), method: "PUT", body: JSON.stringify(json), json: false}, function (err, resp, body) {
     if (err) throw new Error('ahh!! ' + err);
     dfd.resolve(body);
   })
