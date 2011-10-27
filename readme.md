@@ -15,8 +15,9 @@ Very much a work in progress as of Fall 2011!
 - Geospatial queries
 - Data-driven HTML5 application hosting
 - Etherpad/Google docs style collaborative wiki
-- Out of the box app templates
+- Out of the box app visualizations + templates
 - In-browser application source editor
+- Geographic point reprojection (between any EPSG definitions)
 
 ## Roadmap (fork and help out please!)
 
@@ -58,8 +59,7 @@ setup the Couch configuration like so:
     httpd, allow_jsonp, true
     httpd, secure_rewrites, false
     vhosts, datacouch.dev, /datacouch/_design/datacouch/_rewrite
-    httpd_global_handlers, _analytics, {couch_httpd_proxy, handle_proxy_req, <<"http://localhost:9876">>}
-    httpd_global_handlers, _twitter, {couch_httpd_proxy, handle_proxy_req, <<"http://localhost:9870">>}
+    httpd_global_handlers, _smalldata, {couch_httpd_proxy, handle_proxy_req, <<"http://localhost:12345">>}
     
 ![couch configuration from futon](http://i.imgur.com/QZ1MQ.png)
     
@@ -93,6 +93,7 @@ deploy the various couchapps to your Couch. these mostly set database permission
 go to dev.twitter.com and make an app and then add some environment variables to your `.bashrc`/`.bash_profile`:
 
     export DATACOUCH_ROOT="http://admin:pass@localhost:5984"
+    export DATACOUCH_NONADMIN_ROOT="http://localhost:5984"
     export DATACOUCH_VHOST="couchdb.dev:5984"
     export DATACOUCH_TWITTER_KEY="KEY FROM https://dev.twitter.com/ HERE"
     export DATACOUCH_TWITTER_SECRET="SECRET FROM https://dev.twitter.com/ HERE"
@@ -101,6 +102,10 @@ to setup the real-time wiki tab you need to do the following:
 
     cd processors/sharejs
     node setup_couch.js
+    
+to support geometry reprojections you'll need to replicate the following database to your couch:
+
+    curl -X POST http://admin:admin@localhost:5984/_replicate -d '{"target":"http://admin:pass@localhost:5984/datacouch","source":"http://max.ic.ht/epsg", "create_target": true}' -H "Content-type: application/json"
 
 start the various node async processes. these should always be running somewhere. think of them like async job workers. you will want to run 'npm install' from each `processors` directory to install the various dependencies. then to launch all the node processors:
 
