@@ -125,24 +125,27 @@ var costco = function() {
       util.notify("Uploading file...", {persist: true, loader: true});
       
       var xhr = new XMLHttpRequest();
+      xhr.onerror = function (e) {
+        util.notify('upload abort', e)
+      }
+      xhr.onabort = function (e) {
+        util.notify('upload error', e)
+      }
       xhr.upload.onprogress = function (e) {
         var percent = (e.loaded / e.total) * 100;
-        util.notify("Uploading file... " + percent + "%", {persist: true, loader: true});
+        if (percent === 100) {
+          util.notify("We got your data. Waiting for it to process... (this could take a while for large files, feel free to check back later)", {persist: true, loader: true});
+        } else {
+          util.notify("Uploading file... " + percent + "%", {persist: true, loader: true});
+        }
       }
       xhr.onload = function (e) { 
         var resp = JSON.parse(e.currentTarget.response)
           , status = e.currentTarget.status;
         if (status > 299) { 
           util.notify("Error! " + e.error);
-        } else if (resp[0].error) {
-          util.notify("Error! " + JSON.stringify(resp[0]), {showFor: 6000});
         } else {
-          if (resp.length > 499) {
-            util.notify("Here are the first " + resp.length + 
-            " new documents. The rest of the CSV data is being processed and will appear in a few minutes.", {showFor: 6000});
-          } else {
-            util.notify(resp.length + " documents created successfully");
-          }
+          util.notify(resp + " documents created.", {showFor: 10000});
         }
         recline.initializeTable(app.offset);
       }

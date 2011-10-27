@@ -7,7 +7,7 @@ var request = require('request').defaults({json: true}),
     http = require('http');
 
 http.createServer(function (req, res) {
-  var headers, dataset, rows = [], segments = req.url.split('/');
+  var headers, dataset, chunkSize = 500, rows = [], segments = req.url.split('/');
   if (segments.length > 0) {
     dataset = segments[1];
   } else {
@@ -28,26 +28,26 @@ http.createServer(function (req, res) {
       row[_.first(tuple)] = _.last(tuple)
     })
     rows.push(row);
+    if (rows.length === chunkSize) {
+      bulkUpload(rows)
+      rows = []
+    }
   })
-  .on('end',function(count) {
-    var chunk = count;
-    if (chunk > 500) chunk = 500;
-    bulkUpload(rows.slice(0, chunk), function(e,r,b) {
-      res.writeHead(r.statusCode);
-      res.end(JSON.stringify(b));
-      if (count > chunk) {
-        bulkUpload(rows.slice(chunk, rows.length), function(e,r,b) {
-          if(e) console.log('upload error on ' + dataset + ': ' + e);
-        })
-      }
-    })
+  .on('end', function(count) {
+    bulkUpload(rows, function(status, resp) {
+      res.statusCode = status;
+      res.end(JSON.stringify(count - 1));
+    });
   })
   .on('error',function(error){
     console.log("csv error!", error.message);
   });
   
   function bulkUpload(docs, callback) {
-    request({url: couch + '/' + dataset + '/_bulk_docs', method: "POST", body: {docs: docs}, headers: {cookie: req.headers.cookie}}, callback)
+    request({url: couch + '/' + dataset + '/_bulk_docs', method: "POST", body: {docs: docs}, headers: {cookie: req.headers.cookie}}, function(e,r,b) {
+      if (e) console.log('upload error on ' + dataset + ': ' + e);
+      if (callback) callback(r.statusCode,b)
+    })
   }
   
 }).listen(9878, "localhost");
