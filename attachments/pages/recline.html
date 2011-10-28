@@ -643,6 +643,74 @@
     </div>
   </script>
   
+  <script type='text/mustache' class="geocodeTemplate">
+    <div class="infopanel">
+      <div class="top">
+        <div class="title">
+          Geocode addresses
+        </div>
+        <div class="subtitle">
+          Emit your address to have it geocoded by either Google or Yahoo
+        </div>
+      </div>
+      <div class="bottom">
+        <div class="clearfix">
+          <label for="geocoderSelect">Geocoder</label>
+          <div class="input">
+            <select class="medium" name="geocoderSelect" id="geocoderSelect">
+              <option data-value="yahoo">yahoo (50K/day limit)</option>
+              <option data-value="google">google (2500/day limit)</option>
+            </select>
+          </div>
+        </div>
+        <table>
+          <tbody>
+            <tr>
+              <td colspan="4">
+                <div class="grid-layout layout-tight layout-full">
+                  <table rows="4" cols="4">
+                  <tbody>
+                  <tr style="vertical-align: bottom;">
+                    <td colspan="4">
+                      Expression
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="3">
+                      <div class="input-container">
+                        <textarea class="expression-preview-code"></textarea>
+                      </div>
+                    </td>
+                    <td class="expression-preview-parsing-status" width="150" style="vertical-align: top;">
+                      No syntax error.
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="4">
+                      <div id="expression-preview-tabs" class="refine-tabs ui-tabs ui-widget ui-widget-content ui-corner-all">
+                        <span>Preview</span>
+                        <div id="expression-preview-tabs-preview" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
+                          <div class="expression-preview-container" style="width: 652px; ">
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  </tbody>
+                  </table>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <input type="submit" class="btn primary ok" value="Geocode All">
+        <a href="#/cancel!" class="btn secondary cancel">Cancel</a>
+      </div>
+    </div>
+  </script>
+  
   <script type='text/mustache' class="cellEditorTemplate">
     <div class="menu-container data-table-cell-editor">
       <textarea class="data-table-cell-editor-editor" bind="textarea">{{value}}</textarea>

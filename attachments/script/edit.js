@@ -286,6 +286,42 @@ app.after = {
     });
     editor.keydown();
   },
+  geocode: function() {
+    $('.modal-footer .ok').click(function(e) {
+      util.hide('dialog');
+      costco.updateDocs(app.geocodeFunction);
+    })
+    
+    var editor = $('.expression-preview-code');
+    editor.val("function(doc, emit) {\n  emit(doc['"+app.currentColumn+"']);\n}");
+    editor.focus().get(0).setSelectionRange(18, 18);
+    editor.keydown(function(e) {
+      // if you don't setTimeout it won't grab the latest character if you call e.target.value
+      window.setTimeout( function() {
+        var errors = $('.expression-preview-parsing-status');
+        app.geocoder = $('#geocoderSelect option:selected').attr('data-value');
+        var editFunc = costco.evalFunction(e.target.value);
+        app.geocodeFunction = function(editDoc, emit) {
+          editFunc(editDoc, function(address) {
+            if (address) {
+              util.geocode(address, app.geocoder).then(function(result) {
+                editDoc.geocode = result
+                if (app.geocoder === "google") setTimeout(function() { emit(editDoc) }, 250)
+                else emit(editDoc);
+              })
+            }
+          })
+        }
+        if (!editFunc.errorMessage) {
+          errors.text('No syntax error.');
+          costco.previewTransform(app.cache, app.geocodeFunction, 'geocode');
+        } else {
+          errors.text(editFunc.errorMessage);
+        }
+      }, 1, true);
+    });
+    editor.keydown();
+  },
   rename: function() {
     $('.modal-footer .ok').click(function(e) {
       util.notify("Renaming column...", {persist: true, loader: true});

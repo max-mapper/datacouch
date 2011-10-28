@@ -53,14 +53,7 @@ var recline = function() {
             return word.toUpperCase()
           })
         },
-        geocode: function() {
-          costco.updateDocs(function(doc, emit) { 
-            util.geocode(doc[app.currentColumn]).then(function(data) {
-              doc.geocode = data
-              setTimeout(function() { emit(doc) }, 250)
-            })
-          });
-        },
+        geocode: function() { showDialog('geocode', {}, "800px") },
         wipe: function() {
           var msg = "Are you sure? This will permanently delete all documents in this dataset.";
           if (confirm(msg)) costco.updateDocs(function(doc, emit) { emit(_.extend(doc, {_deleted: true})) });

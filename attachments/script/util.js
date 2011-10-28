@@ -100,9 +100,17 @@ var util = function() {
     return cachedRequest(ajaxOpts);
   }
 
-  function geocode(query) {
+  function geocode(query, type) {
+    var types = {
+      google: function(query) {
+        return "http://maps.google.com/maps/geo?sensor=false&output=json&q=" + encodeURIComponent(query)
+      },
+      yahoo: function(query) {
+        return 'http://query.yahooapis.com/v1/public/yql?format=json&q=select * from geo.placefinder where text="' + encodeURIComponent(query) + '"';
+      }
+    }
     return $.ajax({
-      url: "http://maps.google.com/maps/geo?sensor=false&output=json&key=ABQIAAAAUXDSXET8IRGdgHP9FpGw5BTzK9ox1ur1avOry4RqckD8mqqMsxSpbbmXzhXBG_WjkV59qKCQhbciHQ&q=" + encodeURIComponent(query),
+      url: types[type](query),
       dataType: "jsonp"
     }).promise()
   }
