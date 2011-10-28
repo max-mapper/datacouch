@@ -72,6 +72,9 @@ a.button:hover span.icon.loading { background-image: url(images/loader-blue.gif)
   height: 100%;
 }
 
+.modal .clearfix {margin: 5px}
+.modal .clearfix label {text-align: left; width: auto; margin-right: 10px}
+
 ul.menu {
   display: none;
   outline-style: none;
