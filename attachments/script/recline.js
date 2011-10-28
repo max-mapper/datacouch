@@ -16,6 +16,13 @@ var recline = function() {
     $('.dialog').draggable({ handle: '.top', cursor: 'move' });
   }
   
+  function updateWords(column, transform) {
+    costco.updateDocs(function(doc, emit) { 
+      doc[column] = _.map(doc[column].split(' '), transform).join(' ')
+      emit(doc)
+    });
+  }
+  
   function handleMenuClick() {
     $( '.menu li' ).click(function(e) {
       var actions = {
@@ -31,6 +38,29 @@ var recline = function() {
           if (confirm(msg)) costco.deleteColumn(app.currentColumn);
         },
         renameColumn: function() { showDialog('rename', {name: app.currentColumn}) },
+        titlecase: function() {
+          updateWords(app.currentColumn, function(word) {
+            return util.capitalize(word)
+          })
+        },
+        lowercase: function() {
+          updateWords(app.currentColumn, function(word) {
+            return word.toLowerCase()
+          })
+        },
+        uppercase: function() {
+          updateWords(app.currentColumn, function(word) {
+            return word.toUpperCase()
+          })
+        },
+        geocode: function() {
+          costco.updateDocs(function(doc, emit) { 
+            util.geocode(doc[app.currentColumn]).then(function(data) {
+              doc.geocode = data
+              setTimeout(function() { emit(doc) }, 250)
+            })
+          });
+        },
         wipe: function() {
           var msg = "Are you sure? This will permanently delete all documents in this dataset.";
           if (confirm(msg)) costco.updateDocs(function(doc, emit) { emit(_.extend(doc, {_deleted: true})) });

@@ -35,32 +35,29 @@ var costco = function() {
       , updatedDocs = []
       ;
   
-    var q = async.queue(function (doc, done) {
-      try {
-        editFunc(_.clone(doc), function(updated) {
-          if (updated && !_.isEqual(updated, doc)) {
-            edited.push(updated);
-          }
-          updatedDocs.push(updated);
-          done();
-        });
-      } catch(e) {
-        failed.push(doc)
-        done(e);
+    var functions = _.map(docs, function(doc) {
+      return function(next) {
+        try {
+          editFunc(_.clone(doc), function(updated) {
+            if (updated && !_.isEqual(updated, doc)) {
+              edited.push(updated);
+            }
+            updatedDocs.push(updated);
+            next()
+          });
+        } catch(e) {
+          failed.push(doc)
+          next(e)
+        }
       }
-    }, 20);
-
-    q.drain = function() {
+    })
+    
+    async.series(functions, function(err) {
+      if (err) console.log('processing error', err)
       callback({
         edited: edited, 
         docs: updatedDocs, 
         failed: failed
-      })
-    }
-
-    _.map(docs, function(doc) {
-      q.push(doc, function(err) {
-        if (err) console.log('processing error', err)
       })
     })
   }

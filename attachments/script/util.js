@@ -99,10 +99,8 @@ var util = function() {
     }
     return cachedRequest(ajaxOpts);
   }
-  
-  
-  function geocode(query, region) {
-    query = query + " " + region;
+
+  function geocode(query) {
     return $.ajax({
       url: "http://maps.google.com/maps/geo?sensor=false&output=json&key=ABQIAAAAUXDSXET8IRGdgHP9FpGw5BTzK9ox1ur1avOry4RqckD8mqqMsxSpbbmXzhXBG_WjkV59qKCQhbciHQ&q=" + encodeURIComponent(query),
       dataType: "jsonp"
@@ -763,6 +761,7 @@ var util = function() {
     registerEmitter: registerEmitter,
     cachedRequest: cachedRequest,
     lookupIcon: lookupIcon,
+    geocode: geocode,
     listenFor: listenFor,
     show: show,
     hide: hide,
