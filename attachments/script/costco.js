@@ -26,6 +26,7 @@ var costco = function() {
         }
       }
       util.render('editPreview', 'expression-preview-container', {rows: preview});
+      util.notify('Geocoded ' + preview.length + ' preview docs')
     });
   }
 

@@ -289,13 +289,16 @@ app.after = {
   geocode: function() {
     $('.modal-footer .ok').click(function(e) {
       util.hide('dialog');
-      costco.updateDocs(app.geocodeFunction);
+      costco.updateDocs(app.geocodeFunction).then(function(updated) {
+        util.notify('Geocoded ' + updated.length + ' docs and stored them in the "geometry" column', {showFor: 5000})
+      });
     })
     
     var editor = $('.expression-preview-code');
     editor.val("function(doc, emit) {\n  emit(doc['"+app.currentColumn+"']);\n}");
     editor.focus().get(0).setSelectionRange(18, 18);
     editor.keydown(function(e) {
+      util.notify('Geocoding...', {loader: true, persist: true})
       // if you don't setTimeout it won't grab the latest character if you call e.target.value
       window.setTimeout( function() {
         var errors = $('.expression-preview-parsing-status');
@@ -304,7 +307,7 @@ app.after = {
         app.geocodeFunction = function(editDoc, emit) {
           editFunc(editDoc, function(address) {
             if (address) {
-              util.geocode(address, app.geocoder).then(function(result) {
+              util.geocode(address, app.geocoder, function(result) {
                 editDoc.geocode = result
                 if (app.geocoder === "google") setTimeout(function() { emit(editDoc) }, 250)
                 else emit(editDoc);

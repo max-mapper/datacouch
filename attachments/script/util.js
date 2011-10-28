@@ -100,19 +100,32 @@ var util = function() {
     return cachedRequest(ajaxOpts);
   }
 
-  function geocode(query, type) {
+  function geocode(query, type, callback) {
     var types = {
       google: function(query) {
-        return "http://maps.google.com/maps/geo?sensor=false&output=json&q=" + encodeURIComponent(query)
+        var geocoder = new google.maps.Geocoder()
+        geocoder.geocode({
+          address: query
+        }, function(locResult) {
+          var lat = locResult[0].geometry.location.lat()
+            , lng = locResult[0].geometry.location.lng()
+          callback({type: "Point", coordinates: [lng, lat]})
+        });
       },
       yahoo: function(query) {
-        return 'http://query.yahooapis.com/v1/public/yql?format=json&q=select * from geo.placefinder where text="' + encodeURIComponent(query) + '"';
+        var url = 'http://query.yahooapis.com/v1/public/yql?format=json&q=select * from geo.placefinder where text="'
+          + encodeURIComponent(query) + '"';
+        $.ajax({
+          url: url,
+          dataType: "jsonp"
+        }).then(function(response) {
+          var lat = response.query.results['Result'].latitude
+            , lng = response.query.results['Result'].longitude
+          callback({type: "Point", coordinates: [lng, lat]})
+        })
       }
     }
-    return $.ajax({
-      url: types[type](query),
-      dataType: "jsonp"
-    }).promise()
+    types[type](query);
   }
   
   function cachedRequest(opts) {
