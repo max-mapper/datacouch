@@ -9,11 +9,6 @@ ddoc.views = {
     map: function(doc) {
       emit(doc._id);
     }
-  },
-  by_email: {
-    map: function(doc) {
-      emit(doc.user);
-    }
   }
 };
 
@@ -35,7 +30,6 @@ ddoc.lists = {
 ddoc.validate_doc_update = function (newDoc, oldDoc, userCtx) {
   if (userCtx.roles.indexOf('_admin') > -1) return;
   if (oldDoc && (newDoc._id !== oldDoc._id)) throw "That username is taken!";
-  if (!newDoc.user) throw "User documents must have a user property containing their email address.";
   if (newDoc._deleted === true && userCtx.roles.indexOf('_admin') === -1) throw "Only admin can delete documents.";
 };
 

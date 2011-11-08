@@ -16,17 +16,10 @@ $(function(){
     function loginFail() { alert('oh noes! an error occurred whilst logging you in') };
 
     // binds UX interaction and form submit event handlers to the signup/login forms
-    function showLogin() {
-      navigator.id.getVerifiedEmail(function(assertion) {
-        if (assertion) {
-          var verificationURL = couch.rootPath + '_browserid';
-          var verification = { 'assertion': encodeURIComponent(assertion)
-                             , 'audience' : encodeURIComponent(document.domain)
-                             };
-          couch.request({url: verificationURL, type: "POST", data: JSON.stringify(verification)}).then(fetchSession, loginFail);
-        } else {
-          loginFail();
-        }
+    function showLogin(callback) {
+      $.oauthpopup({
+        path: app.baseURL + "login",
+        callback: callback
       });
     }
 
@@ -48,69 +41,40 @@ $(function(){
       var dfd = $.Deferred();
       couch.session().then(function( session ) {
         app.session = session;
-        app.emitter.emit(app.session, 'session');
-        util.render('userControls', 'userControls');
-        if ( session.userCtx.name ) {
-          fetchProfile( session ).then( function( profile ) {
-            util.render( 'loggedIn', 'session_status', {
-              username : profile._id,
-              gravatar_url : profile.gravatar_url
-            });
-            app.emitter.emit(profile._id, 'login');
-            util.render('userActions', 'userButtons')
-          });
-        } else if ( util.isAdminParty( session.userCtx ) ) {
-          util.render( 'adminParty', 'userButtons' );
-        } else {
-          util.render( 'loginButton', 'userButtons' );
-          util.render( 'loggedOut', 'session_status' );
-        }
-        dfd.resolve(session);
+        if(session.userCtx.name) app.emitter.emit(session.userCtx, 'login');
+        dfd.resolve(app.session);
       });
       return dfd.promise();
     }
 
     // gets user's stored profile info from couch
-    // asks them to fill out a form if it's their first login
     function fetchProfile(session) {
       var dfd = $.Deferred();
-      couch.get( "users/by_email/" + session.userCtx.name ).then(function(resp) {
-        if (resp.rows.length > 0) {
-          var profile = resp.rows[0].doc;
+      couch.request({url: app.baseURL + "api/users/" + session.userCtx.name}).then(
+        function(profile) {
           app.profile = profile;
           dfd.resolve( profile );
-        } else {
-          util.show('dialog');
-          util.render( 'newProfileForm', 'modal', session.userCtx );
+        },
+        function(error) {
+          console.log('no profile?!')
+          if(window.location.hash !== "#/activity") window.location.href = "#/";
         }
-      })
+      )
       return dfd.promise();
-    }
-
-    function gravatarURL(uuid) {
-      return 'http://www.gravatar.com/avatar/' + md5.hex( uuid ) + '.jpg?s=50&d=identicon';
     }
 
     function updateProfile(profileDoc) {
       var dfd = $.Deferred();
-      profileDoc.gravatar_url = gravatarURL(profileDoc.email || profileDoc.rand);
       
       function upload(updatedDoc) {
         couch.request({url: app.baseURL + "api/users", data: JSON.stringify(updatedDoc), type: "POST"}).then(function(resp) {
           updatedDoc._rev = resp.rev;
+          app.profile = updatedDoc;
           dfd.resolve(updatedDoc);
-          couch.userDb().then(function(userDb) {
-            userDb.get( "org.couchdb.user:" + app.session.userCtx.name).then(
-              function( userDoc ) {              
-                userDoc.username = updatedDoc._id;
-                userDb.save(userDoc);
-              }
-            )
-          })
         });
       }
-      
-      couch.get( "users/" + profileDoc._id ).then(
+
+      couch.request({ url: app.baseURL + "api/users/" + profileDoc._id }).then(
         function( profile ) {
           $.extend(profile, profileDoc);
           upload(profile);
@@ -508,32 +472,6 @@ $(function(){
       })
     }
 
-    function bindInfiniteScroll() {
-      var settings = {
-        lookahead: 400,
-        container: $( document )
-      };
-
-      $( window ).scroll( function( e ) {
-        if ( loaderShowing() || streamDisabled ) {
-          return;
-        }
-
-        var containerScrollTop = settings.container.scrollTop();
-        if ( ! containerScrollTop ) {
-          var ownerDoc = settings.container.get().ownerDocument;
-          if( ownerDoc ) {
-            containerScrollTop = $( ownerDoc.body ).scrollTop();        
-          }
-        }
-        var distanceToBottom = $( document ).height() - ( containerScrollTop + $( window ).height() );
-
-        if ( distanceToBottom < settings.lookahead ) {  
-          getPostsWithComments( { offsetDoc: oldestDoc } );
-        }
-      });
-    }
-
     return {
       db: db,
       userProfile: userProfile,
@@ -561,8 +499,7 @@ $(function(){
       formatComments: formatComments,
       showComments: showComments,
       submitComment: submitComment,
-      decorateStream: decorateStream,
-      bindInfiniteScroll: bindInfiniteScroll
+      decorateStream: decorateStream
     }
 
   }();

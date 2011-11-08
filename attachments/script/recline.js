@@ -4,21 +4,30 @@ var recline = function() {
     return (parseFloat(bytes)/1024/1024).toString().substr(0,4) + "MB"
   }
   
-  function showDialog(template, data) {
+  function showDialog(template, data, modalWidth) {
     if (!data) data = {};
+    if (!modalWidth) modalWidth = ""
     util.show('dialog');
-    util.render(template, 'dialog-content', data);
-    util.observeExit($('.dialog-content'), function() {
+    $('.modal').css('width', modalWidth);
+    util.render(template, 'modal', data);
+    util.observeExit($('.modal'), function() {
       util.hide('dialog');
     })
-    $('.dialog').draggable({ handle: '.dialog-header', cursor: 'move' });
+    $('.dialog').draggable({ handle: '.top', cursor: 'move' });
+  }
+  
+  function updateWords(column, transform) {
+    costco.updateDocs(function(doc, emit) { 
+      doc[column] = _.map(doc[column].split(' '), transform).join(' ')
+      emit(doc)
+    });
   }
   
   function handleMenuClick() {
     $( '.menu li' ).click(function(e) {
       var actions = {
-        bulkEdit: function() { showDialog('bulkEdit', {name: app.currentColumn}) },
-        transform: function() { showDialog('transform') },
+        bulkEdit: function() { showDialog('bulkEdit', {name: app.currentColumn}, "800px") },
+        reproject: function() { showDialog('reproject', {}, "800px") },
         csv: function() { window.location.href = app.csvUrl },
         json: function() { window.location.href = app.dbPath + "/json" },
         urlImport: function() { showDialog('urlImport') },
@@ -28,6 +37,36 @@ var recline = function() {
           var msg = "Are you sure? This will delete '" + app.currentColumn + "' from all documents.";
           if (confirm(msg)) costco.deleteColumn(app.currentColumn);
         },
+        renameColumn: function() { showDialog('rename', {name: app.currentColumn}) },
+        titlecase: function() {
+          updateWords(app.currentColumn, function(word) {
+            return util.capitalize(word)
+          })
+        },
+        lowercase: function() {
+          updateWords(app.currentColumn, function(word) {
+            return word.toLowerCase()
+          })
+        },
+        uppercase: function() {
+          updateWords(app.currentColumn, function(word) {
+            return word.toUpperCase()
+          })
+        },
+        geocode: function() { showDialog('geocode', {}, "800px") },
+        wipe: function() {
+          var msg = "Are you sure? This will permanently delete all documents in this dataset.";
+          if (confirm(msg)) costco.updateDocs(function(doc, emit) { emit(_.extend(doc, {_deleted: true})) });
+        },
+        destroy: function() {
+          var msg = "Are you sure? This will permanently delete this entire dataset.";
+          if ( confirm(msg) ) {
+            var datasetDoc = _.extend({}, app.datasetInfo, {_deleted: true})
+            couch.request({url: app.baseURL + 'api', data: JSON.stringify(datasetDoc), type: "POST"}).then(function(b) { 
+              window.location.href = "/";
+            });
+          }
+        },
         deleteRow: function() {
           var doc = _.find(app.cache, function(doc) { return doc._id === app.currentRow });
           doc._deleted = true;
@@ -35,8 +74,7 @@ var recline = function() {
             function(updatedDocs) { 
               util.notify("Row deleted successfully");
               recline.initializeTable(app.offset);
-            },
-            function(err) { util.notify("Errorz! " + err) }
+            }
           )
         }
       }
@@ -52,7 +90,7 @@ var recline = function() {
     var rows = response.rows;
     
     if (rows.length < 1) {
-      util.render('dataTable', 'data-table-container');
+      util.render('dataTable', 'data-table-container', {loggedIn: util.loggedIn()});
       return;
     };
     
@@ -66,15 +104,26 @@ var recline = function() {
           value = row.value[header];
           if (typeof(value) == "object") value = JSON.stringify(value);
         }
-        cells.push({header: header, value: value});
+        var cell = {header: header, value: value};
+        if (_.include(["_id", "_rev"], header)) cell.state = "collapsed";
+        cells.push(cell);
       })
       tableRows.push({id: row.value._id, cells: cells});
+      
+    })
+    
+    var headers = app.headers.map(function(header) {
+      var header = {header: header};
+      if (_.include(["_id", "_rev"], header.header)) header.state = "collapsed";
+      return header;
     })
     
     util.render('dataTable', 'data-table-container', {
       rows: tableRows,
-      headers: app.headers,
-      notEmpty: function() { return app.headers.length > 0 }
+      headers: headers,
+      notEmpty: function() { return app.headers.length > 0 },
+      loggedIn: util.loggedIn(),
+      isOwner: isOwner()
     })
     
     app.newest = rows[0].id;
@@ -122,7 +171,16 @@ var recline = function() {
   }
   
   function getPageSize() {
-    return parseInt($(".viewpanel-pagesize .selected").text());
+    var pagination = $(".viewpanel-pagesize .selected");
+    if (pagination.length > 0) {
+      if (pagination.hasClass("show-all")){
+        return app.docCount;
+      } else {
+        return parseInt(pagination.text())
+      }
+    } else {
+      return 10;
+    }
   }
   
   function fetchRows(id, skip) {
@@ -153,7 +211,8 @@ var recline = function() {
     return couch.request({url: app.dbPath + '/_all_docs?' + $.param({startkey: '"_design/"', endkey: '"_design0"'})}).then(
       function ( data ) {
         var ddocCount = data.rows.length;
-        $('#docCount').text(totalDocs - ddocCount + " documents");
+        app.docCount = totalDocs - data.rows.length;
+        $('#docCount').text(app.docCount + " documents");
       }
     )    
   }
@@ -181,21 +240,13 @@ var recline = function() {
     util.listenFor(['esc', 'return']);
     
     getDbInfo(app.dbPath).then(function( dbInfo ) {
-      util.render( 'tableContainer', 'right-panel' );
       util.render( 'generating', 'project-actions' );    
             
-      couch.session().then(function(session) {
-        if ( session.userCtx.name ) {
-          var text = "Sign out";
-        } else {
-          var text = "Sign in";
-        }
-        util.render('controls', 'project-controls', {text: text});
-      })
+      showSessionButtons();
       
       couch.request({url: app.baseURL + "api/" + id}).then(function(datasetInfo) {
         app.datasetInfo = datasetInfo;
-        util.render('title', 'project-title', datasetInfo);        
+        app.ddocs = {};
         util.render('sidebar', 'left-panel');
       })
 
@@ -203,7 +254,31 @@ var recline = function() {
     })
   }
   
+  function showSessionButtons() {
+    couch.session().then(function(session) {
+      app.session = session;
+      if ( session.userCtx.name ) util.render('signOut', 'project-controls');
+      else util.render('signIn', 'project-controls')
+    })
+  }
+  
+  function hasFork(callback) {
+    couch.request({url: app.baseURL + 'api/forks/' + app.dbInfo.db_name}).then(
+      function ( response ) {
+        var isOwner = _.detect(response.rows, function(row) {
+          return row.doc.user === app.session.userCtx.name;
+        })
+        if(isOwner) isOwner = isOwner.id;
+        callback(isOwner);
+      })
+  }
+  
+  function isOwner() {
+    return app.datasetInfo.user === app.session.userCtx.name;
+  }
+  
   function initializeTable(offset) {
+    util.render( 'tableContainer', 'right-panel' );
     showDialog('busy');
     couch.request({url: app.dbPath + '/headers'}).then(function ( headers ) {
       util.hide('dialog');
@@ -212,7 +287,18 @@ var recline = function() {
       });
       app.headers = headers;
       app.csvUrl = app.dbPath + '/csv?headers=' + escape(JSON.stringify(headers));
-      util.render( 'actions', 'project-actions', $.extend({}, app.dbInfo, {url: app.csvUrl}) );    
+      hasFork(function(fork) {
+        util.render( 'actions', 'project-actions', 
+          $.extend({}, app.dbInfo, {
+            url: app.csvUrl,
+            isOwner: recline.isOwner(),
+            showForkButton: function() {
+              return (util.loggedIn() && !recline.isOwner() && !fork);
+            },
+            fork: fork
+          })
+        );
+      })
       fetchRows(false, offset);
     })
   }
@@ -223,10 +309,13 @@ var recline = function() {
     showDialog: showDialog,
     updateDocCount: updateDocCount,
     bootstrap: bootstrap,
+    showSessionButtons: showSessionButtons,
     fetchRows: fetchRows,
     activateControls: activateControls,
     getPageSize: getPageSize,
     renderRows: renderRows,
+    hasFork: hasFork,
+    isOwner: isOwner,
     initializeTable: initializeTable
   };
 }();

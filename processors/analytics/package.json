@@ -1,0 +1,11 @@
+{
+  "name": "dc_analytics",
+  "subdomain": "dcanalytics",
+  "scripts": {
+    "start": "collect_analytics.js"
+  },
+  "dependencies": {
+    "request": ">= 2.1.1"
+  },
+  "version": "0.0.1"
+}

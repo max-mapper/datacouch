@@ -50,7 +50,7 @@ onmessage = function(message) {
     if(e.lengthComputable) postMessage(JSON.stringify({ percent: (e.loaded / e.total) * 100 }));
   };
   
-  req.onreadystatechange = function() { if (req.readyState == 4) postMessage(JSON.stringify( {done: true} )) };
+  req.onreadystatechange = function() { if (req.readyState == 4) postMessage(JSON.stringify( {done: true, response: req.responseText} )) };
   req.open('POST', message.data.url);
   req.setRequestHeader('Content-Type', 'application/json');
   req.send(JSON.stringify({docs: docs}));

@@ -6,17 +6,34 @@ ddoc =
   { _id:'_design/datacouch'
   , rewrites :
     [ {from:"/", to:'pages/index.html'}
+    , {from:"/edit", to:"pages/recline.html"}
     , {from:"/edit/*", to:"pages/recline.html"}
+    // , {from:"/fakelogin", to:"../../../_twitter/auth/fakelogin"} // only enable when testing offline
+    , {from:"/proxy", to:"../../../_smalldata/"}
+    , {from:"/proxy/*", to:"../../../_smalldata/*"}
+    , {from:"/socket.io", to:"../../../_smalldata/wiki/socket.io"}
+    , {from:"/socket.io/*", to:"../../../_smalldata/wiki/socket.io/*"}
+    , {from:"/login", to:"../../../_smalldata/twitter/auth/twitter"}
+    , {from:"/login/callback", to:"../../../_smalldata/twitter/auth/twitter/callback"}
+    , {from:"/logout", to:"../../../_smalldata/twitter/logout"}
+    , {from:"/api/token", to:"../../../_smalldata/twitter/auth/token"}
+    , {from:"/api/upload/*", to:"../../../_smalldata/upload/*"}
+    , {from:"/api/applications/:dataset", to:"_view/applications", query:{endkey:":dataset", startkey:":dataset", include_docs:"true", descending: "true"}}
+    , {from:"/api/applications", to:"_view/applications", query:{include_docs:"true", descending: "true"}}
+    , {from:"/api/applications/user/:user", to:"_view/applications_by_user", query:{endkey:":user", startkey:":user", include_docs:"true", descending: "true"}}
     , {from:"/api/datasets/:user", to:"_view/by_user", query:{endkey: [":user",null], startkey:[":user",{}], include_docs:"true", descending: "true"}}
     , {from:"/api/datasets", to:"_view/by_date", query:{include_docs:"true", descending: "true"}}
+    , {from:"/api/forks/:id", to:"_view/forks", query:{endkey:":id", startkey:":id", include_docs:"true", descending: "true"}}
+    , {from:"/api/forks", to:"_view/forks", query:{include_docs:"true", descending: "true"}}
     , {from:"/api/profile/all", to:"../../../datacouch-users/_design/users/_list/all/users"}
     , {from:"/api/trending", to:"_view/popular", query:{include_docs: "true", descending: "true", limit: "10"}}
+    , {from:"/api/templates", to:"_view/templates", query:{include_docs: "true"}}
     , {from:"/api/users/search/:user", to:"../../../datacouch-users/_design/users/_view/users", query:{startkey:":user", endkey:":user", include_docs: "true"}}
-    , {from:"/api/users/by_email/:user", to:"../../../datacouch-users/_design/users/_view/by_email", query:{startkey:":user", endkey:":user", include_docs: "true"}}
     , {from:"/api/users", to:'../../../datacouch-users/'}
     , {from:"/api/users/*", to:'../../../datacouch-users/*'}
     , {from:"/api/couch", to:"../../../"}
     , {from:"/api/couch/*", to:"../../../*"}
+    , {from:"/api/epsg/:code", to:"../../../epsg/:code"}
     , {from:"/api", to:"../../"}
     , {from:"/api/*", to:"../../*"}
     , {from:"/analytics.gif", to:"../../../_analytics/spacer.gif"}
@@ -31,12 +48,6 @@ ddoc =
     ]
   }
   ;
-
-ddoc.validate_doc_update = function (newDoc, oldDoc, userCtx) {
-  if (newDoc._deleted === true && userCtx.roles.indexOf('_admin') === -1) {
-    throw "Only admin can delete documents on this database.";
-  }
-};
 
 ddoc.views = {
   /**
@@ -70,8 +81,35 @@ ddoc.views = {
     map: function(doc) {
       if(doc.hits) emit(doc.hits);
     }
+  },
+  templates: {
+    map: function(doc) {
+      if(doc.type === "template") emit(doc.name);
+    }
+  },
+  applications: {
+    map: function(doc) {
+      if(doc.type === "app" && doc.url) emit(doc.dataset);
+    }
+  },
+  applications_by_user: {
+    map: function(doc) {
+      if(doc.type === "app" && doc.url) emit(doc.user);
+    }
+  },
+  forks: {
+    map: function(doc) {
+      if(doc.forkedFrom) emit(doc.forkedFrom);
+    }
   }
 };
+
+ddoc.filters = {
+  by_value: function(doc, req) {
+    if (!req.query.k || !req.query.v || !doc[req.query.k]) return false;
+    return doc[req.query.k] === req.query.v;
+  }
+}
 
 ddoc.lists = {
   /**
@@ -151,9 +189,12 @@ ddoc.lists = {
   }
 }
 
-ddoc.validate_doc_update = function (newDoc, oldDoc, userCtx) {
+ddoc.validate_doc_update = function (newDoc, oldDoc, userCtx, securityObj) {
   if (userCtx.roles.indexOf('_admin') > -1) return;
-  if ( (newDoc.type !== "database") || (newDoc.couch_user !== userCtx.name) ) throw({forbidden : "You can't create datasets for other users."});
+  if (["app", "database", "template"].indexOf(newDoc.type) === -1) throw({forbidden : "Invalid doc type"});
+  if ( !userCtx.name ) throw({forbidden : "You have to sign in to do that."});
+  if ( (newDoc.user !== userCtx.name) ) throw({forbidden : "You can't create datasets or apps for other users."});
+  if( newDoc.forkedFromUser && ( newDoc.forkedFromUser === userCtx.name )) throw({forbidden : "You can't fork your own datasets."});
 };
 
 couchapp.loadAttachments(ddoc, path.join(__dirname, 'attachments'));

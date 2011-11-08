@@ -36,14 +36,45 @@ var util = function() {
     }
     return exists;
   }
-  
-  function emailToDB(email) {
-    return email.replace(/@/ig, "/").replace(/\./ig, "$");
-  }
-  
+
   // true if no admins exist in the database
   function isAdminParty( userCtx ) {
     return userCtx.roles.indexOf("_admin") !== -1;
+  }
+  
+  function loggedIn() {
+    return app.session && app.session.userCtx.name;
+  }
+  
+  function catchModals( route ) {
+    if(!route) return;
+    // Trim off the #/ from the beginning of the route if it exists
+    route = route.replace('#/', '');
+    
+    /*
+      Basic rules:
+        * If the href ends with a bang (!) we're going to launch a modal
+        * Otherwise, we're going to pass it through to SugarSkull
+    */
+
+    if( route && route.indexOf( '!' ) === ( route.length -1 ) ) {
+
+      route = route.substr(0, route.lastIndexOf('!'));
+
+      // The ID (if one exists) will be what comes after the slash
+      var id = route.split('/')[1];
+
+      // If there is an ID, then we have to trim it off the route
+      if (id) {
+        route = route.split('/')[0];
+      }
+
+      if(route in app.routes.modals) app.routes.modals[ route ](id);
+
+      event.preventDefault();
+
+    }
+
   }
   
   function registerEmitter() {
@@ -68,20 +99,53 @@ var util = function() {
     }
     return cachedRequest(ajaxOpts);
   }
+
+  function geocode(query, type, callback) {
+    var types = {
+      google: function(query) {
+        var geocoder = new google.maps.Geocoder()
+        geocoder.geocode({
+          address: query
+        }, function(locResult) {
+          var lat = locResult[0].geometry.location.lat()
+            , lng = locResult[0].geometry.location.lng()
+          callback({type: "Point", coordinates: [lng, lat]})
+        });
+      },
+      yahoo: function(query) {
+        var url = 'http://query.yahooapis.com/v1/public/yql?format=json&q=select * from geo.placefinder where text="'
+          + encodeURIComponent(query) + '"';
+        $.ajax({
+          url: url,
+          dataType: "jsonp"
+        }).then(function(response) {
+          var lat = response.query.results['Result'].latitude
+            , lng = response.query.results['Result'].longitude
+          callback({type: "Point", coordinates: [lng, lat]})
+        })
+      }
+    }
+    types[type](query);
+  }
   
   function cachedRequest(opts) {
+    if (!app.cache.promises) app.cache.promises = {};
     var dfd = $.Deferred();
     var key = JSON.stringify(opts);
     if (app.cache[key]) {
       dfd.resolve(jQuery.extend(true, {}, app.cache[key]));
+      return dfd.promise();
+    } else if (app.cache.promises[key]) {
+      return app.cache.promises[key]();
     } else {
       var ajaxOpts = $.extend({}, opts);
       $.ajax(ajaxOpts).then(function(data) {
         app.cache[key] = data;
         dfd.resolve(data);
       })
+      app.cache.promises[key] = dfd.promise;
+      return dfd.promise();
     }
-    return dfd.promise();
   }
   
   function listenFor(keys) {
@@ -133,30 +197,20 @@ var util = function() {
     $('.' + thing).show().css({top: position.top + $(elem.target).height(), left: position.left});
   }
 
-  function render( template, target, options ) {
-    if ( !options ) options = {data: {}};
-    if ( !options.data ) options = {data: options};
-    var html = $.mustache( $( "." + template + "Template:first" ).html(), options.data );
-    if (target instanceof jQuery) {
-      var targetDom = target;
-    } else {
-      var targetDom = $( "." + target + ":first" );
-    }
-    if( options.append ) {
-      targetDom.append( html );
-    } else {
-      targetDom.html( html );
-    }
+  function render( template, target, data ) {
+    if (! (target instanceof jQuery)) target = $( "." + target + ":first" );
+    target.html( $.mustache( $( "." + template + "Template:first" ).html(), data || {} ) );
     if (template in app.after) app.after[template]();
   }
-  
+
   function notify( message, options ) {
     if (!options) var options = {};
+    if (!options.showFor) options.showFor = 3000;
     $('#notification-container').show();
     $('#notification-message').text(message);
     if (!options.loader) $('.notification-loader').hide();
     if (options.loader) $('.notification-loader').show();
-    if (!options.persist) setTimeout(function() { $('#notification-container').hide() }, 3000);
+    if (!options.persist) setTimeout(function() { $('#notification-container').hide() }, options.showFor);
   }
 
   function formatMetadata(data) {
@@ -399,47 +453,62 @@ var util = function() {
   
   function showDatasets(name) {
     var url = app.baseURL + "api/datasets/";
-
-    // If a name is passed in, then add it to the url
+    
     if (name) {
       url += name;
-    
-    // No name was passed in, so we're looking at the global
-    // data sets feed
-    } else {
-      name = "Recent Datasets";
     }
-    return couch.request({url: url}).then(function(resp) {
+    
+    return fetchDatasets(url).then(function(datasets) {
+      if (datasets.length > 0) {
+        util.render('datasetsList', 'datasetsContainer', {name: name})
+        util.render('datasets', 'datasets-wrapper', {
+          name: name,
+          datasets: datasets
+        });
+      } else {
+        util.render('datasetsList', 'datasetsContainer')
+        couch.request({url: app.baseURL + "api/users/" + name }).then(
+          function(res) { util.render('datasets', 'datasets-wrapper', {name: name}) }
+        , function(err) { util.render('noUser', 'datasets-wrapper', {name: name}) }
+        )
+      }
+    })
+  }
+  
+  function fetchDatasets(url, offset) {
+    var dfd = $.Deferred();
+    if (!offset) offset = 0;
+    couch.request({url: url + '?limit=20&skip=' + offset}).then(function(resp) {
+      app.lastOffset = resp.offset;
       var datasets = _.map(resp.rows, function(row) {
         return {
           baseURL: app.baseURL + 'edit#/',
           id: row.id,
           user: row.doc.user,
-          gravatar_url: row.doc.gravatar_url,
+          avatar: row.doc.avatar,
           size: util.formatDiskSize(row.doc.disk_size),
           name: row.value,
           date: row.doc.createdAt,
+          description: row.doc.description,
           nouns: row.doc.nouns,
           forkedFrom: row.doc.forkedFrom,
           forkedFromUser: row.doc.forkedFromUser,
-          count: row.doc.doc_count - 1 // TODO calculate this programatically
+          count: row.doc.doc_count
         };
       })
-      
-      if (datasets.length > 0) {
-        util.render('datasets', 'datasetsContainer', {
-          loggedIn: function() { 
-            return app.session && app.session.userCtx.name 
-          },
-          name: name,
-          datasets: datasets
-        });      
-      } else {
-        couch.request({url: app.baseURL + "api/users/" + name}).then(
-          function(res) { util.render('datasets', 'datasetsContainer', {name: name}) }
-        , function(err) { util.render('noUser', 'datasetsContainer', {name: name}) }
-        )
-      }
+      dfd.resolve(datasets);
+    })
+    return dfd.promise();
+  }
+
+  function showApps(name) {
+    var url = app.baseURL + "api/applications";
+    if (name) url += "/user/" + name;
+    return couch.request({url: url}).then(function(resp) {
+      util.render('apps', 'appsContainer', {
+        loggedIn: loggedIn(),
+        apps: _(resp.rows).map(function(row) { return row.doc })
+      });
     })
   }
 
@@ -452,7 +521,7 @@ var util = function() {
           baseURL: app.baseURL + 'edit#/',
           id: row.id,
           user: row.doc.user,
-          gravatar_url: row.doc.gravatar_url,
+          avatar: row.doc.avatar,
           size: util.formatDiskSize(row.doc.disk_size),
           name: row.doc.name,
           date: row.doc.createdAt,
@@ -465,66 +534,12 @@ var util = function() {
       
       if (datasets.length > 0) {
         util.render('datasets', 'trendingSetsContainer', {
-          loggedIn: function() {return app.session && app.session.userCtx.name },
+          loggedIn: loggedIn(),
           datasets: datasets,
           name: "Trending Datasets"
         });      
       }
     })
-  }
-  
-  function routeViews( route ){
-    
-    var fullRoute = route;
-    
-    if( !route.length ) {
-      app.routes.pages[ 'home' ]();
-    }
-
-    // If we've made it this far, then the ID (if one exists) will be
-    // what comes after the slash
-    id = route.split('/')[1];
-    
-    // If there is an Id, then we have to trim it off the route
-    if(id){
-      route = route.split('/')[0];
-    }
-
-    // If "#" is in the route, and it's the first char, then we are dealing with
-    // a modal, we're going to route it through the views modals object
-    if( route.indexOf( '#' ) === 0 ) {
-
-      route = route.replace('#', '');
-      app.routes.modals[ route ]( id );
-
-    // Otherwise, it's a page, and we're going to route it through the
-    // views pages object, and pushState
-    } else {
-      
-      if( route === "/" ) {
-        history.pushState({}, "", '/'); 
-        app.routes.pages[ 'home' ]();
-        return;
-      }
-
-      history.pushState({}, "", '/' + fullRoute); 
-      app.routes.pages[ 'user' ]( id );
-      
-    }
-  }
-  
-  function formatProperties( properties ) {
-    var data = {properties: []};
-    _.each(_.keys(properties), function(prop) {
-      if (_.include(["name", "description", "source", "nouns", "apps"], prop)) {
-        data[prop] = properties[prop];
-      }
-    }) 
-    if(properties.nouns) data.hasNouns = true;
-    if(properties.hits) data.properties.push({key:'Unique Visitors', value: properties.hits});
-    if(properties.createdAt) data.properties.push({key:'Created', value: properties.createdAt});
-    if(properties.statsGenerated) data.properties.push({key:'Updated', value: properties.statsGenerated});
-    return data;
   }
   
   // transform couch _attachment objects into file trees that are compatible with the Nide editor
@@ -559,6 +574,7 @@ var util = function() {
   function getDDocFiles(ddocPath) {
     var dfd = $.Deferred();
     couch.request({url: app.dbPath + ddocPath}).then(function(ddoc) {
+      app.ddocs[ddoc._id] = ddoc;
       var folder = {
         "name": "",
         "type": "directory",
@@ -595,10 +611,8 @@ var util = function() {
           if (e.offsetX < 24) {
             $(this).toggleClass('open');
             app.stateByPath[entry.path] = $(this).hasClass('open') ? 'open' : '';
-            e.stopPropagation()
           } else {
             $('.right-panel').html(codeEditor(entry));
-            e.stopPropagation()
           }
         }
       })
@@ -617,6 +631,27 @@ var util = function() {
       thisElement.className += ' hidden'
     }
     parentElement.appendChild(thisElement)
+  }
+  
+  function saveFile(file, content) {
+    var dfd = $.Deferred();
+    
+    var path = _.rest(file.split('/'))
+      , ddoc = path.splice(0,2).join('/')
+      , attachment = path.join('/')
+      ;
+    $.ajax({
+       type: "PUT",
+       contentType: app.ddocs[ddoc]._attachments[attachment].content_type,
+       headers: {"Accept":"application/json"},
+       url: app.dbPath + "/" + ddoc + "/" + attachment + "?rev=" + app.ddocs[ddoc]._rev,
+       data: content,
+       dataType:"json"
+     }).then(function(resp) {
+       app.ddocs[ddoc]._rev = resp.rev;
+       dfd.resolve(resp);
+     }, dfd.reject);
+     return dfd.promise();
   }
   
   function codeEditor(entry) {
@@ -645,6 +680,7 @@ var util = function() {
           mode: "javascript",
           lineNumbers: true,
           onChange: function(editor) {
+            $('.selected').addClass('syncing');
             content = editor.getValue()
             changed = true
           }
@@ -659,9 +695,8 @@ var util = function() {
             var done = false;
             saving = true;
             var selected = $('.selected')
-            selected.addClass('syncing')
-            saveFile(entry.path, content, function(err){
-              if (!err) {
+            saveFile(entry.path, content).then(function(resp){
+              if (resp.ok) {
                 changed = false
                 done = true;
                 selected.removeClass('syncing')
@@ -681,15 +716,135 @@ var util = function() {
     return editor;
   }
   
+  function addApp(ddoc, dataset) {
+    couch.request({url: app.baseURL + "api/applications/" + dataset}).then(function(result) {
+      var apps = result.rows;
+      if(_.detect(apps, function(appEntry) { return appEntry.ddoc === ddoc })) {
+        util.hide('dialog');
+        util.notify('That app is already installed');
+      } else {
+        var doc = {type: "app", user: app.session.userCtx.name, dataset: dataset, ddoc: ddoc};
+        couch.request({url: app.baseURL + "api", type: "POST", data: JSON.stringify(doc)}).then(function(resp) {
+          function waitUntilExists(docURL, property) {
+            couch.request({url: docURL}).then(
+              function(resp) {
+                if(resp[property]) {
+                  util.hide('dialog');
+                  app.routes.tabs['apps']();
+                } else {
+                  console.log("not created yet...", resp);
+                  setTimeout(function() {
+                    waitUntilExists(docURL, property);
+                  }, 500);
+                }
+              }
+            )
+          }
+          util.render('busy', 'modal', {message: "Installing app..."});
+          waitUntilExists(couch.rootPath + "api/" + resp.id, "url");
+        })
+      }
+    })
+  }
+  
+  function searchTwitter(term) {
+    var linkSearch = "http://search.twitter.com/search.json?rpp=4&page=1&q=filter:links%20";
+    return $.ajax({dataType: "jsonp", url: linkSearch + encodeURIComponent(term)}).promise();
+  }
+  
+  function renderIcons() {
+    var input = $(this);
+    input.addClass('loading');
+    var word = input.val()
+     .replace(/[^\w\s]|_/g, "")
+     .replace(/\s+/g, ' ')
+     .trim()
+    util.lookupIcon(word).then(function(resp) {
+     input.removeClass('loading');
+     var matches = _.map(_.keys(resp.svg), function(match) {
+       return {
+         noun: match.toLowerCase(),
+         svg: resp.svg[match]
+       };
+     })
+
+     app.nouns = {};
+     _.each(matches, function(noun) { app.nouns[noun.noun] = noun; })
+
+     util.render('nouns', 'nounContainer', {nouns: matches});
+    })
+  }
+  
+  function projectToGeoJSON(epsg, coordinates, callback) {
+    util.cachedRequest({url: app.baseURL + '/api/epsg/' + epsg, dataType: "jsonp"}).then(function(epsgData) {
+      Proj4js.defs["EPSG:" + epsg] = epsgData.proj4;
+      transformation = HodgeProj4.transform(coordinates[0], coordinates[1]).from("EPSG:" + epsg).to('WGS84');
+      callback(false, {type: "Point", coordinates: [transformation.point.x, transformation.point.y]});
+    }, callback)
+  }
+  
+  function showLoader() {
+    $( '.stream-loading' ).removeClass( 'hidden' );
+  }
+
+  function hideLoader() {
+    $( '.stream-loading' ).addClass( 'hidden' );
+  }
+
+  function loaderShowing() {
+    var showing = false;
+    if( $( '.stream-loading' ).css( 'visibility' ) !== "hidden" ) showing = true;
+    return showing;
+  }
+  
+  function bindInfiniteScroll() {
+    var settings = {
+      lookahead: 400,
+      container: $( document )
+    };
+
+    $( window ).scroll( function( e ) {
+      if ( loaderShowing() ) {
+        return;
+      }
+
+      var containerScrollTop = settings.container.scrollTop();
+      if ( ! containerScrollTop ) {
+        var ownerDoc = settings.container.get().ownerDocument;
+        if( ownerDoc ) {
+          containerScrollTop = $( ownerDoc.body ).scrollTop();        
+        }
+      }
+      var distanceToBottom = $( document ).height() - ( containerScrollTop + $( window ).height() );
+
+      if ( distanceToBottom < settings.lookahead ) {  
+        showLoader()
+        var url = app.baseURL + 'api/datasets';
+        var name = $('.datasets').attr('data-name');
+        if (name) url += ('/' + name);
+        fetchDatasets(url, app.lastOffset + 20).then(function(datasets) {
+          if (datasets.length > 0) {
+            $('.datasets-wrapper').append( $.mustache( $( ".datasetsTemplate" ).html(), {datasets: datasets} ) );
+            hideLoader()
+          } else {
+            $('.stream-loading').html('This is the last dataset!')
+          }
+        })
+      }
+    });
+  }
+  
   return {
     inURL: inURL,
     formatDiskSize: formatDiskSize,
     capitalize: capitalize,
-    emailToDB: emailToDB,
     isAdminParty: isAdminParty,
+    loggedIn: loggedIn,
+    catchModals: catchModals,
     registerEmitter: registerEmitter,
     cachedRequest: cachedRequest,
     lookupIcon: lookupIcon,
+    geocode: geocode,
     listenFor: listenFor,
     show: show,
     hide: hide,
@@ -705,13 +860,20 @@ var util = function() {
     lookupPath: lookupPath,
     selectedTreePath: selectedTreePath,
     renderTree: renderTree,
+    showApps: showApps,
     showDatasets: showDatasets,
     showTrendingsets: showTrendingsets,
-    routeViews: routeViews,
-    formatProperties: formatProperties,
     mergeFileTree: mergeFileTree,
     getDDocFiles: getDDocFiles,
     addHTMLElementForFileEntry: addHTMLElementForFileEntry,
-    codeEditor: codeEditor
+    codeEditor: codeEditor,
+    addApp: addApp,
+    searchTwitter: searchTwitter,
+    renderIcons: renderIcons,
+    projectToGeoJSON: projectToGeoJSON,
+    showLoader: showLoader,
+    hideLoader: hideLoader,
+    loaderShowing: loaderShowing,
+    bindInfiniteScroll: bindInfiniteScroll
   };
 }();

@@ -13,51 +13,54 @@ var costco = function() {
   
   function previewTransform(docs, editFunc, currentColumn) {
     var preview = [];
-    var updated = mapDocs($.extend(true, {}, docs), editFunc);
-    for (var i = 0; i < updated.docs.length; i++) {      
-      var before = docs[i]
-        , after = updated.docs[i]
-        ;
-      if (!after) after = {};
-      if (currentColumn) {
-        preview.push({before: JSON.stringify(before[currentColumn]), after: JSON.stringify(after[currentColumn])});      
-      } else {
-        preview.push({before: JSON.stringify(before), after: JSON.stringify(after)});      
+    mapDocs(_.clone(docs), editFunc, function(updated) {
+      for (var i = 0; i < updated.docs.length; i++) {      
+        var before = docs[i]
+          , after = updated.docs[i]
+          ;
+        if (!after) after = {};
+        if (currentColumn) {
+          preview.push({before: JSON.stringify(before[currentColumn]), after: JSON.stringify(after[currentColumn])});      
+        } else {
+          preview.push({before: JSON.stringify(before), after: JSON.stringify(after)});      
+        }
       }
-    }
-    util.render('editPreview', 'expression-preview-container', {rows: preview});
+      util.render('editPreview', 'expression-preview-container', {rows: preview});
+      util.notify('Geocoded ' + preview.length + ' preview docs')
+    });
   }
 
-  function mapDocs(docs, editFunc) {
+  function mapDocs(docs, editFunc, callback) {
     var edited = []
-      , deleted = []
       , failed = []
+      , updatedDocs = []
       ;
+  
+    var functions = _.map(docs, function(doc) {
+      return function(next) {
+        try {
+          editFunc(_.clone(doc), function(updated) {
+            if (updated && !_.isEqual(updated, doc)) {
+              edited.push(updated);
+            }
+            updatedDocs.push(updated);
+            next()
+          });
+        } catch(e) {
+          failed.push(doc)
+          next(e)
+        }
+      }
+    })
     
-    var updatedDocs = _.map(docs, function(doc) {
-      try {
-        var updated = editFunc(_.clone(doc));
-      } catch(e) {
-        failed.push(doc);
-        return;
-      }
-      if(updated === null) {
-        updated = {_deleted: true};
-        edited.push(updated);
-        deleted.push(doc);
-      }
-      else if(updated && !_.isEqual(updated, doc)) {
-        edited.push(updated);
-      }
-      return updated;      
-    });
-    
-    return {
-      edited: edited, 
-      docs: updatedDocs, 
-      deleted: deleted, 
-      failed: failed
-    };
+    async.series(functions, function(err) {
+      if (err) console.log('processing error', err)
+      callback({
+        edited: edited, 
+        docs: updatedDocs, 
+        failed: failed
+      })
+    })
   }
   
   function updateDocs(editFunc) {
@@ -65,18 +68,18 @@ var costco = function() {
     util.notify("Download entire database into Recline. This could take a while...", {persist: true, loader: true});
     couch.request({url: app.dbPath + "/json"}).then(function(docs) {
       util.notify("Updating " + docs.docs.length + " documents. This could take a while...", {persist: true, loader: true});
-      var toUpdate = costco.mapDocs(docs.docs, editFunc).edited;
-      costco.uploadDocs(toUpdate).then(
-        function(updatedDocs) { 
-          util.notify(updatedDocs.length + " documents updated successfully");
-          recline.initializeTable(app.offset);
-          dfd.resolve(updatedDocs);
-        },
-        function(err) {
-          util.notify("Errorz! " + err);
-          dfd.reject(err);
-        }
-      );
+      mapDocs(docs.docs, editFunc, function(transformed) {
+        uploadDocs(transformed.edited).then(
+          function(updatedDocs) { 
+            util.notify(updatedDocs.length + " documents updated successfully");
+            recline.initializeTable(app.offset);
+            dfd.resolve(updatedDocs);
+          },
+          function(err) {
+            dfd.reject(err);
+          }
+        );
+      });
     });
     return dfd.promise();
   }
@@ -90,7 +93,14 @@ var costco = function() {
     if(!docs.length) dfd.resolve("Failed: No docs specified");
     couch.request({url: app.dbPath + "/_bulk_docs", type: "POST", data: JSON.stringify({docs: docs})})
       .then(
-        function(resp) {ensureCommit().then(function() { dfd.resolve(resp) })}, 
+        function(resp) {ensureCommit().then(function() { 
+          var error = couch.responseError(resp);
+          if (error) {
+            dfd.reject(error);
+          } else {
+            dfd.resolve(resp);            
+          }
+        })}, 
         function(err) { dfd.reject(err.responseText) }
       );
     return dfd.promise();
@@ -101,42 +111,58 @@ var costco = function() {
   }
   
   function deleteColumn(name) {
-    var deleteFunc = function(doc) {
+    var deleteFunc = function(doc, emit) {
       delete doc[name];
-      return doc;
+      emit(doc);
     }
     return updateDocs(deleteFunc);
   }
   
-  function uploadCSV() {
-    var file = $('#file')[0].files[0];
+  function uploadCSV(file) {
     if (file) {
-      var reader = new FileReader();
-      reader.readAsText(file);
-      reader.onload = function(event) {
-        var payload = {
-          url: app.dbPath + "/_bulk_docs", // todo more robust url composition
-          data: event.target.result
-        };
-        var worker = new Worker('/script/costco-csv-worker.js');
-        worker.onmessage = function(message) {
-           message = JSON.parse(message.data);
-           if (message.done) {
-             util.hide('dialog');
-             util.notify("Data uploaded successfully!");
-             recline.initializeTable(app.offset);
-           } else if (message.percent) {
-             if (message.percent === 100) {
-               util.notify("Waiting for CouchDB...", {persist: true, loader: true})
-             } else {
-               util.notify("Uploading... " + message.percent + "%");            
-             }
-           } else {
-             util.notify(JSON.stringify(message));
-           }
-         };
-         worker.postMessage(payload);
-      };
+      util.notify("Uploading file...", {persist: true, loader: true});
+      
+      var xhr = new XMLHttpRequest();
+      xhr.onerror = function (e) {
+        util.notify('upload abort', e)
+      }
+      xhr.onabort = function (e) {
+        util.notify('upload error', e)
+      }
+      xhr.upload.onprogress = function (e) {
+        var percent = (e.loaded / e.total) * 100;
+        if (percent === 100) {
+          util.notify("We got your data. Waiting for it to process... (this could take a while for large files, feel free to check back later)", {persist: true, loader: true});
+        } else {
+          util.notify("Uploading file... " + percent + "%", {persist: true, loader: true});
+        }
+      }
+      xhr.onload = function (e) { 
+        var resp = JSON.parse(e.currentTarget.response)
+          , status = e.currentTarget.status;
+        if (status > 299) { 
+          util.notify("Error! " + e.error);
+        } else {
+          util.notify(resp + " documents created.", {showFor: 10000});
+        }
+        recline.initializeTable(app.offset);
+      }
+      xhr.open('PUT', app.baseURL + "api/upload/" + app.datasetInfo._id);
+      xhr.setRequestHeader('Content-Type', file.type);
+      xhr.send(file)
+      
+      // var reader = new FileReader();
+      // reader.readAsText(file);
+      // reader.onload = function(event) {
+      //   couch.request({
+      //     url: app.baseURL + "api/upload/" + app.datasetInfo._id,
+      //     type: "POST", 
+      //     data: event.target.result
+      //   }).then(function(done) {
+      //     util.notify("Data uploaded successfully!");
+      //     recline.initializeTable(app.offset);
+      //   })
+      // };
     } else {
       util.notify('File not selected. Please try again');
     }

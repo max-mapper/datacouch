@@ -1,0 +1,15 @@
+{
+  "name": "dc_backup",
+  "subdomain": "dcbackup",
+  "scripts": {
+    "start": "backup_documents.js"
+  },
+  "dependencies": {
+    "follow": ">= 0.1.0",
+    "request": ">= 2.1.1",
+    "couchapp": ">= 0.8.1",
+    "deferred": ">= 0.2.2",
+    "underscore": ">= 1.1.7"
+  },
+  "version": "0.0.1"
+}

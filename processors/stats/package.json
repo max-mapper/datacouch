@@ -1,0 +1,13 @@
+{
+  "name": "dc_stats",
+  "subdomain": "dcstats",
+  "scripts": {
+    "start": "compute_stats.js"
+  },
+  "dependencies": {
+    "request": ">= 2.1.1",
+    "deferred": ">= 0.2.2",
+    "underscore": ">= 1.1.7"
+  },
+  "version": "0.0.1"
+}
