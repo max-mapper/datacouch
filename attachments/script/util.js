@@ -453,13 +453,33 @@ var util = function() {
   
   function showDatasets(name) {
     var url = app.baseURL + "api/datasets/";
-
-    // If a name is passed in, then add it to the url
+    
     if (name) {
       url += name;
     }
     
-    return couch.request({url: url}).then(function(resp) {
+    return fetchDatasets(url).then(function(datasets) {
+      if (datasets.length > 0) {
+        util.render('datasetsList', 'datasetsContainer', {name: name})
+        util.render('datasets', 'datasets-wrapper', {
+          name: name,
+          datasets: datasets
+        });
+      } else {
+        util.render('datasetsList', 'datasetsContainer')
+        couch.request({url: app.baseURL + "api/users/" + name }).then(
+          function(res) { util.render('datasets', 'datasets-wrapper', {name: name}) }
+        , function(err) { util.render('noUser', 'datasets-wrapper', {name: name}) }
+        )
+      }
+    })
+  }
+  
+  function fetchDatasets(url, offset) {
+    var dfd = $.Deferred();
+    if (!offset) offset = 0;
+    couch.request({url: url + '?limit=20&skip=' + offset}).then(function(resp) {
+      app.lastOffset = resp.offset;
       var datasets = _.map(resp.rows, function(row) {
         return {
           baseURL: app.baseURL + 'edit#/',
@@ -476,20 +496,11 @@ var util = function() {
           count: row.doc.doc_count
         };
       })
-      if (datasets.length > 0) {
-        util.render('datasets', 'datasetsContainer', {
-          name: name,
-          datasets: datasets
-        });      
-      } else {
-        couch.request({url: app.baseURL + "api/users/" + name}).then(
-          function(res) { util.render('datasets', 'datasetsContainer', {name: name}) }
-        , function(err) { util.render('noUser', 'datasetsContainer', {name: name}) }
-        )
-      }
+      dfd.resolve(datasets);
     })
+    return dfd.promise();
   }
-  
+
   function showApps(name) {
     var url = app.baseURL + "api/applications";
     if (name) url += "/user/" + name;
@@ -772,6 +783,57 @@ var util = function() {
     }, callback)
   }
   
+  function showLoader() {
+    $( '.stream-loading' ).removeClass( 'hidden' );
+  }
+
+  function hideLoader() {
+    $( '.stream-loading' ).addClass( 'hidden' );
+  }
+
+  function loaderShowing() {
+    var showing = false;
+    if( $( '.stream-loading' ).css( 'visibility' ) !== "hidden" ) showing = true;
+    return showing;
+  }
+  
+  function bindInfiniteScroll() {
+    var settings = {
+      lookahead: 400,
+      container: $( document )
+    };
+
+    $( window ).scroll( function( e ) {
+      if ( loaderShowing() ) {
+        return;
+      }
+
+      var containerScrollTop = settings.container.scrollTop();
+      if ( ! containerScrollTop ) {
+        var ownerDoc = settings.container.get().ownerDocument;
+        if( ownerDoc ) {
+          containerScrollTop = $( ownerDoc.body ).scrollTop();        
+        }
+      }
+      var distanceToBottom = $( document ).height() - ( containerScrollTop + $( window ).height() );
+
+      if ( distanceToBottom < settings.lookahead ) {  
+        showLoader()
+        var url = app.baseURL + 'api/datasets';
+        var name = $('.datasets').attr('data-name');
+        if (name) url += ('/' + name);
+        fetchDatasets(url, app.lastOffset + 20).then(function(datasets) {
+          if (datasets.length > 0) {
+            $('.datasets-wrapper').append( $.mustache( $( ".datasetsTemplate" ).html(), {datasets: datasets} ) );
+            hideLoader()
+          } else {
+            $('.stream-loading').html('This is the last dataset!')
+          }
+        })
+      }
+    });
+  }
+  
   return {
     inURL: inURL,
     formatDiskSize: formatDiskSize,
@@ -808,6 +870,10 @@ var util = function() {
     addApp: addApp,
     searchTwitter: searchTwitter,
     renderIcons: renderIcons,
-    projectToGeoJSON: projectToGeoJSON
+    projectToGeoJSON: projectToGeoJSON,
+    showLoader: showLoader,
+    hideLoader: hideLoader,
+    loaderShowing: loaderShowing,
+    bindInfiniteScroll: bindInfiniteScroll
   };
 }();

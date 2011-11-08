@@ -53,7 +53,6 @@ app.routes = {
         }
       })
       util.showDatasets(username);
-      // util.showApps(username);
       if (username) {
         couch.request({url: app.baseURL + 'api/users/' + username}).then(function(profile) {
           profile.avatar = profile.avatar.replace('_normal.', '_bigger.');
@@ -186,6 +185,7 @@ app.after = {
   },
   datasets: function() {
     $('.timeago').timeago();
+    util.bindInfiniteScroll()
   },
   nouns: function() {
     $('.nounContainer svg').click(function(e) {

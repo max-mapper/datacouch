@@ -472,32 +472,6 @@ $(function(){
       })
     }
 
-    function bindInfiniteScroll() {
-      var settings = {
-        lookahead: 400,
-        container: $( document )
-      };
-
-      $( window ).scroll( function( e ) {
-        if ( loaderShowing() || streamDisabled ) {
-          return;
-        }
-
-        var containerScrollTop = settings.container.scrollTop();
-        if ( ! containerScrollTop ) {
-          var ownerDoc = settings.container.get().ownerDocument;
-          if( ownerDoc ) {
-            containerScrollTop = $( ownerDoc.body ).scrollTop();        
-          }
-        }
-        var distanceToBottom = $( document ).height() - ( containerScrollTop + $( window ).height() );
-
-        if ( distanceToBottom < settings.lookahead ) {  
-          getPostsWithComments( { offsetDoc: oldestDoc } );
-        }
-      });
-    }
-
     return {
       db: db,
       userProfile: userProfile,
@@ -525,8 +499,7 @@ $(function(){
       formatComments: formatComments,
       showComments: showComments,
       submitComment: submitComment,
-      decorateStream: decorateStream,
-      bindInfiniteScroll: bindInfiniteScroll
+      decorateStream: decorateStream
     }
 
   }();

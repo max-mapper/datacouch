@@ -183,6 +183,9 @@ ul#landing_nav {
 .nounsBoundary .selected { background-color: #f9f9f9}
 .nounWrapper { float: left; margin-right: 5px; text-align: center;}
 
+.stream-loading{position:relative;height:60px;text-align:center;display: none;}
+.stream-loading .spinner{display:block;height:32px;width:32px;background-image:url(../images/loader.gif);margin:10px auto;}
+
 /* NOUN PROJECT STYLES */
 .container .column-main{
     width: 500px;

@@ -380,11 +380,6 @@ img {
   vertical-align: middle;
 }
 
-.hidden {
-  display: none;
-  visibility: hidden !important;
-}
-
 .fbs-pane, .fbs-flyout-pane {
   z-index: 2000;
 }
