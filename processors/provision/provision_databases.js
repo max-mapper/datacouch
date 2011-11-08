@@ -54,18 +54,28 @@ follow({db: db, include_docs: true, filter: "datacouch/by_value", query_params: 
     , dbPath = couch + '/' + change.doc.dataset
     ;
   checkExistenceOf(dbPath + "/_design/" + change.doc.ddoc).then(function(status) {
-    if(status === 404) {
-      var appURL = change.doc._id + "." + vhostDomain;
+    var appURL = change.doc._id + "." + vhostDomain;
+    if (status === 404) {
       replicate("apps", dbPath, "_design/" + change.doc.ddoc).then(function(resp) {
-        addVhost(appURL, "/" + change.doc.dataset + "/_design/" + change.doc.ddoc + "/_rewrite").then(function() {
-          request.post({url: db, body: _.extend({}, change.doc, {url: appURL})}, function(e,r,b) {
-            console.log("installed " + change.doc.ddoc + " into " + dbPath + " in " + (new Date() - start_time) + "ms");
-          })
-        });
+        registerApp(appURL, change.doc, db, function(resp) {
+          console.log("installed " + doc.ddoc + " app into " + db + " in " + (new Date() - start_time) + "ms");
+        })
       });
-    };
+    } else if (!change.doc.url) {
+      registerApp(appURL, change.doc, db, function(resp) {
+        console.log("updated " + change.doc.ddoc + " app into " + db + " in " + (new Date() - start_time) + "ms");
+      })
+    }
   })
 })
+
+function registerApp(appURL, doc, db, callback) {
+  addVhost(appURL, "/" + doc.dataset + "/_design/" + doc.ddoc + "/_rewrite").then(function() {
+    request.post({url: db, body: _.extend({}, doc, {url: appURL})}, function(e,r,b) {
+      if (callback) callback(b)
+    })
+  });
+}
 
 function absolutePath(pathname) {
   if (pathname[0] === '/') return pathname
@@ -118,7 +128,8 @@ function createDB(url) {
 
 function addVhost(url, couchapp) {
   var dfd = deferred();
-  request({uri: couch + "/_config/vhosts/" + encodeURIComponent(url), method: "PUT", body: JSON.stringify(json), json: false}, function (err, resp, body) {
+  request({uri: couch + "/_config/vhosts/" + encodeURIComponent(url), method: "PUT", body: JSON.stringify(couchapp), json: false}, function (err, resp, body) {
+    console.log(body)
     if (err) throw new Error('ahh!! ' + err);
     dfd.resolve(body);
   })
