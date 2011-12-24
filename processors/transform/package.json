@@ -1,0 +1,12 @@
+{
+  "name": "dc_transform",
+  "subdomain": "dctransform",
+  "scripts": {
+    "start": "main.js"
+  },
+  "dependencies": {
+    "transfuse": "0.0.x",
+    "request": "2.x.x"
+  },
+  "version": "0.0.1"
+}
