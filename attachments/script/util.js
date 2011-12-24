@@ -39,6 +39,7 @@ var util = function() {
 
   // true if no admins exist in the database
   function isAdminParty( userCtx ) {
+    // return !_.include(userCtx.roles, "_admin");
     return userCtx.roles.indexOf("_admin") !== -1;
   }
   

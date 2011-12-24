@@ -15,22 +15,9 @@ couch.dbPath = app.baseURL + "api/";
 couch.rootPath = couch.dbPath + "couch/";
 
 /*
-<<<<<<< HEAD
- app.routes
-   pages
-    home
-    user
-  modals
-    new
-    settings
-    logout
-  actions
-    fork
-=======
   app.routes
     - pages (URL routed with SugarSkull, hrefs like "#/" or "#/bob")
     - modals (no URL change triggered, hrefs like "#/cancel!" or "#/logout!")
->>>>>>> master
 */
 
 app.routes = {
@@ -233,7 +220,7 @@ $(function() {
     '/welcome': {on: 'welcome'},
     '/activity': {on: 'activity'},
     '/(\\w+)!': {on: function(modal) { util.catchModals("#/" + modal + "!") }},
-    '/:username': {on: 'activity'},
+    '/:username': {on: 'activity'}
   }).use({ resource: app.routes.pages, notfound: function() { console.log('notfound') } })
 
   // see if route matches /#/someuser
