@@ -6,7 +6,7 @@
   *  Author: Max Ogden (@maxogden)
  **/
 
-if(!process.env['DATACOUCH_ROOT'] || !process.env['DATACOUCH_VHOST']) throw ("OMGZ YOU HAVE TO SET $DATACOUCH_ROOT and $DATACOUCH_VHOST");
+if(!process.env['DATACOUCH_ROOT']) throw ("OMGZ YOU HAVE TO SET $DATACOUCH_ROOT");
 
 var follow = require('follow')
   , request = require('request').defaults({json: true})
@@ -17,12 +17,19 @@ var follow = require('follow')
   , url = require('url')
   , _ = require('underscore')
   ;
+  
+// for nodejitsu -- they require a running server
+require('http').createServer(function (req, res) {
+  res.writeHead(200, {'Content-Type': 'text/plain'});
+  res.end('database provisioner is up\n');
+}).listen(1337);
 
 var configURL = url.parse(process.env['DATACOUCH_ROOT'] + "/datacouch")
-  , vhostDomain = process.env['DATACOUCH_VHOST']
+  // , vhostDomain = process.env['DATACOUCH_VHOST']
   , couch = configURL.protocol + "//" + configURL.host
   , db = couch + configURL.pathname
   ;
+  console.log('follow', db)
 
 follow({db: db, include_docs: true, filter: "datacouch/by_value", query_params: {k: "type", v: "database"}}, function(error, change) {
   if (error || !("doc" in change)) return;
@@ -31,6 +38,7 @@ follow({db: db, include_docs: true, filter: "datacouch/by_value", query_params: 
     , dbPath = couch + "/" + dbName
     ;
   checkExistenceOf(dbPath).then(function(status) {
+    console.log(dbPath, status)
     if( (status === 404) && (!change.deleted) ) {
       console.log('creating ' + dbName);
       var start_time = new Date();
@@ -54,7 +62,8 @@ follow({db: db, include_docs: true, filter: "datacouch/by_value", query_params: 
     , dbPath = couch + '/' + change.doc.dataset
     ;
   checkExistenceOf(dbPath + "/_design/" + change.doc.ddoc).then(function(status) {
-    var appURL = change.doc._id + "." + vhostDomain;
+    // var appURL = change.doc._id + "." + vhostDomain;
+    var appURL = "http://data.ic.ht/" + db + '/_design/' + doc.ddoc + '/_rewrite'
     if (status === 404) {
       replicate("apps", dbPath, "_design/" + change.doc.ddoc).then(function(resp) {
         registerApp(appURL, change.doc, db, function(resp) {
@@ -70,11 +79,11 @@ follow({db: db, include_docs: true, filter: "datacouch/by_value", query_params: 
 })
 
 function registerApp(appURL, doc, db, callback) {
-  addVhost(appURL, "/" + doc.dataset + "/_design/" + doc.ddoc + "/_rewrite").then(function() {
+  // addVhost(appURL, "/" + doc.dataset + "/_design/" + doc.ddoc + "/_rewrite").then(function() {
     request.post({url: db, body: _.extend({}, doc, {url: appURL})}, function(e,r,b) {
       if (callback) callback(b)
     })
-  });
+  // });
 }
 
 function absolutePath(pathname) {

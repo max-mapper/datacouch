@@ -9,5 +9,5 @@
     "deferred": ">= 0.2.2",
     "underscore": ">= 1.1.7"
   },
-  "version": "0.0.1"
+  "version": "0.0.1-2"
 }

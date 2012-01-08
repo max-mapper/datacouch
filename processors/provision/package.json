@@ -5,11 +5,13 @@
     "start": "provision_databases.js"
   },
   "dependencies": {
-    "follow": ">= 0.1.0",
     "request": ">= 2.0.3",
     "couchapp": ">= 0.8.1",
     "deferred": ">= 0.2.2",
     "underscore": ">= 1.1.7"
   },
-  "version": "0.0.0"
+  "bundleDependencies": [
+    "follow"
+  ],
+  "version": "0.0.0-5"
 }
