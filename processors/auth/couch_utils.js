@@ -75,7 +75,7 @@ module.exports = function() {
   function createDoc(url, userData, callback) {
     request.put({uri: url, body: userData, json: true}
       , function(e,r,b) {
-        if(b.error) throw new Error(url + " - " + JSON.stringify(b));
+        if(e || (b && b.error)) throw new Error(url + " - " + JSON.stringify(b) + '-' + JSON.stringify(e));
         callback(_.extend({}, userData
           , { _id: b.id
             , _rev: b.rev

@@ -5,8 +5,11 @@
     "start": "proxy_server.js"
   },
   "dependencies": {
-    "http-proxy": "0.7.3",
-    "pkginfo": "0.2.2"
+    "pkginfo": "0.2.2",
+    "underscore": "1.1.7"
   },
-  "version": "0.0.1-1"
+  "bundleDependencies": [
+    "http-proxy"
+  ],
+  "version": "0.0.1-21"
 }

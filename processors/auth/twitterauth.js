@@ -106,6 +106,7 @@ module.exports = function(app, errorHandler) {
         , req.query.oauth_verifier
         , function(error, oauth_access_token, oauth_access_token_secret, results) {
           if (error) {
+            console.log("oauth error", error)
             return errorHandler({errors: "You choose not to login via twitter by not authorizing our app. Please try again."});
           } else {
             req.session.oauth_access_token = oauth_access_token;
