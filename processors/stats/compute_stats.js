@@ -6,78 +6,84 @@
   *  Author: Max Ogden (@maxogden)
  **/
 
- if(!process.env['DATACOUCH_ROOT']) throw ("OMGZ YOU HAVE TO SET $DATACOUCH_ROOT");
+ // if(!process.env['DATACOUCH_ROOT']) throw ("OMGZ YOU HAVE TO SET $DATACOUCH_ROOT");
 
 var request = require('request').defaults({json: true})
+  , async = require('async')
   , _ = require('underscore')
-  , deferred = require('deferred')
   ;
 
-function computeStats(couch, datasetsURL, callback) {
-  var start_time = new Date();  
+function getAllDatasets(callback) {
   request({url: datasetsURL}, function(err, resp, data) {
-    _.each(data.rows, function(db) {
-      request({url: couch + "/" + db.id}, function(err, resp, data) {
-        if (err) console.log('dataset info err', err)
-        var dbInfo = data;
-        // getHits(db.doc._id).then(function(hits) {
-          request({url: couch + "/" + db.id + '/_all_docs?startkey=%22_design/%22&endkey=%22_design0%22'}, function(err, resp, data) {
-            if (err) {
-              console.log(err, resp, data);
-              return;
-            } else {
-              var ddocCount = data.rows.length
-                , docCount = dbInfo.doc_count
-                , important = {disk_size: dbInfo.disk_size}
-                , changed = false;
+    callback(data.rows)
+  })
+}
 
-              important.doc_count = docCount - ddocCount;
-              if ( (docCount - ddocCount) < 0 ) important.doc_count = 0;
+function getAllDocs(db, callback) {
+  request({url: couch + "/" + db.id + '/_all_docs?startkey=%22_design/%22&endkey=%22_design0%22'}, function(err, resp, data) {
+    if (err) callback(err, data)
+    else callback(false, data)
+  })
+}
 
-              _.each(_.keys(important), function(prop) {
-                if (db.doc[prop] !== important[prop]) {
-                  db.doc[prop] = important[prop];
-                  changed = true;
-                }
-              })
+function getDbInfo(db, callback) {
+  request({url: couch + "/" + db.id}, function(err, resp, data) {
+    if (err) callback(err, data)
+    else callback(false, data)
+  })
+}
 
-              if (changed) {
-                db.doc.statsGenerated = new Date();
-                request.post({uri: couch + '/datacouch', body: db.doc}, function(err, resp, data) {
-                  console.log("updated stats on " + db.doc._id + " in " + (new Date() - start_time) + "ms");
-                })
-              }
-            }
-          })
-        // })
-      })
+function updateDoc(doc, callback) {
+  doc.statsGenerated = new Date();
+  request.post({uri: couch + '/datacouch', body: doc}, function(err, resp, data) {
+    callback()
+  })
+}
+
+function computeStats(couch, datasetsURL, callback) {
+  getAllDatasets(function(datasets) {
+    _.each(datasets, function(db) {
+      q.push(db, function (err) {
+        console.log('updated stats on ' + db.id);
+      });
     })
   })
 }
 
-function getHits(id) {
-  var dfd = deferred();  
-  var key = "[%22"+id+"%22,null]";
-  var hitsURL = couch + "/datacouch-analytics/_design/analytics/_view/popular_datasets?group=true&startkey="+key+"&endkey="+key+"&limit=1";
-  request({url: hitsURL}, function(err, resp, data) {
-    if(err) throw new Error(err);
-    var rows = data.rows;
-    if (rows.length > 0) {
-      dfd.resolve(rows[0].value);
-    } else {
-      dfd.resolve(0);
-    }
-  })
-  return dfd.promise();
-}
-
 var couch = process.env['DATACOUCH_ROOT']
-  , datasets = couch + "/" + "datacouch/_design/datacouch/_view/by_user?include_docs=true"
+  , datasetsURL = couch + "/" + "datacouch/_design/datacouch/_view/by_user?include_docs=true"
   ;
+  
+var q = async.queue(function (db, callback) {
+  getDbInfo(db, function(dbInfo) {         
+    getAllDocs(db, function(err, docs) {
+      var ddocCount = docs.rows.length
+        , docCount = dbInfo.doc_count
+        , important = {disk_size: dbInfo.disk_size}
+        , changed = false;
 
-function loop() {
-  computeStats(couch, datasets);
-  setTimeout(loop, 10000);
+      important.doc_count = docCount - ddocCount;
+      if ( (docCount - ddocCount) < 0 ) important.doc_count = 0;
+
+      _.each(_.keys(important), function(prop) {
+        if (db.doc[prop] !== important[prop]) {
+          db.doc[prop] = important[prop];
+          changed = true;
+        }
+      })
+
+      if (changed) updateDoc(db.doc, callback)
+      else callback()
+    })
+  })
+}, 20);
+
+var startTime = new Date()
+
+q.drain = function() {
+  console.log('last run took ' + (new Date() - startTime) + "ms")
+  startTime = new Date()
+  computeStats(couch, datasetsURL)
 }
 
-loop()
+computeStats(couch, datasetsURL);

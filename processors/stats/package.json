@@ -5,9 +5,9 @@
     "start": "compute_stats.js"
   },
   "dependencies": {
-    "request": ">= 2.1.1",
-    "deferred": ">= 0.2.2",
-    "underscore": ">= 1.1.7"
+    "request": "2.1.1",
+    "async": "0.1.15",
+    "underscore": "1.1.7"
   },
   "version": "0.0.1-2"
 }

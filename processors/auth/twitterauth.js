@@ -120,7 +120,7 @@ module.exports = function(app, errorHandler) {
                 } else {
                   util.logUserIn(util.couchUserDoc(JSON.parse(data)), function(userDoc, cookie) {
                     res.header('Set-Cookie', cookie)
-                    res.redirect('/#/loggedin!')
+                    res.redirect("http://" + couchVhost + '/#/loggedin!')
                   })
                 }
             });
