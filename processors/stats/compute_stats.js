@@ -6,12 +6,18 @@
   *  Author: Max Ogden (@maxogden)
  **/
 
- // if(!process.env['DATACOUCH_ROOT']) throw ("OMGZ YOU HAVE TO SET $DATACOUCH_ROOT");
+if(!process.env['DATACOUCH_ROOT']) throw ("OMGZ YOU HAVE TO SET $DATACOUCH_ROOT");
 
 var request = require('request').defaults({json: true})
   , async = require('async')
   , _ = require('underscore')
   ;
+ 
+// for nodejitsu -- they require a running server
+require('http').createServer(function (req, res) {
+  res.writeHead(200, {'Content-Type': 'text/plain'});
+  res.end('datacouch stats thingy is up\n');
+}).listen(1337);
 
 function getAllDatasets(callback) {
   request({url: datasetsURL}, function(err, resp, data) {
