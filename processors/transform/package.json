@@ -5,8 +5,9 @@
     "start": "main.js"
   },
   "dependencies": {
-    "transfuse": "0.0.x",
-    "request": "2.x.x"
+    "request": "2.x.x",
+    "underscore": "1.2.0"
   },
+  "bundleDependencies": ["transfuse"],
   "version": "0.0.1"
 }
