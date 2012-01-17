@@ -1,32 +1,53 @@
+/**  Runs database functional transformations
+  *  Setup environment variables (see datacouch readme for more info):
+  *    export DATACOUCH_ROOT="http://admin:pass@localhost:5984"
+  *  then "node main.js"
+  *  Author: Max Ogden (@maxogden)
+ **/
+
+if(!process.env['DATACOUCH_ROOT']) throw ("OMGZ YOU HAVE TO SET $DATACOUCH_ROOT");
+
 var request = require('request').defaults({json: true}),
   transfuse = require('transfuse'),
   JSONStream = require('JSONStream'),
   url = require('url'),
-  http = require('http');
+  _ = require('underscore'),
+  follow = require('follow');
 
-var couch = process.env['DATACOUCH_NONADMIN_ROOT'];
+// for nodejitsu -- they require a running server
+require('http').createServer(function (req, res) {
+  res.writeHead(200, {'Content-Type': 'text/plain'});
+  res.end('transformer is up\n');
+}).listen(1337);
 
-http.createServer(function (req, resp) {
-  var json = ""
-  req
-    .on('data',function(data) { json += data })
-    .on('end', function() {
-      json = JSON.parse(json)
-      transform(json.dataset, json.transform, req, resp)
+var configURL = url.parse(process.env['DATACOUCH_ROOT'] + "/datacouch")
+  , couch = configURL.protocol + "//" + configURL.host
+  , db = couch + configURL.pathname
+  ;
+
+follow({db: db, include_docs: true, filter: "datacouch/by_value", query_params: {k: "type", v: "transformation"}}, function(error, change) {
+  if (error || !("doc" in change)) return;
+  if (change.doc.finishedAt) return;
+  var doc = change.doc
+    , dbName = doc._id
+    , dbPath = couch + "/" + dbName
+    ;
+  transform(doc.dataset, doc.transform, function(err, done) {
+    if(err) console.log('transformation error on ' + doc.dataset, err)
+    request.post({url: db, body: _.extend({}, doc, {finishedAt: new Date()})}, function(e,r,b) {
+      console.log('transformed ' + doc.dataset)
     })
-    .on('error',function(error){
-      resp.end("request error! " + error);
-    });
-}).listen(9999);
+  })
+})
 
-
-function transform(dataset, funcString, req, resp) {
+function transform(dataset, funcString, callback) {
   var down = request({url: couch + "/" + dataset + '/_all_docs?include_docs=true'}),
-    up = request({url: couch + '/' + dataset + '/_bulk_docs', method: "POST", headers: req.headers.cookie}),
+    up = request({url: couch + '/' + dataset + '/_bulk_docs', method: "POST"}),
     tr = transfuse(['rows', /./, 'doc'], funcString, JSONStream.stringify("{\"docs\":[\n", "\n,\n", "\n]}\n"));
   down.pipe(tr)
   tr.pipe(up)
+  up.on('error', callback)
   up.on('end', function() {
-    resp.end('all done')
+    callback(false, 'all done')
   })
 }

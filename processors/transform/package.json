@@ -6,8 +6,12 @@
   },
   "dependencies": {
     "request": "2.x.x",
-    "underscore": "1.2.0"
+    "underscore": "1.2.0",
+    "JSONStream": "0.1.2",
+    "transfuse": "0.0.3"
   },
-  "bundleDependencies": ["transfuse"],
-  "version": "0.0.1"
+  "bundleDependencies": [
+    "follow"
+  ],
+  "version": "0.0.1-5"
 }

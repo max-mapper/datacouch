@@ -195,6 +195,7 @@ ddoc.validate_doc_update = function (newDoc, oldDoc, userCtx, securityObj) {
   if ( !userCtx.name ) throw({forbidden : "You have to sign in to do that."});
   if ( (newDoc.user !== userCtx.name) ) throw({forbidden : "You can't create datasets or apps for other users."});
   if( newDoc.forkedFromUser && ( newDoc.forkedFromUser === userCtx.name )) throw({forbidden : "You can't fork your own datasets."});
+  if( newDoc.type === "transformation" && ( newDoc.user !== userCtx.name )) throw({forbidden : "You can't transform other users datasets."});
 };
 
 couchapp.loadAttachments(ddoc, path.join(__dirname, 'attachments'));
