@@ -232,6 +232,18 @@ var util = function() {
     out = out + '</dl>';
     return out;
   }
+  
+  function waitFor(condition, callback) {
+    condition().then(
+      callback,
+      function(resp, status){
+        console.log("not yet...", resp, status);
+        setTimeout(function() {
+          waitFor(condition, callback);
+        }, 500);
+      }
+    )
+  }
 
   function getBaseURL(path) {
     var url = $.url(path);
@@ -854,6 +866,7 @@ var util = function() {
     notify: notify,
     observeExit: observeExit,
     formatMetadata:formatMetadata,
+    waitFor: waitFor,
     getBaseURL:getBaseURL,
     resetForm: resetForm,
     delay: delay,

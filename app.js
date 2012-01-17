@@ -191,7 +191,7 @@ ddoc.lists = {
 
 ddoc.validate_doc_update = function (newDoc, oldDoc, userCtx, securityObj) {
   if (userCtx.roles.indexOf('_admin') > -1) return;
-  if (["app", "database", "template"].indexOf(newDoc.type) === -1) throw({forbidden : "Invalid doc type"});
+  if (["app", "database", "template", "transformation"].indexOf(newDoc.type) === -1) throw({forbidden : "Invalid doc type"});
   if ( !userCtx.name ) throw({forbidden : "You have to sign in to do that."});
   if ( (newDoc.user !== userCtx.name) ) throw({forbidden : "You can't create datasets or apps for other users."});
   if( newDoc.forkedFromUser && ( newDoc.forkedFromUser === userCtx.name )) throw({forbidden : "You can't fork your own datasets."});

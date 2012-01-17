@@ -129,7 +129,6 @@ ddoc.validate_doc_update = function (newDoc, oldDoc, userCtx, securityCtx) {
   if (newDoc._deleted && securityCtx.admins.names.indexOf(userCtx.name) === -1) {
     throw({forbidden : "Only dataset owners can delete documents."});;
   }
-
   if (newDoc && securityCtx.admins.names.indexOf(userCtx.name) === -1) {
     throw({forbidden : "Only dataset owners can add or edit documents."});;
   }

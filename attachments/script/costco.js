@@ -64,28 +64,38 @@ var costco = function() {
   }
   
   function updateDocs(editFunc) {
+    var transformDoc = {
+      "transform": editFunc.toString(),
+      "dataset": app.datasetInfo._id,
+      "type": "transformation",
+      "createdAt": new Date(),
+      "user": app.session.userCtx.name
+    }
+    
     var dfd = $.Deferred();
-    util.notify("Download entire database into Recline. This could take a while...", {persist: true, loader: true});
-    couch.request({url: app.dbPath + "/json"}).then(function(docs) {
-      util.notify("Updating " + docs.docs.length + " documents. This could take a while...", {persist: true, loader: true});
-      mapDocs(docs.docs, editFunc, function(transformed) {
-        uploadDocs(transformed.edited).then(
-          function(updatedDocs) { 
-            util.notify(updatedDocs.length + " documents updated successfully");
-            recline.initializeTable(app.offset);
-            dfd.resolve(updatedDocs);
-          },
-          function(err) {
-            dfd.reject(err);
-          }
-        );
-      });
+    couch.request({type: "POST", url: app.baseURL + 'api', data: JSON.stringify(transformDoc)}).then(function(resp) {      
+      util.notify("Transforming documents. This could take a while... (you can close and come back later)", {persist: true, loader: true});
+      util.waitFor(function() {
+        var dfd = $.Deferred()
+        couch.request({url: app.baseURL + 'api/' + resp.id}).then(function(doc) {
+          if (doc.finishedAt) dfd.resolve()
+          else dfd.reject()
+        }, function(err) {
+          dfd.reject(err)
+        })
+        return dfd.promise()
+      }, function() { 
+        util.notify("Documents updated successfully!");
+        recline.initializeTable(app.offset);
+      })
+    }, function(err) {
+      dfd.reject(err);
     });
-    return dfd.promise();
+    return dfd.promise()
   }
   
   function updateDoc(doc) {
-    return couch.request({type: "PUT", url: app.dbPath + "/" + doc._id, data: JSON.stringify(doc)})    
+    return couch.request({type: "PUT", url: app.dbPath + "/" + doc._id, data: JSON.stringify(doc)})
   }
 
   function uploadDocs(docs) {
