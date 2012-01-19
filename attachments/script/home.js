@@ -205,10 +205,11 @@ $(function() {
   
   app.defaultRoute = function() {
     monocles.fetchSession().then( function( session ) {
+      console.log(session)
       if ( session.userCtx.name ) {
         window.location.href = "#/activity";
       } else if ( util.isAdminParty( session.userCtx ) ) {
-        util.render( 'adminParty', 'userButtons' );
+        util.render( 'adminParty', 'content' );
       } else {
         window.location.href = "#/welcome";
       }
