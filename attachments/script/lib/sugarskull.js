@@ -9,7 +9,7 @@
     for (var key in routes) {
       regify(routes[key]);
       if (key.indexOf(':') !== -1) {
-        var newKey = key.replace(/:.*?\/|:.*?$/g, '([a-zA-Z0-9-]+)/').slice(0, -1);
+        var newKey = key.replace(/:.*?\/|:.*?$/g, '([a-zA-Z0-9-_]+)/').slice(0, -1);
         routes[newKey] = routes[key];
         delete routes[key];
       }
@@ -100,7 +100,7 @@
 
               if (exactmatch[0] === '/' && 
                   roughmatch.length > 1 && 
-                  '/([a-zA-Z0-9-]+)' in routes) {
+                  '/([a-zA-Z0-9-_]+)' in routes) {
                 continue;
               }
 
