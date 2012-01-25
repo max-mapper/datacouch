@@ -4,8 +4,8 @@ var _ = require('underscore')
     { couchurl : "http://localhost:5984"
     , vhosturl : "http://localhost:9999"
     , port : 9999
-    , twitterKey: ""
-    , twitterSecret: ""
+    , twitterKey: process.env['DATACOUCH_TWITTER_KEY']
+    , twitterSecret: process.env['DATACOUCH_TWITTER_SECRET']
     }
   ;
   
