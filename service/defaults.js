@@ -1,9 +1,9 @@
 var _ = require('underscore')
   , url = require('url')
   , defaults = 
-    { couchurl : process.env.COUCHURL || "http://data.ic.ht"
-    , vhosturl : process.env.VHOSTURL || "http://datacouch.com"
-    , port : process.env.VHOSTPORT || 9999
+    { couchurl : "http://data.ic.ht"
+    , vhosturl : "http://datacouch.com"
+    , port : 9999
     }
   ;
   

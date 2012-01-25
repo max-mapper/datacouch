@@ -1,0 +1,1622 @@
+/*custom styles up top*/
+
+.sidebar {height:100%;width:299px;background-color:#F1FFFD;position:relative;overflow-x: hidden}
+.sidebar hr { margin: 10px 15px 2px}
+.sidebar .title, .sidebar .title a{font-family:"Lucida Grande", "Geneva";font-size:20px;line-height:24px;font-weight: 400; color: #084354; width: 240px;}
+.sidebar .controls a, .sidebar .controls a:hover {color: #252525; text-decoration: none; background: transparent;}
+.sidebar .timestamp{opacity:0.6;font-family:"Geneva";font-size:10px;line-height:16px;width: 240px}
+.sidebar .edit {opacity:0.3;font-family:"Geneva";padding-left:12px;background-image:url('images/edit.png');background-position:0 4px;background-repeat:no-repeat;}
+.sidebar .edit, .sidebar .edit a { font-size:10px; line-height:18px; }
+.sidebar .close{position:absolute;right:10px;top:15px;width:16px;height:16px;opacity:0.2;background-image:url('images/close.png');}
+.sidebar .close:hover,.sidebar .edit:hover{opacity:1;cursor: pointer; cursor: hand;}
+.sidebar .top{background-color:#EBF9F7;border-bottom:1px solid #E1EEEC;padding:10px 16px 2px 16px;}
+.sidebar .top .btn { margin: 10px 30px; }
+.sidebar .description {font-family: "Lucida Grande"; font-size: 12px; color: #707070; margin: 5px 0px 0px 0px;}
+.sidebar .datasource {overflow: auto;background: url('images/tiny-triangle.png') no-repeat 0px 6px;padding-left: 7px; font-family: "Lucida Grande"; font-size: 10px; color: #959595;}
+.strong {font-weight: bold; margin-right: 5px}
+.sidebar .bottom{width: 100%; overflow-x: hidden}
+.sidebar .bottom #editor { position: absolute;margin: 10px;right: 0px;left: 0px;width: auto;bottom: 10px;top: 55px; font-size: 12px;}
+.sidebar .property {padding: 10px 16px; border-bottom: 1px solid #DDEFEC; overflow: auto}
+.sidebar .key{width: 90px; float: left; font-family: "Lucida Grande"; font-size: 13px; font-weight: bold; color: #464646}
+.sidebar .value{width: 170px; float: left; color: #707070; }
+.sidebar .link{text-decoration: underline}
+.sidebar p{font-family:"Geneva";font-size:11px;line-height:12px;padding-bottom:10px;color:#252525;}
+td.collapsed {width: 5%; overflow: auto;}
+.column-header-title.collapsed { background: url('images/raquo.png') no-repeat right 8px; }
+.data-table-cell-value.collapsed {width: 60px; overflow: hidden;}
+/*end custom styles*/
+
+/*
+
+Copyright 2010, Google Inc.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+    * Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following disclaimer
+in the documentation and/or other materials provided with the
+distribution.
+    * Neither the name of Google Inc. nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+*/
+
+html, body, div, span, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, abbr, address, cite, code, del, dfn, em, img, ins, kbd, q, samp, small, strong, sub, sup, var, b, i, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, figure, footer, header, hgroup, menu, nav, section, menu, time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  font-size: 100%;
+  vertical-align: baseline;
+  background: transparent;
+}
+
+article, aside, figure, footer, header, hgroup, nav, section {
+  display: block;
+}
+
+ul {
+  list-style-position: inside;
+}
+
+a {
+  margin: 0;
+  padding: 0;
+  font-size: 100%;
+  vertical-align: baseline;
+  background: transparent;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+input, select {
+  vertical-align: middle;
+}
+
+body {
+  font-size: 62.5%;
+  font-family: Arial, sans-serif;
+  background: #fff;
+}
+
+h1 {
+  font-size: 1.8em;
+}
+
+h2 {
+  font-size: 1.3em;
+  font-weight: bold;
+}
+
+a {
+  color: #4183C4;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+a.secondary {
+  color: #4272db;
+}
+
+a.action, a.selected, a.inaction {
+  margin: 0 3px;
+}
+
+a.selected {
+  color: #000;
+  font-weight: bold;
+  cursor: default;
+}
+
+a.inaction {
+  color: #999;
+}
+
+a.selected:hover, a.inaction:hover {
+  cursor: default;
+  text-decoration: none;
+}
+
+a img {
+  border: 0;
+}
+
+.form-table th, .form-table td {
+  vertical-align: top;
+  font-size: 1.3em;
+  padding: 2px;
+}
+
+.form-table th {
+  text-align: left;
+  padding-top: 8px;
+  font-weight: bold;
+}
+
+.list-table {
+  width: 100%;
+}
+
+.list-table th, .list-table td {
+  padding-top: 5px;
+  text-align: left;
+  vertical-align: baseline;
+  padding: 3px 5px;
+  font-size: 1.1em;
+  color: #777;
+  border-bottom: dotted 1px #ddd;
+}
+
+.list-table th {
+  font-weight: bold;
+  color: #444;
+  background: #f2f2f2;
+}
+
+.list-table-itemname {
+  font-size: 1.2em;
+}
+
+#loading-message {
+  text-align: center;
+  font-size: 300%;
+  color: #999;
+  padding: 3em .5em;
+}
+
+#loading-message img {
+  position: relative;
+  top: -4px;
+}
+
+#notification-container {
+  width: 400px;
+  left: 520px;
+  display: none;
+  position: fixed;
+  top: 0;
+  z-index: 100;
+  text-align: center;
+}
+
+#notification {
+  display: inline-block;
+  margin: 0 auto;
+  padding: 5px 8px 4px;
+  text-align: left;
+  font-weight: bold;
+  background: #fe8;
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
+}
+
+.notification-action {
+  padding-left: 10px;
+}
+
+.notification-loader {
+  padding: 0 3px 0 0;
+  opacity: 0.3;
+}
+
+#header {
+  max-height: 40px;
+  padding: 6px;
+  position: relative;
+  overflow: hidden;
+  background: url('images/grid-bg.png');
+}
+
+#app-home-button {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+#body-info {
+  margin: 0 40px;
+}
+
+#body-info p {
+  font-size: 1.3em;
+  margin: 1.3em;
+  width: 50em;
+  line-height: 1.3;
+}
+
+#body-info h1 {
+  font-size: 3.0em;
+  font-weight: normal;
+  color: #777;
+}
+
+#body-info h2 {
+  margin: 1.6em 0 .5em 0;
+}
+
+#body-info .license, #body-info .errorstack {
+  font-family: monospace;
+  font-size: 1.3em;
+  white-space: pre;
+  border: 1px solid #ddd;
+  background: #eee;
+  padding: 15px;
+  width: 60em;
+  overflow: auto;
+}
+
+#body-info ul {
+  font-size: 1.3em;
+  margin: .5em 0 2em;
+}
+
+#body-info li {
+  margin: 0.4em;
+}
+
+input[type="checkbox"], input[type="radio"], select {
+  vertical-align: baseline;
+}
+
+input.inline {
+  vertical-align: middle;
+}
+
+div.grid-layout > table {
+  border-collapse: separate;
+}
+
+div.grid-layout.layout-full > table {
+  width: 100%;
+  max-width: 100% !important;
+}
+
+div.grid-layout > table > tbody > tr > th, div.grid-layout > table > tbody > tr > td {
+  padding: 0px;
+  text-align: left;
+  vertical-align: baseline;
+}
+
+div.grid-layout.grid-layout-for-text > table > tbody > tr > th, div.grid-layout.grid-layout-for-text > table > tbody > tr > td {
+  vertical-align: middle;
+}
+
+div.grid-layout.grid-layout-for-ui > table > tbody > tr > th, div.grid-layout.grid-layout-for-ui > table > tbody > tr > td {
+  vertical-align: top;
+}
+
+div.grid-layout.layout-normal {
+  margin: -10px;
+}
+
+div.grid-layout.layout-normal > table {
+  border-spacing: 10px;
+}
+
+div.grid-layout.layout-tight {
+  margin: -7px;
+}
+
+div.grid-layout.layout-tight > table {
+  border-spacing: 7px;
+}
+
+div.grid-layout.layout-tighter {
+  margin: -5px;
+}
+
+div.grid-layout.layout-tighter > table {
+  border-spacing: 5px;
+}
+
+div.grid-layout.layout-tightest {
+  margin: -3px;
+}
+
+div.grid-layout.layout-tightest > table {
+  border-spacing: 3px;
+}
+
+div.grid-layout.layout-loose {
+  margin: -15px;
+}
+
+div.grid-layout.layout-loose > table {
+  border-spacing: 15px;
+}
+
+div.grid-layout.layout-looser {
+  margin: -20px;
+}
+
+div.grid-layout.layout-looser > table {
+  border-spacing: 20px;
+}
+
+div.input-container {
+  padding: 3px;
+}
+
+div.input-container > input, div.input-container > textarea {
+  display: block;
+  width: 100%;
+  padding: 2px;
+  border: 1px inset;
+  margin-left: -3px;
+  margin-top: -3px;
+  vertical-align: top;
+}
+
+input.code, textarea.code {
+  font-family: monospace;
+}
+
+img {
+  vertical-align: middle;
+}
+
+.fbs-pane, .fbs-flyout-pane {
+  z-index: 2000;
+}
+
+.ui-widget {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+.ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+p.body-text {
+  margin-bottom: 1em;
+}
+
+/*
+
+Copyright 2010, Google Inc.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+    * Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following disclaimer
+in the documentation and/or other materials provided with the
+distribution.
+    * Neither the name of Google Inc. nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+*/
+
+#body {
+  display: none;
+}
+
+.project-title {
+  float: left;
+  padding: 2px 0 0 0;
+  font-size: 1.6em;
+}
+
+.project-controls, .project-actions {
+  margin: 3px 2px 0px 0px;
+  display: block;
+  float: right;
+}
+
+#project-name-button {
+  padding: 3px;
+  border: 1px solid transparent;
+}
+
+#project-name-button:hover {
+  background: #ffffd6;
+  border: 1px solid #ccc;
+  border-top: 1px solid #aaa;
+}
+
+#logged-in-status {
+  position: relative;
+  bottom: 1px;
+  padding: 0 8px;
+  font-size: 11px;
+  line-height: 24px;
+}
+
+#logged-in-status img {
+  position: relative;
+  bottom: 2px;
+}
+
+a#logged-in-status {
+  color: black;
+  font-weight: 500;
+  font-family: Helvetica Neue;
+  font-size: 11px;
+}
+
+.left-panel {
+  position: fixed;
+  overflow: hidden;
+  padding: 0px;
+  font-size: 1.3em;
+  background: #DCF0F4;
+  top: 40px;
+  left: 0px;
+  width: 300px;
+  bottom: 0px;
+}
+
+.left-panel .ui-tabs .ui-tabs-panel {
+  border-left: none;
+  border-right: none;
+  border-bottom: none;
+  padding: 0;
+}
+
+.right-panel {
+  position: fixed;
+  top: 40px;
+  left: 300px;
+  bottom: 0px;
+  right: 0px;
+  overflow: auto;
+  padding: 0px;
+  padding-left: 5px;
+  background: #D0E8F0;
+}
+
+#tool-panel {
+  position: relative;
+  height: 32px;
+}
+
+#summary-bar {
+  position: absolute;
+  top: 7px;
+  left: 7px;
+  font-size: 1.8em;
+  font-weight: bold;
+}
+
+#summary-total {
+  font-size: 0.8em;
+  font-weight: normal;
+}
+
+#extension-bar {
+  position: absolute;
+  top: 0px;
+  right: 10px;
+  white-space: nowrap;
+  font-size: 1.3em;
+  padding: 5px 0;
+}
+
+#extension-bar .secondary {
+  font-size: 0.85em;
+}
+
+#view-panel {
+  background: white;
+  overflow: hidden;
+}
+
+#facet-panel, #history-panel {
+  overflow: auto;
+}
+
+
+/*
+
+Copyright 2010, Google Inc.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+    * Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following disclaimer
+in the documentation and/or other materials provided with the
+distribution.
+    * Neither the name of Google Inc. nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+*/
+
+.viewpanel-header {
+  position: relative;
+  background: #DCF0F4;
+  padding: 7px;
+  overflow: hidden;
+  text-align: right;
+}
+
+.viewpanel-rowrecord, .viewpanel-pagesize, .viewpanel-sorting {
+  position: absolute;
+  top: 7px;
+  background: #DCF0F4;
+  padding: 0 10px 0 0;
+}
+
+.viewpanel-pagingcount {
+  font-weight: bold
+  
+}
+
+.data-table-container {
+  display: block;
+  border-top: 1px solid #E1EEEC;
+  overflow: auto;
+  position: absolute;
+  top: 73px;
+  bottom: 0px;
+  left: 5px;
+  right: 0px;
+  background: url('images/grid-bg.png');
+}
+
+.data-table {
+  margin: 0;
+  padding: 0;
+  border-collapse: collapse;
+}
+
+.data-table tr {
+  background: #fff;
+}
+
+.data-table td {
+  padding: 2px 5px;
+  border-bottom: 1px dotted #ddd;
+  border-right: 1px solid #ddd;
+}
+
+.data-table td:hover .data-table-cell-edit {
+  visibility: visible;
+}
+
+table.data-table > tbody > tr.even > td {
+  background: #f2f2f2;
+}
+
+table.data-table > tbody > tr.contextual > td > div {
+  opacity: 0.3;
+}
+
+table.data-table td.column-header {
+  vertical-align: top;
+  white-space: nowrap;
+  background: #ffe;
+  cursor: pointer;
+  padding: 2px 6px 2px 4px;
+  border-right: 1px solid #ddd;
+  font-weight: bold;
+}
+
+.column-header-name {
+  margin: 0 0 0 21px;
+  padding: 2px 0 0 0;
+  display: block;
+}
+
+.column-header-name.slim {
+  margin: 0;
+  padding: 2px 0 0 0;
+  display: block;
+}
+
+a.column-header-menu {
+  float: left;
+  display: block;
+  margin: 0 4px 0 0;
+  width: 17px;
+  height: 19px;
+  background-image: url(images/menu-dropdown.png);
+  background-repeat: no-repeat;
+}
+
+a.row-header-menu:hover {
+  background-position: -17px 0px;
+  text-decoration: none;
+}
+
+a.row-header-menu {
+  float: left;
+  display: block;
+  margin: -2px 0 -4px 0;
+  width: 17px;
+  height: 18px;
+  background-image: url(images/menu-dropdown.png);
+  background-repeat: no-repeat;
+}
+
+a.column-header-menu:hover {
+  background-position: -17px 0px;
+  text-decoration: none;
+}
+
+.column-header-recon-stats-bar {
+  margin-top: 10px;
+  height: 4px;
+  background: #ddd;
+  border: 1px solid #ccc;
+  position: relative;
+  width: 100%;
+}
+
+.column-header-recon-stats-matched {
+  position: absolute;
+  height: 100%;
+  background: #282;
+}
+
+.column-header-recon-stats-blanks {
+  position: absolute;
+  height: 100%;
+  background: #3d3;
+}
+
+div.data-table-cell-content {
+  line-height: 1.2;
+  color: #222;
+  position: relative;
+}
+
+div.data-table-cell-content-numeric {
+  text-align: right;
+}
+
+a.data-table-cell-edit {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: block;
+  width: 25px;
+  height: 16px;
+  text-decoration: none;
+  background-image: url(images/edit-map.png);
+  background-repeat: no-repeat;
+  visibility: hidden;
+}
+
+a.data-table-cell-edit:hover {
+  background-position: -25px 0px;
+}
+
+div.data-table-cell-content-numeric > a.data-table-cell-edit {
+  left: 0px;
+  right: auto;
+}
+
+.data-table-value-nonstring {
+  color: #282;
+}
+
+.data-table-error {
+  color: red;
+}
+
+div.data-table-recon-candidates {
+  padding: 1px 0;
+  min-width: 15em;
+  color: #777;
+}
+
+div.data-table-recon-candidate {
+  padding: 1px 35px 1px;
+  position: relative;
+}
+
+a.data-table-recon-topic {
+  color: #4272db;
+}
+
+.data-table-recon-score, .data-table-recon-new {
+  color: #aaa;
+  margin: 0 0.5em;
+}
+
+a.data-table-recon-action, .data-table-recon-extra > a {
+  text-decoration: none;
+  color: #4272db;
+}
+
+a.data-table-recon-action, .data-table-recon-extra {
+  font-size: 0.8em;
+  display: block;
+  margin: 3px 0 0;
+}
+
+a.data-table-recon-match, a.data-table-recon-match-similar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 16px;
+  height: 16px;
+  background-image: url(images/checks-map.png);
+  background-repeat: no-repeat;
+  background-position: -16px 0;
+  text-decoration: none;
+}
+
+a.data-table-recon-match:hover {
+  background-position: 0 0;
+}
+
+a.data-table-recon-match-similar {
+  background-position: -16px -16px;
+  left: 16px;
+}
+
+a.data-table-recon-match-similar:hover {
+  background-position: 0 -16px;
+}
+
+a.data-table-star-on, a.data-table-star-off, a.data-table-flag-on, a.data-table-flag-off {
+  display: block;
+  width: 16px;
+  height: 16px;
+  background-repeat: no-repeat;
+  text-decoration: none;
+}
+
+a.data-table-star-on {
+  background-position: 0 0;
+}
+
+a.data-table-star-off {
+  background-position: -17px 0;
+}
+
+a.data-table-flag-on {
+  background-position: 0 -17px;
+}
+
+a.data-table-flag-off {
+  background-position: -17px -17px;
+}
+
+.data-table-cell-editor, .data-table-topic-popup {
+  overflow: auto;
+  border: 1px solid #E1EEEC;
+  background: #DCF0F4;
+  padding: 5px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+}
+
+.data-table-topic-popup-header {
+  padding: 0 0 5px;
+}
+
+.data-table-cell-editor-editor {
+  overflow: hidden;
+  display: block;
+  width: 98%;
+  height: 3em;
+  font-family: monospace;
+  margin: 3px 0;
+}
+
+.data-table-cell-copypaste-editor {
+  overflow: hidden;
+  display: block;
+  width: 98%;
+  height: 10em;
+  font-family: monospace;
+  margin: 3px 0;
+}
+
+.data-table-cell-editor-action {
+  float: left;
+  vertical-align: bottom;
+  text-align: center;
+}
+
+.data-table-cell-editor-key {
+  font-size: 0.8em;
+  color: #999;
+}
+
+ul.sorting-dialog-blank-error-positions {
+  margin: 0;
+  padding: 5px;
+  height: 10em;
+  border: 1px solid #ccc;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+}
+
+ul.sorting-dialog-blank-error-positions > li {
+  display: block;
+  border: 1px solid #ccc;
+  background: #eee;
+  padding: 5px;
+  margin: 2px;
+  cursor: move;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+}
+
+/*
+
+Copyright 2010, Google Inc.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+    * Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following disclaimer
+in the documentation and/or other materials provided with the
+distribution.
+    * Neither the name of Google Inc. nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+*/
+
+#expression-preview-tabs .ui-tabs-nav li a {
+  padding: 0.15em 1em;
+}
+
+textarea.expression-preview-code {
+  font-family: monospace;
+  height: 5em;
+  vertical-align: top;
+}
+
+.expression-preview-parsing-status {
+  color: #999;
+}
+
+.expression-preview-parsing-status.error {
+  color: red;
+}
+
+#expression-preview-tabs-preview,
+#expression-preview-tabs-help,
+#expression-preview-tabs-history,
+#expression-preview-tabs-starred {
+  padding: 5px;
+  overflow: hidden;
+}
+
+#expression-preview-tabs-preview > div,
+#expression-preview-tabs-help > div,
+#expression-preview-tabs-history > div,
+#expression-preview-tabs-starred {
+  height: 200px;
+  overflow: auto;
+}
+
+#expression-preview-tabs-preview td, #expression-preview-tabs-preview th,
+#expression-preview-tabs-help td, #expression-preview-tabs-help th,
+#expression-preview-tabs-history td, #expression-preview-tabs-history th,
+#expression-preview-tabs-starred td, #expression-preview-tabs-starred th {
+  padding: 5px;
+}
+
+.expression-preview-table-wrapper {
+  padding: 7px;
+}
+
+.expression-preview-container td {
+  padding: 2px 5px;
+  border-top: 1px solid #ccc;
+}
+
+td.expression-preview-heading {
+  border-top: none;
+  background: #ddd;
+  font-weight: bold;
+}
+
+td.expression-preview-value {
+  max-width: 250px !important;
+  overflow-x: hidden;
+}
+
+.expression-preview-special-value {
+  color: #aaa;
+}
+
+.expression-preview-help-container h3 {
+  margin-top: 15px;
+  margin-bottom: 7px;
+  border-bottom: 1px solid #999;
+}
+
+.expression-preview-doc-item-title {
+  font-weight: bold;
+  text-align: right;
+}
+
+.expression-preview-doc-item-params {
+}
+
+.expression-preview-doc-item-returns {
+}
+
+.expression-preview-doc-item-desc {
+  color: #666;
+}
+
+/*
+
+Copyright 2010, Google Inc.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+    * Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following disclaimer
+in the documentation and/or other materials provided with the
+distribution.
+    * Neither the name of Google Inc. nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+*/
+
+.button:hover, a.button:hover {
+  border: 1px solid #666;
+}
+
+.button:active, a.button:active {
+  border: 1px solid #000;
+}
+
+.button-primary, a.button-primary {
+  font-weight: bold;
+  padding: 1px 15px;
+}
+
+.button-pill-left, a.button-pill-left {
+  border-right: 1px solid #bbb;
+  -webkit-border-top-right-radius: 0;
+  -webkit-border-bottom-right-radius: 0;
+  -moz-border-radius-topright: 0;
+  -moz-border-radius-bottomright: 0;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.button-pill-right, a.button-pill-right {
+  border-left: 1px solid #fff;
+  -moz-border-radius-topleft: 0;
+  -moz-border-radius-bottomleft: 0;
+  -webkit-border-top-left-radius: 0;
+  -webkit-border-bottom-left-radius: 0;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.button-disabled, a.button-disabled, .button.button-disabled, a.button.button-disabled {
+  color: #666;
+  border: 1px solid #ddd;
+  background: #f3f3f3;
+  cursor: default;
+}
+
+.button-disabled:hover, a.button-disabled:hover {
+  color: #666;
+  border: 1px solid #ddd;
+  background: #f3f3f3;
+  cursor: default;
+}
+
+.button img, a.button img {
+  padding-left: 3px;
+}
+
+.button-menu, a.button-menu {
+  background: url(images/down-arrow.png) no-repeat right 6px;
+  padding-right: 12px;
+}
+
+.button, a.button {
+  display: inline-block;
+  overflow: visible;
+  font-size: 1em;
+  line-height: 1.4;
+  color: #000;
+  text-decoration: none;
+  padding: 1px 6px;
+  border: 1px solid #bbb;
+  cursor: pointer;
+  background: #eee;
+  white-space: nowrap;
+  font-family: Arial, Helvetica, sans-serif;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+}
+
+.button, a.button { 
+  background: -webkit-gradient(linear, left top, left bottom, from(#f9f9f9), to(#e3e3e3));
+  background: -moz-linear-gradient(top,  #f9f9f9,  #e3e3e3);
+  filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#f9f9f9', endColorstr='#e3e3e3');
+}
+
+.button:active, a.button:active { 
+  background: -webkit-gradient(linear, left top, left bottom, from(#e3e3e3), to(#f9f9f9));
+  background: -moz-linear-gradient(top,  #e3e3e3,  #f9f9f9);
+  filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#e3e3e3', endColorstr='#f9f9f9');
+}
+
+/*
+
+Copyright 2010, Google Inc.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+    * Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following disclaimer
+in the documentation and/or other materials provided with the
+distribution.
+    * Neither the name of Google Inc. nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+*/
+
+.ui-tabs {
+  padding: 0;
+}
+
+.ui-widget-content, .ui-tabs .ui-widget-header {
+  border: none;
+  background: none;
+  color: inherit;
+}
+
+.ui-tabs .ui-tabs-nav {
+  padding: 0 7px;
+}
+
+.ui-tabs .ui-tabs-nav li a {
+  padding: 4px 10px;
+}
+
+.ui-tabs .ui-tabs-nav .ui-state-default,
+.ui-tabs .ui-tabs-nav .ui-widget-content .ui-state-default {
+  background: none;
+  border: 1px solid transparent;
+  border-bottom: 0;
+  margin-bottom: 0;
+  padding-bottom: 1px;
+}
+
+.ui-tabs .ui-tabs-nav .ui-state-default a,
+.ui-tabs .ui-tabs-nav .ui-state-default a:link,
+.ui-tabs .ui-tabs-nav .ui-state-default a:visited {
+  color: #4183C4;
+  font-weight: normal;
+}
+
+.ui-tabs .ui-tabs-nav li a span.count {
+  color: #666;
+  font-weight: normal;
+  font-size: 80%;
+}
+
+.ui-tabs .ui-tabs-nav .ui-state-active,
+.ui-tabs .ui-tabs-nav .ui-widget-content .ui-state-active {
+  border: 1px solid #D0E8F0;
+  border-bottom: none;
+  background: #EBF9F7;
+}
+
+.ui-tabs .ui-tabs-nav .ui-state-active a,
+.ui-tabs .ui-tabs-nav .ui-state-active a:link,
+.ui-tabs .ui-tabs-nav .ui-state-active a:visited {
+  color: black;
+  font-weight: bold;
+}
+
+.ui-tabs .ui-corner-top, .ui-tabs .ui-corner-top {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  -webkit-border-top-right-radius: 0;
+  -webkit-border-top-left-radius: 0;
+  -moz-border-radius-topright: 0;
+  -moz-border-radius-topleft: 0;
+}
+
+.ui-tabs .ui-tabs-panel {
+  margin: 0;
+  padding: 7px;
+  border: 1px solid #bcf;
+  background: white;
+}
+
+.ui-widget-content a {
+  color: #4183C4;
+}
+
+/*
+* jQuery UI CSS Framework
+* Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
+* Dual licensed under the MIT (MIT-LICENSE.txt) and GPL (GPL-LICENSE.txt) licenses.
+*/
+
+/* Layout helpers
+----------------------------------*/
+.ui-helper-hidden { display: none; }
+.ui-helper-hidden-accessible { position: absolute; left: -99999999px; }
+.ui-helper-reset { margin: 0; padding: 0; border: 0; outline: 0; line-height: 1.3; text-decoration: none; font-size: 100%; list-style: none; }
+.ui-helper-clearfix:after { content: "."; display: block; height: 0; clear: both; visibility: hidden; }
+.ui-helper-clearfix { display: inline-block; }
+/* required comment for clearfix to work in Opera \*/
+* html .ui-helper-clearfix { height:1%; }
+.ui-helper-clearfix { display:block; }
+/* end clearfix */
+.ui-helper-zfix { width: 100%; height: 100%; top: 0; left: 0; position: absolute; opacity: 0; filter:Alpha(Opacity=0); }
+
+
+/* Interaction Cues
+----------------------------------*/
+.ui-state-disabled { cursor: default !important; }
+
+
+/* Icons
+----------------------------------*/
+
+/* states and images */
+.ui-icon { display: block; text-indent: -99999px; overflow: hidden; background-repeat: no-repeat; }
+
+
+/* Misc visuals
+----------------------------------*/
+
+/* Overlays */
+.ui-widget-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+
+
+/*
+* jQuery UI CSS Framework
+* Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
+* Dual licensed under the MIT (MIT-LICENSE.txt) and GPL (GPL-LICENSE.txt) licenses.
+* To view and modify this theme, visit http://jqueryui.com/themeroller/?ffDefault=Trebuchet%20MS,%20Tahoma,%20Verdana,%20Arial,%20sans-serif&fwDefault=bold&fsDefault=1.1em&cornerRadius=4px&bgColorHeader=f6a828&bgTextureHeader=12_gloss_wave.png&bgImgOpacityHeader=35&borderColorHeader=e78f08&fcHeader=ffffff&iconColorHeader=ffffff&bgColorContent=eeeeee&bgTextureContent=03_highlight_soft.png&bgImgOpacityContent=100&borderColorContent=dddddd&fcContent=333333&iconColorContent=222222&bgColorDefault=f6f6f6&bgTextureDefault=02_glass.png&bgImgOpacityDefault=100&borderColorDefault=cccccc&fcDefault=1c94c4&iconColorDefault=ef8c08&bgColorHover=fdf5ce&bgTextureHover=02_glass.png&bgImgOpacityHover=100&borderColorHover=fbcb09&fcHover=c77405&iconColorHover=ef8c08&bgColorActive=ffffff&bgTextureActive=02_glass.png&bgImgOpacityActive=65&borderColorActive=fbd850&fcActive=eb8f00&iconColorActive=ef8c08&bgColorHighlight=ffe45c&bgTextureHighlight=03_highlight_soft.png&bgImgOpacityHighlight=75&borderColorHighlight=fed22f&fcHighlight=363636&iconColorHighlight=228ef1&bgColorError=b81900&bgTextureError=08_diagonals_thick.png&bgImgOpacityError=18&borderColorError=cd0a0a&fcError=ffffff&iconColorError=ffd27a&bgColorOverlay=666666&bgTextureOverlay=08_diagonals_thick.png&bgImgOpacityOverlay=20&opacityOverlay=50&bgColorShadow=000000&bgTextureShadow=01_flat.png&bgImgOpacityShadow=10&opacityShadow=20&thicknessShadow=5px&offsetTopShadow=-5px&offsetLeftShadow=-5px&cornerRadiusShadow=5px
+*/
+
+
+/* Component containers
+----------------------------------*/
+.ui-widget { font-size: 1.1em; }
+.ui-widget .ui-widget { font-size: 1em; }
+.ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button { font-size: 1em; }
+.ui-widget-content { border-bottom: 1px solid #D0E8F0; background: #EDF0F4 50% top repeat-x; color: #333333; }
+.ui-widget-content a { color: #333333; }
+.ui-widget-header { border: 1px solid #e78f08; background: #f6a828 50% 50% repeat-x; color: #ffffff; font-weight: bold; }
+.ui-widget-header a { color: #ffffff; }
+
+/* Interaction states
+----------------------------------*/
+.ui-state-default, .ui-widget-content .ui-state-default { border: 1px solid #cccccc; background: #f6f6f6 50% 50% repeat-x; font-weight: bold; color: #1c94c4; }
+.ui-state-default a, .ui-state-default a:link, .ui-state-default a:visited { color: #1c94c4; text-decoration: none; }
+.ui-state-hover, .ui-widget-content .ui-state-hover, .ui-state-focus, .ui-widget-content .ui-state-focus { border: 1px solid #fbcb09; background: #fdf5ce 50% 50% repeat-x; font-weight: bold; color: #c77405; }
+.ui-state-hover a, .ui-state-hover a:hover { color: #c77405; text-decoration: none; }
+.ui-state-active, .ui-widget-content .ui-state-active { border: 1px solid #fbd850; background: #ffffff 50% 50% repeat-x; font-weight: bold; color: #eb8f00; }
+.ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited { color: #eb8f00; text-decoration: none; }
+.ui-widget :active { outline: none; }
+
+/* Interaction Cues
+----------------------------------*/
+.ui-state-highlight, .ui-widget-content .ui-state-highlight {border: 1px solid #fed22f; background: #ffe45c 50% top repeat-x; color: #363636; }
+.ui-state-highlight a, .ui-widget-content .ui-state-highlight a { color: #363636; }
+.ui-state-error, .ui-widget-content .ui-state-error {border: 1px solid #cd0a0a; background: #b81900 50% 50% repeat; color: #ffffff; }
+.ui-state-error a, .ui-widget-content .ui-state-error a { color: #ffffff; }
+.ui-state-error-text, .ui-widget-content .ui-state-error-text { color: #ffffff; }
+.ui-priority-primary, .ui-widget-content .ui-priority-primary { font-weight: bold; }
+.ui-priority-secondary, .ui-widget-content .ui-priority-secondary { opacity: .7; filter:Alpha(Opacity=70); font-weight: normal; }
+.ui-state-disabled, .ui-widget-content .ui-state-disabled { opacity: .35; filter:Alpha(Opacity=35); background-image: none; }
+
+/* Icons
+----------------------------------*/
+
+/* states and images */
+.ui-icon { width: 16px; height: 16px; background-image: url(images/ui-icons_222222_256x240.png); }
+.ui-widget-content .ui-icon {background-image: url(images/ui-icons_222222_256x240.png); }
+.ui-widget-header .ui-icon {background-image: url(images/ui-icons_ffffff_256x240.png); }
+.ui-state-default .ui-icon { background-image: url(images/ui-icons_ef8c08_256x240.png); }
+.ui-state-hover .ui-icon, .ui-state-focus .ui-icon {background-image: url(images/ui-icons_ef8c08_256x240.png); }
+.ui-state-active .ui-icon {background-image: url(images/ui-icons_ef8c08_256x240.png); }
+.ui-state-highlight .ui-icon {background-image: url(images/ui-icons_228ef1_256x240.png); }
+.ui-state-error .ui-icon, .ui-state-error-text .ui-icon {background-image: url(images/ui-icons_ffd27a_256x240.png); }
+
+/* positioning */
+.ui-icon-carat-1-n { background-position: 0 0; }
+.ui-icon-carat-1-ne { background-position: -16px 0; }
+.ui-icon-carat-1-e { background-position: -32px 0; }
+.ui-icon-carat-1-se { background-position: -48px 0; }
+.ui-icon-carat-1-s { background-position: -64px 0; }
+.ui-icon-carat-1-sw { background-position: -80px 0; }
+.ui-icon-carat-1-w { background-position: -96px 0; }
+.ui-icon-carat-1-nw { background-position: -112px 0; }
+.ui-icon-carat-2-n-s { background-position: -128px 0; }
+.ui-icon-carat-2-e-w { background-position: -144px 0; }
+.ui-icon-triangle-1-n { background-position: 0 -16px; }
+.ui-icon-triangle-1-ne { background-position: -16px -16px; }
+.ui-icon-triangle-1-e { background-position: -32px -16px; }
+.ui-icon-triangle-1-se { background-position: -48px -16px; }
+.ui-icon-triangle-1-s { background-position: -64px -16px; }
+.ui-icon-triangle-1-sw { background-position: -80px -16px; }
+.ui-icon-triangle-1-w { background-position: -96px -16px; }
+.ui-icon-triangle-1-nw { background-position: -112px -16px; }
+.ui-icon-triangle-2-n-s { background-position: -128px -16px; }
+.ui-icon-triangle-2-e-w { background-position: -144px -16px; }
+.ui-icon-arrow-1-n { background-position: 0 -32px; }
+.ui-icon-arrow-1-ne { background-position: -16px -32px; }
+.ui-icon-arrow-1-e { background-position: -32px -32px; }
+.ui-icon-arrow-1-se { background-position: -48px -32px; }
+.ui-icon-arrow-1-s { background-position: -64px -32px; }
+.ui-icon-arrow-1-sw { background-position: -80px -32px; }
+.ui-icon-arrow-1-w { background-position: -96px -32px; }
+.ui-icon-arrow-1-nw { background-position: -112px -32px; }
+.ui-icon-arrow-2-n-s { background-position: -128px -32px; }
+.ui-icon-arrow-2-ne-sw { background-position: -144px -32px; }
+.ui-icon-arrow-2-e-w { background-position: -160px -32px; }
+.ui-icon-arrow-2-se-nw { background-position: -176px -32px; }
+.ui-icon-arrowstop-1-n { background-position: -192px -32px; }
+.ui-icon-arrowstop-1-e { background-position: -208px -32px; }
+.ui-icon-arrowstop-1-s { background-position: -224px -32px; }
+.ui-icon-arrowstop-1-w { background-position: -240px -32px; }
+.ui-icon-arrowthick-1-n { background-position: 0 -48px; }
+.ui-icon-arrowthick-1-ne { background-position: -16px -48px; }
+.ui-icon-arrowthick-1-e { background-position: -32px -48px; }
+.ui-icon-arrowthick-1-se { background-position: -48px -48px; }
+.ui-icon-arrowthick-1-s { background-position: -64px -48px; }
+.ui-icon-arrowthick-1-sw { background-position: -80px -48px; }
+.ui-icon-arrowthick-1-w { background-position: -96px -48px; }
+.ui-icon-arrowthick-1-nw { background-position: -112px -48px; }
+.ui-icon-arrowthick-2-n-s { background-position: -128px -48px; }
+.ui-icon-arrowthick-2-ne-sw { background-position: -144px -48px; }
+.ui-icon-arrowthick-2-e-w { background-position: -160px -48px; }
+.ui-icon-arrowthick-2-se-nw { background-position: -176px -48px; }
+.ui-icon-arrowthickstop-1-n { background-position: -192px -48px; }
+.ui-icon-arrowthickstop-1-e { background-position: -208px -48px; }
+.ui-icon-arrowthickstop-1-s { background-position: -224px -48px; }
+.ui-icon-arrowthickstop-1-w { background-position: -240px -48px; }
+.ui-icon-arrowreturnthick-1-w { background-position: 0 -64px; }
+.ui-icon-arrowreturnthick-1-n { background-position: -16px -64px; }
+.ui-icon-arrowreturnthick-1-e { background-position: -32px -64px; }
+.ui-icon-arrowreturnthick-1-s { background-position: -48px -64px; }
+.ui-icon-arrowreturn-1-w { background-position: -64px -64px; }
+.ui-icon-arrowreturn-1-n { background-position: -80px -64px; }
+.ui-icon-arrowreturn-1-e { background-position: -96px -64px; }
+.ui-icon-arrowreturn-1-s { background-position: -112px -64px; }
+.ui-icon-arrowrefresh-1-w { background-position: -128px -64px; }
+.ui-icon-arrowrefresh-1-n { background-position: -144px -64px; }
+.ui-icon-arrowrefresh-1-e { background-position: -160px -64px; }
+.ui-icon-arrowrefresh-1-s { background-position: -176px -64px; }
+.ui-icon-arrow-4 { background-position: 0 -80px; }
+.ui-icon-arrow-4-diag { background-position: -16px -80px; }
+.ui-icon-extlink { background-position: -32px -80px; }
+.ui-icon-newwin { background-position: -48px -80px; }
+.ui-icon-refresh { background-position: -64px -80px; }
+.ui-icon-shuffle { background-position: -80px -80px; }
+.ui-icon-transfer-e-w { background-position: -96px -80px; }
+.ui-icon-transferthick-e-w { background-position: -112px -80px; }
+.ui-icon-folder-collapsed { background-position: 0 -96px; }
+.ui-icon-folder-open { background-position: -16px -96px; }
+.ui-icon-document { background-position: -32px -96px; }
+.ui-icon-document-b { background-position: -48px -96px; }
+.ui-icon-note { background-position: -64px -96px; }
+.ui-icon-mail-closed { background-position: -80px -96px; }
+.ui-icon-mail-open { background-position: -96px -96px; }
+.ui-icon-suitcase { background-position: -112px -96px; }
+.ui-icon-comment { background-position: -128px -96px; }
+.ui-icon-person { background-position: -144px -96px; }
+.ui-icon-print { background-position: -160px -96px; }
+.ui-icon-trash { background-position: -176px -96px; }
+.ui-icon-locked { background-position: -192px -96px; }
+.ui-icon-unlocked { background-position: -208px -96px; }
+.ui-icon-bookmark { background-position: -224px -96px; }
+.ui-icon-tag { background-position: -240px -96px; }
+.ui-icon-home { background-position: 0 -112px; }
+.ui-icon-flag { background-position: -16px -112px; }
+.ui-icon-calendar { background-position: -32px -112px; }
+.ui-icon-cart { background-position: -48px -112px; }
+.ui-icon-pencil { background-position: -64px -112px; }
+.ui-icon-clock { background-position: -80px -112px; }
+.ui-icon-disk { background-position: -96px -112px; }
+.ui-icon-calculator { background-position: -112px -112px; }
+.ui-icon-zoomin { background-position: -128px -112px; }
+.ui-icon-zoomout { background-position: -144px -112px; }
+.ui-icon-search { background-position: -160px -112px; }
+.ui-icon-wrench { background-position: -176px -112px; }
+.ui-icon-gear { background-position: -192px -112px; }
+.ui-icon-heart { background-position: -208px -112px; }
+.ui-icon-star { background-position: -224px -112px; }
+.ui-icon-link { background-position: -240px -112px; }
+.ui-icon-cancel { background-position: 0 -128px; }
+.ui-icon-plus { background-position: -16px -128px; }
+.ui-icon-plusthick { background-position: -32px -128px; }
+.ui-icon-minus { background-position: -48px -128px; }
+.ui-icon-minusthick { background-position: -64px -128px; }
+.ui-icon-close { background-position: -80px -128px; }
+.ui-icon-closethick { background-position: -96px -128px; }
+.ui-icon-key { background-position: -112px -128px; }
+.ui-icon-lightbulb { background-position: -128px -128px; }
+.ui-icon-scissors { background-position: -144px -128px; }
+.ui-icon-clipboard { background-position: -160px -128px; }
+.ui-icon-copy { background-position: -176px -128px; }
+.ui-icon-contact { background-position: -192px -128px; }
+.ui-icon-image { background-position: -208px -128px; }
+.ui-icon-video { background-position: -224px -128px; }
+.ui-icon-script { background-position: -240px -128px; }
+.ui-icon-alert { background-position: 0 -144px; }
+.ui-icon-info { background-position: -16px -144px; }
+.ui-icon-notice { background-position: -32px -144px; }
+.ui-icon-help { background-position: -48px -144px; }
+.ui-icon-check { background-position: -64px -144px; }
+.ui-icon-bullet { background-position: -80px -144px; }
+.ui-icon-radio-off { background-position: -96px -144px; }
+.ui-icon-radio-on { background-position: -112px -144px; }
+.ui-icon-pin-w { background-position: -128px -144px; }
+.ui-icon-pin-s { background-position: -144px -144px; }
+.ui-icon-play { background-position: 0 -160px; }
+.ui-icon-pause { background-position: -16px -160px; }
+.ui-icon-seek-next { background-position: -32px -160px; }
+.ui-icon-seek-prev { background-position: -48px -160px; }
+.ui-icon-seek-end { background-position: -64px -160px; }
+.ui-icon-seek-start { background-position: -80px -160px; }
+/* ui-icon-seek-first is deprecated, use ui-icon-seek-start instead */
+.ui-icon-seek-first { background-position: -80px -160px; }
+.ui-icon-stop { background-position: -96px -160px; }
+.ui-icon-eject { background-position: -112px -160px; }
+.ui-icon-volume-off { background-position: -128px -160px; }
+.ui-icon-volume-on { background-position: -144px -160px; }
+.ui-icon-power { background-position: 0 -176px; }
+.ui-icon-signal-diag { background-position: -16px -176px; }
+.ui-icon-signal { background-position: -32px -176px; }
+.ui-icon-battery-0 { background-position: -48px -176px; }
+.ui-icon-battery-1 { background-position: -64px -176px; }
+.ui-icon-battery-2 { background-position: -80px -176px; }
+.ui-icon-battery-3 { background-position: -96px -176px; }
+.ui-icon-circle-plus { background-position: 0 -192px; }
+.ui-icon-circle-minus { background-position: -16px -192px; }
+.ui-icon-circle-close { background-position: -32px -192px; }
+.ui-icon-circle-triangle-e { background-position: -48px -192px; }
+.ui-icon-circle-triangle-s { background-position: -64px -192px; }
+.ui-icon-circle-triangle-w { background-position: -80px -192px; }
+.ui-icon-circle-triangle-n { background-position: -96px -192px; }
+.ui-icon-circle-arrow-e { background-position: -112px -192px; }
+.ui-icon-circle-arrow-s { background-position: -128px -192px; }
+.ui-icon-circle-arrow-w { background-position: -144px -192px; }
+.ui-icon-circle-arrow-n { background-position: -160px -192px; }
+.ui-icon-circle-zoomin { background-position: -176px -192px; }
+.ui-icon-circle-zoomout { background-position: -192px -192px; }
+.ui-icon-circle-check { background-position: -208px -192px; }
+.ui-icon-circlesmall-plus { background-position: 0 -208px; }
+.ui-icon-circlesmall-minus { background-position: -16px -208px; }
+.ui-icon-circlesmall-close { background-position: -32px -208px; }
+.ui-icon-squaresmall-plus { background-position: -48px -208px; }
+.ui-icon-squaresmall-minus { background-position: -64px -208px; }
+.ui-icon-squaresmall-close { background-position: -80px -208px; }
+.ui-icon-grip-dotted-vertical { background-position: 0 -224px; }
+.ui-icon-grip-dotted-horizontal { background-position: -16px -224px; }
+.ui-icon-grip-solid-vertical { background-position: -32px -224px; }
+.ui-icon-grip-solid-horizontal { background-position: -48px -224px; }
+.ui-icon-gripsmall-diagonal-se { background-position: -64px -224px; }
+.ui-icon-grip-diagonal-se { background-position: -80px -224px; }
+
+
+/* Misc visuals
+----------------------------------*/
+
+/* Corner radius */
+.ui-corner-tl { -moz-border-radius-topleft: 4px; -webkit-border-top-left-radius: 4px; border-top-left-radius: 4px; }
+.ui-corner-tr { -moz-border-radius-topright: 4px; -webkit-border-top-right-radius: 4px; border-top-right-radius: 4px; }
+.ui-corner-bl { -moz-border-radius-bottomleft: 4px; -webkit-border-bottom-left-radius: 4px; border-bottom-left-radius: 4px; }
+.ui-corner-br { -moz-border-radius-bottomright: 4px; -webkit-border-bottom-right-radius: 4px; border-bottom-right-radius: 4px; }
+.ui-corner-top { -moz-border-radius-topleft: 4px; -webkit-border-top-left-radius: 4px; border-top-left-radius: 4px; -moz-border-radius-topright: 4px; -webkit-border-top-right-radius: 4px; border-top-right-radius: 4px; }
+.ui-corner-bottom { -moz-border-radius-bottomleft: 4px; -webkit-border-bottom-left-radius: 4px; border-bottom-left-radius: 4px; -moz-border-radius-bottomright: 4px; -webkit-border-bottom-right-radius: 4px; border-bottom-right-radius: 4px; }
+.ui-corner-right {  -moz-border-radius-topright: 4px; -webkit-border-top-right-radius: 4px; border-top-right-radius: 4px; -moz-border-radius-bottomright: 4px; -webkit-border-bottom-right-radius: 4px; border-bottom-right-radius: 4px; }
+.ui-corner-left { -moz-border-radius-topleft: 4px; -webkit-border-top-left-radius: 4px; border-top-left-radius: 4px; -moz-border-radius-bottomleft: 4px; -webkit-border-bottom-left-radius: 4px; border-bottom-left-radius: 4px; }
+.ui-corner-all { -moz-border-radius: 4px; -webkit-border-radius: 4px; border-radius: 4px; }
+
+/* Overlays */
+.ui-widget-overlay { background: #666666 url(images/ui-bg_diagonals-thick_20_666666_40x40.png) 50% 50% repeat; opacity: .50;filter:Alpha(Opacity=50); }
+.ui-widget-shadow { margin: -5px 0 0 -5px; padding: 5px; background: #000000 url(images/ui-bg_flat_10_000000_40x100.png) 50% 50% repeat-x; opacity: .20;filter:Alpha(Opacity=20); -moz-border-radius: 5px; -webkit-border-radius: 5px; border-radius: 5px; }/* Resizable
+----------------------------------*/
+.ui-resizable { position: relative;}
+.ui-resizable-handle { position: absolute;font-size: 0.1px;z-index: 99999; display: block;}
+.ui-resizable-disabled .ui-resizable-handle, .ui-resizable-autohide .ui-resizable-handle { display: none; }
+.ui-resizable-n { cursor: n-resize; height: 7px; width: 100%; top: -5px; left: 0; }
+.ui-resizable-s { cursor: s-resize; height: 7px; width: 100%; bottom: -5px; left: 0; }
+.ui-resizable-e { cursor: e-resize; width: 7px; right: -5px; top: 0; height: 100%; }
+.ui-resizable-w { cursor: w-resize; width: 7px; left: -5px; top: 0; height: 100%; }
+.ui-resizable-se { cursor: se-resize; width: 12px; height: 12px; right: 1px; bottom: 1px; }
+.ui-resizable-sw { cursor: sw-resize; width: 9px; height: 9px; left: -5px; bottom: -5px; }
+.ui-resizable-nw { cursor: nw-resize; width: 9px; height: 9px; left: -5px; top: -5px; }
+.ui-resizable-ne { cursor: ne-resize; width: 9px; height: 9px; right: -5px; top: -5px;}/* Button
+----------------------------------*/
+
+.ui-button { display: inline-block; position: relative; padding: 0; margin-right: .1em; text-decoration: none !important; cursor: pointer; text-align: center; zoom: 1; overflow: visible; } /* the overflow property removes extra width in IE */
+.ui-button-icon-only { width: 2.2em; } /* to make room for the icon, a width needs to be set here */
+button.ui-button-icon-only { width: 2.4em; } /* button elements seem to need a little more width */
+.ui-button-icons-only { width: 3.4em; } 
+button.ui-button-icons-only { width: 3.7em; } 
+
+/*button text element */
+.ui-button .ui-button-text { display: block; line-height: 1.4;  }
+.ui-button-text-only .ui-button-text { padding: .4em 1em; }
+.ui-button-icon-only .ui-button-text, .ui-button-icons-only .ui-button-text { padding: .4em; text-indent: -9999999px; }
+.ui-button-text-icon .ui-button-text, .ui-button-text-icons .ui-button-text { padding: .4em 1em .4em 2.1em; }
+.ui-button-text-icons .ui-button-text { padding-left: 2.1em; padding-right: 2.1em; }
+/* no icon support for input elements, provide padding by default */
+input.ui-button { padding: .4em 1em; }
+
+/*button icon element(s) */
+.ui-button-icon-only .ui-icon, .ui-button-text-icon .ui-icon, .ui-button-text-icons .ui-icon, .ui-button-icons-only .ui-icon { position: absolute; top: 50%; margin-top: -8px; }
+.ui-button-icon-only .ui-icon { left: 50%; margin-left: -8px; }
+.ui-button-text-icon .ui-button-icon-primary, .ui-button-text-icons .ui-button-icon-primary, .ui-button-icons-only .ui-button-icon-primary { left: .5em; }
+.ui-button-text-icons .ui-button-icon-secondary, .ui-button-icons-only .ui-button-icon-secondary { right: .5em; }
+
+/*button sets*/
+.ui-buttonset { margin-right: 7px; }
+.ui-buttonset .ui-button { margin-left: 0; margin-right: -.3em; }
+
+/* workarounds */
+button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra padding in Firefox */
+
+/* Dialog
+----------------------------------*/
+.ui-dialog { position: absolute; padding: .2em; width: 300px; overflow: hidden; }
+.ui-dialog .ui-dialog-titlebar { padding: .5em 1em .3em; position: relative;  }
+.ui-dialog .ui-dialog-title { float: left; margin: .1em 16px .2em 0; } 
+.ui-dialog .ui-dialog-titlebar-close { position: absolute; right: .3em; top: 50%; width: 19px; margin: -10px 0 0 0; padding: 1px; height: 18px; }
+.ui-dialog .ui-dialog-titlebar-close span { display: block; margin: 1px; }
+.ui-dialog .ui-dialog-titlebar-close:hover, .ui-dialog .ui-dialog-titlebar-close:focus { padding: 0; }
+.ui-dialog .ui-dialog-content { border: 0; padding: .5em 1em; background: none; overflow: auto; zoom: 1; }
+.ui-dialog .ui-dialog-buttonpane { text-align: left; border-width: 1px 0 0 0; background-image: none; margin: .5em 0 0 0; padding: .3em 1em .5em .4em; }
+.ui-dialog .ui-dialog-buttonpane button { float: right; margin: .5em .4em .5em 0; cursor: pointer; padding: .2em .6em .3em .6em; line-height: 1.4em; width:auto; overflow:visible; }
+.ui-dialog .ui-resizable-se { width: 14px; height: 14px; right: 3px; bottom: 3px; }
+.ui-draggable .ui-dialog-titlebar { cursor: move; }
+/* Slider
+----------------------------------*/
+.ui-slider { position: relative; text-align: left; }
+.ui-slider .ui-slider-handle { position: absolute; z-index: 2; width: 1.2em; height: 1.2em; cursor: default; }
+.ui-slider .ui-slider-range { position: absolute; z-index: 1; font-size: .7em; display: block; border: 0; background-position: 0 0; }
+
+.ui-slider-horizontal { height: .8em; }
+.ui-slider-horizontal .ui-slider-handle { top: -.3em; margin-left: -.6em; }
+.ui-slider-horizontal .ui-slider-range { top: 0; height: 100%; }
+.ui-slider-horizontal .ui-slider-range-min { left: 0; }
+.ui-slider-horizontal .ui-slider-range-max { right: 0; }
+
+.ui-slider-vertical { width: .8em; height: 100px; }
+.ui-slider-vertical .ui-slider-handle { left: -.3em; margin-left: 0; margin-bottom: -.6em; }
+.ui-slider-vertical .ui-slider-range { left: 0; width: 100%; }
+.ui-slider-vertical .ui-slider-range-min { bottom: 0; }
+.ui-slider-vertical .ui-slider-range-max { top: 0; }/* Tabs
+----------------------------------*/
+.ui-tabs { position: relative; padding: .2em .2em 0 .2em;; zoom: 1; } /* position: relative prevents IE scroll bug (element with position: relative inside container with overflow: auto appear as "fixed") */
+.ui-tabs .ui-tabs-nav { margin: 0; padding: .2em .2em 0; }
+.ui-tabs .ui-tabs-nav li { list-style: none; float: left; position: relative; top: 1px; margin: 0 .2em 1px 0; border-bottom: 0 !important; padding: 0; white-space: nowrap; }
+.ui-tabs .ui-tabs-nav li a { float: left; padding: .5em 1em; text-decoration: none; }
+.ui-tabs .ui-tabs-nav li.ui-tabs-selected { margin-bottom: 0; padding-bottom: 1px; }
+.ui-tabs .ui-tabs-nav li.ui-tabs-selected a, .ui-tabs .ui-tabs-nav li.ui-state-disabled a, .ui-tabs .ui-tabs-nav li.ui-state-processing a { cursor: text; }
+.ui-tabs .ui-tabs-nav li a, .ui-tabs.ui-tabs-collapsible .ui-tabs-nav li.ui-tabs-selected a { cursor: pointer; } /* first selector in group seems obsolete, but required to overcome bug in Opera applying cursor: text overall if defined elsewhere... */
+.ui-tabs .ui-tabs-panel { display: block; border: 0; padding: 1em 1.4em; background: none; }
+.ui-tabs .ui-tabs-hide { display: none !important; }
+.ui-tabs-nav a { line-height: 13px; height: 13px; font-size: 13px; }
+/* Progressbar
+----------------------------------*/
+.ui-progressbar { height:2em; text-align: left; }
+.ui-progressbar .ui-progressbar-value {margin: -1px; height:100%; }

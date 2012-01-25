@@ -1,0 +1,781 @@
+<!doctype html> 
+<html lang="en"> 
+<head> 
+  <meta charset="utf-8">
+  <title>DataCouch Editor</title>
+  <link rel="stylesheet" href="/style/reset.css" media="screen">
+  <link rel="stylesheet" href="/style/data-table.css" media="screen"> 
+  <link rel="stylesheet" href="/style/common.css">
+  <link rel="stylesheet" href="/style/bootstrap.css">
+  <link rel="stylesheet" href="/style/recline.css" media="screen">
+  <link rel="stylesheet" href="/style/iconic.css" media="screen">
+  <link rel="stylesheet" href="/style/codemirror.css">
+  <link rel="stylesheet" href="/style/codemirror-default.css">
+  
+  <!-- <script src="/proxy/wiki/socket.io/socket.io.js"></script>  
+  <script src="/proxy/wiki/share/share.js"></script>  
+  <script src="/proxy/wiki/share/textarea.js"></script>   -->
+  <script type="text/javascript" src="/script/deps-min.js"></script>  
+  <script type="text/javascript" src="/script/util.js"></script>
+  <script type="text/javascript" src="/script/costco.js"></script>
+  <script type="text/javascript" src="/script/recline.js"></script>
+  <script type="text/javascript" src="/script/monocles.js"></script>
+  <script type="text/javascript" src="/script/edit.js"></script>
+  <script type='text/javascript' src='http://maps.google.com/maps/api/js?sensor=true'></script>
+  
+</head> 
+<body class="bod">
+  <div class="reclineContainer">
+    <div class="menu-overlay" style="display: none; z-index: 101; ">&nbsp;</div>
+    <ul class="menu">
+    </ul>
+    <div id="header">
+      <a class="homeButton" href="#/">
+        <img id="couchLogo" src="/images/fancycouch-small.png"/>
+        <span class="project-title">DataCouch - collaborative data</span>
+      </a>
+      <div class="project-actions"></div>
+      <div class="project-controls"></div>
+    </div>
+    <div class="main_content">
+      <div class="left-panel"></div>
+      <div class="right-panel"></div>
+    </div>
+  </div>
+  
+  <div id="notification-container">
+    <div id="notification">
+      <img src="/images/small-spinner.gif" class="notification-loader"><span id="notification-message">Loading...</span>
+    </div>
+  </div>
+    
+  <div class="dialog-overlay" style="display: none; z-index: 101; ">&nbsp;</div>
+  <div class="dialog" style="display: none">
+    <div class="modal" style="position: relative; top: 50px; left: auto; margin: 0 auto; z-index: 102"></div>
+  </div>
+
+  <script type="text/mustache" class="busyTemplate">
+    <div id="loading-message">
+      <img src="../images/large-spinner.gif">
+      <span>{{message}}{{^message}}Working...{{/message}}</span>
+    </div>
+  </script>
+  
+  <script type='text/mustache' class="appTemplatesTemplate">
+    <div class="infopanel">
+      <div class="top">
+        <div class="title">
+          App Directory
+        </div>
+        <div class="subtitle">
+          Choose an application to install on top of this dataset.
+        </div>
+      </div>
+      <div class="bottom">
+        <div class="appTemplates">
+          {{#templates}}
+            <div data-ddoc="{{ddoc}}" class="appTemplate">
+              <div class="title">
+                {{name}}
+              </div>
+              <div class="subtitle">
+                {{description}}
+              </div>
+              <img src="{{screenshot}}">
+            </div>
+          {{/templates}}
+        </div>
+      </div>
+      <a href="#/close!"><div class="close"></div></a>
+    </div>
+  </script>
+
+  <script type='text/mustache' class="signInTemplate">
+    <a id="logged-in-status" href="#/login!" class="secondary">Want to fork this dataset? <img src="/images/sign-in-with-twitter.png"></a>
+  </script>
+  
+  <script type='text/mustache' class="signOutTemplate">
+    <a id="logged-in-status" href="#/logout!" class="secondary">Sign Out</a>
+  </script>
+  
+  <script type='text/mustache' class="actionsTemplate">
+    {{#showForkButton}}
+      <a class="button" href="#/fork/{{db_name}}!">
+        <span class="fork icon"></span><span>Fork dataset</span>
+      </a>
+    {{/showForkButton}}
+    {{#fork}}
+      <a class="button" href="/edit/#/{{fork}}">
+        <span class="fork icon"></span><span>Your fork</span>
+      </a>
+    {{/fork}}
+    {{#isOwner}}
+      <a class="button" data-action="import" href="javascript:{}"><span data-action="import" class="button-menu">Import</span></a>
+      <a class="button" data-action="edit" href="javascript:{}"><span data-action="transform" class="button-menu">Edit</span></a>
+    {{/isOwner}}
+    <a class="button" data-action="export" href="javascript:{}"><span data-action="export" class="button-menu">Export</span></a>
+  </script>
+
+  <script type='text/mustache' class="importActionsTemplate">
+    <li><a data-action="urlImport" class="menuAction" href="JavaScript:void(0);">JSON API</a></li>
+    <li><a data-action="pasteImport" class="menuAction" href="JavaScript:void(0);">Paste JSON</a></li>
+    <li><a data-action="uploadImport" class="menuAction" href="JavaScript:void(0);">Upload CSV</a></li>
+  </script>
+    
+  <script type='text/mustache' class="exportActionsTemplate">
+    <li><a data-action="csv" class="menuAction" href="JavaScript:void(0);">CSV</a></li>
+    <li><a data-action="json" class="menuAction" href="JavaScript:void(0);">JSON</a></li>
+  </script>
+  
+  <script type='text/mustache' class="transformActionsTemplate">
+    <li><a data-action="wipe" class="menuAction" href="JavaScript:void(0);">Delete all docs</a></li>
+    <li><a data-action="destroy" class="menuAction" href="JavaScript:void(0);">Delete dataset</a></li>
+    <li><a data-action="reproject" class="menuAction" href="JavaScript:void(0);">Reproject geometry...</a></li>
+  </script>
+  
+  <script type='text/mustache' class="columnActionsTemplate">
+    <li><a data-action="bulkEdit" class="menuAction" href="JavaScript:void(0);">Transform...</a></li>
+    <li><a data-action="renameColumn" class="menuAction" href="JavaScript:void(0);">Rename this column</a></li>
+    <li><a data-action="deleteColumn" class="menuAction" href="JavaScript:void(0);">Delete this column</a></li>
+    <li><a data-action="titlecase" class="menuAction" href="JavaScript:void(0);">To titlecase</a></li>
+    <li><a data-action="uppercase" class="menuAction" href="JavaScript:void(0);">To uppercase</a></li>
+    <li><a data-action="lowercase" class="menuAction" href="JavaScript:void(0);">To lowercase</a></li>
+    <li><a data-action="geocode" class="menuAction" href="JavaScript:void(0);">Geocode</a></li>
+  </script>
+
+  <script type='text/mustache' class="rowActionsTemplate">
+    <li><a data-action="deleteRow" class="menuAction" href="JavaScript:void(0);">Delete this row</a></li>
+  </script>
+
+  <script type='text/mustache' class="sidebarTemplate">
+    <div bind="leftPanelTabs" class="refine-tabs ui-tabs ui-widget ui-widget-content">
+      <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header">
+        <li class="ui-state-default ui-corner-top"><a data-tab="data" href="javascript:{}">Data</a></li>
+        <li class="ui-state-default ui-corner-top"><a data-tab="apps" href="javascript:{}">Applications</a></li>
+        <!-- <li class="ui-state-default ui-corner-top"><a data-tab="wiki" href="javascript:{}">Wiki</a></li> -->        
+      </ul>
+    </div>
+    <div class="sidebar">
+    </div>
+  </script>
+  
+  <script type='text/mustache' class="dataTabTemplate">
+    <div class="top">
+      <div class="title"><a href="/#/{{user}}">{{user}}</a>&nbsp;/ {{name}}</div>
+      {{#description}}<div class="description">{{description}}</div>{{/description}}
+      {{^description}}<div class="description">This dataset doesn't have a description.</div>{{/description}}
+      {{#source}}<div class="datasource"><span class="strong">DATASOURCE:</span>{{source}}</div>{{/source}}
+      <div class="timestamp">
+        Created <span class="timeago" title="{{createdAt}}"></span>,
+        updated <span class="timeago" title="{{statsGenerated}}"></span>
+      </div>
+      {{#canEdit}}
+        <div class="controls">
+          <div class="edit"><a href="#/edit!">EDIT</a></div>
+        </div>
+      {{/canEdit}}
+    </div>
+    <div class="bottom">
+      {{#hasNouns}}
+        <div class="datasetNoun">
+          {{#nouns}}
+            <a href="http://thenounproject.com/noun/{{noun}}/">{{{svg}}}</a>
+          {{/nouns}}
+        </div>
+      {{/hasNouns}}
+      {{#properties}}
+        <div class="property">
+          <div class="key">{{key}}:</div>
+          <div class="value {{classStyle}}">{{value}}</div>
+        </div>
+      {{/properties}}
+      <div class="tweetsContainer"></div>
+    </div>
+  </script>
+  
+  <script type='text/mustache' class="wikiTabTemplate">
+    <div class="top">
+      <div class="title">Collaborative Notepad</div>
+      <div class="timestamp">
+        {{#loggedIn}}Anyone can edit. Synchronized as you type{{/loggedIn}}
+        {{^loggedIn}}Log in to edit{{/loggedIn}}
+      </div>
+    </div>
+    <div class="bottom">
+      {{#loggedIn}}<textarea id="editor" disabled>Loading...</textarea>{{/loggedIn}}
+      {{^loggedIn}}<div id="editor" disabled>Loading...</div>{{/loggedIn}}
+    </div>
+  </script>
+  
+  <script type="text/mustache" class="editDatasetInfoTemplate">
+    <div class="infopanel">
+      <div class="top">
+        <div class="title">
+          Edit dataset details
+        </div>
+        <div class="subtitle">
+          Update the public metadata for your dataset
+        </div>
+      </div>
+      <div class="bottom">
+        <form>
+          <fieldset>
+            <div class="clearfix">
+              <label for="name">
+                Name
+              </label>
+              <div class="input">
+                <input class="xlarge" id="name" name="name" size="30" type="text" value="{{name}}">
+              </div>
+            </div>
+            <div class="clearfix">
+              <label for="source">
+                Datasource
+              </label>
+              <div class="input">
+                <input class="xlarge" id="source" name="source" size="30" type="text" value="{{source}}">
+              </div>
+            </div>
+            <div class="clearfix">
+              <label for="description">
+                Description
+              </label>
+              <div class="input">
+                <textarea class="xlarge" id="description" name="description" rows="3">{{description}}</textarea>
+              </div>
+            </div>
+            <div class="clearfix">
+              <label for="icon">
+                Icon
+              </label>
+              <div class="input">
+                <div class="input-prepend">
+                  <span class="add-on"><span class="magnifier icon"></span></span>
+                  <input class="medium" id="icon-picker" size="16" type="text">
+                </div>
+                <span class="help-block">
+                  Pick one icon from the <a href="http://thenounproject.com" target="_blank">Noun Project</a> that represents this dataset.
+                </span>
+              </div>
+              <div class="nounContainer"></div>
+            </div>
+          </fieldset>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <input type="submit" class="btn primary ok" value="Update">
+        <a href="#/cancel!" class="btn secondary cancel">Cancel</a>
+      </div>
+    </div>
+  </script>
+  
+  <script type="text/mustache" class="nounsTemplate">
+    <div class="nounsBoundary">
+      {{#nouns}}
+        <div class="nounWrapper">
+          <div class="noun-icon">{{{svg}}}</div>
+          <span class="icon-subtitle">{{noun}}</span>
+        </div>
+      {{/nouns}}
+  </script>
+  
+  <script type='text/mustache' class="tweetStreamTemplate">
+    <div class="tweetsTitle">
+      <span>Share this dataset!</span>
+      <a href="https://twitter.com/share" class="twitter-share-button" data-text="Check out this forkable dataset on DataCouch!" data-count="horizontal" data-via="maxogden">Tweet this page</a>
+    </div>
+    <ul class="tweetStream">
+      {{#results}}
+        <li class='message'>
+          <img class='avatar' width='35' height='35' src='{{profile_image_url}}'/>
+          <div class='content'>
+            <span class='from'>
+              <a href='http://twitter.com/{{from_user}}/status/{{id}}' class='hover_profile'>{{from_user}}</a>
+              {{text}}
+            </span>
+            <div class='info'>{{created_at}}</div>
+          </div>
+        </li>
+      {{/results}}
+    </ul>
+    <script type="text/javascript" src="//platform.twitter.com/widgets.js"></script>
+  </script>
+  
+  <script type='text/mustache' class="ddocIframeTemplate">
+    <div class="iframeDetails">
+      <span class="title">{{ddoc}}</span> (<a href="http://{{url}}">permalink</a>)
+    </div>
+    <div id="view-panel">
+      <div class="iframeContainer">
+        <iframe class="ddocIframe" src="http://{{url}}"></iframe>
+      </div>
+    </div>
+  </script>
+  
+  <script type='text/mustache' class="appsTabTemplate">
+    <div class="top">
+      {{^apps}}
+        <div class="description">
+          {{#loggedIn}}You haven't made any apps on top of this data yet.{{/loggedIn}}
+          {{^loggedIn}}There aren't any applications on top of this data yet.{{/loggedIn}}
+        </div>
+      {{/apps}}
+      {{#loggedIn}}<a href="#/browse!" class="btn"><span class="iconic magnifying-glass"></span>Browse available apps</a>{{/loggedIn}}
+    </div>
+    <div class="bottom">
+      {{#apps}}
+        <ul>
+          <li class="root" data-url="{{url}}" data-ddoc="{{ddoc}}" id="project"><img src="/images/project.png">{{ddoc}}
+          <div id="files">
+            <ul>
+              <li class="hidden"><img src="/images/ajax-loader.gif">Loading project...
+            </ul>
+          </div>
+        </ul>
+      {{/apps}}
+    </div>
+  </script>
+  
+  <script type='text/mustache' class="historyTabTemplate"></script>
+  <script type='text/mustache' class="bulkTemplate">http://{{host}}/{{db_name}}/_bulk_docs</script>
+  <script type='text/mustache' class="generatingTemplate"><div class="loading">Loading...</div></script>
+  
+  <script type='text/mustache' class="tableContainerTemplate">
+    <div id="tool-panel">
+      <div id="summary-bar">
+        <span id="docCount"></span>
+      </div>
+      <div id="download">
+      </div>
+    </div>
+    <div id="view-panel">
+      <div class="viewpanel-header">
+        <div class="viewpanel-pagesize">
+          <span>
+            Show:
+          </span>
+          <a href="javascript:{}" class="viewPanel-pagingControls-page action">5</a>
+          <a href="javascript:{}" class="viewPanel-pagingControls-page selected">10</a>
+          <a href="javascript:{}" class="viewPanel-pagingControls-page action">25</a>
+          <a href="javascript:{}" class="viewPanel-pagingControls-page action">50</a>
+          <a href="javascript:{}" class="viewPanel-pagingControls-page action show-all">all</a>
+          <span>
+            rows
+          </span>
+        </div>
+        <div class="viewpanel-sorting">
+        </div>
+        <div class="viewpanel-paging">
+          <a href="javascript:{}" class="first inaction">« first</a>
+          <a href="javascript:{}" class="previous inaction">‹ previous</a>
+          <span class="viewpanel-pagingcount">
+            1 - 10
+          </span>
+          <a href="javascript:{}" class="next action">next ›</a>
+          <a href="javascript:{}" class="last action">last »</a>
+        </div>
+      </div>
+      <div class="data-table-container">
+      </div>
+    </div>
+  </script>
+
+  <script type='text/mustache' class="dataTableTemplate">
+    <table class="data-table" cellspacing="0">
+      <tbody>
+        <tr>
+          {{#notEmpty}}<td class="column-header"></td>{{/notEmpty}}
+          {{#headers}}
+            <td class="column-header {{state}}">
+              <div class="column-header-title {{state}}">
+                {{#isOwner}}<a class="column-header-menu"></a>{{/isOwner}}
+                <span class="column-header-name{{^isOwner}} slim{{/isOwner}}">{{header}}</span>
+              </div>
+            </td>
+          {{/headers}}
+        </tr>
+        {{#rows}}
+          <tr data-id="{{id}}">
+            <td>{{#isOwner}}<a class="row-header-menu"></a>{{/isOwner}}</td>
+            {{#cells}}
+            <td data-header="{{header}}" class="{{state}}">
+              <div class="data-table-cell-content {{state}}">
+                {{#isOwner}}<a href="javascript:{}" class="data-table-cell-edit" title="Edit this cell">&nbsp;</a>{{/isOwner}}
+                <div class="data-table-cell-value {{state}}">{{value}}</div>
+              </div>
+            </td>
+            {{/cells}}
+          </tr>
+        {{/rows}}
+        {{^rows}}
+          <div class="gettingStarted">
+            <div class="welcomeMessage">
+              <h1>Hello there!</h1>
+              {{#loggedIn}}<p>You haven't uploaded any data yet. Check out the Import menu up top to get started.</p>{{/loggedIn}}
+              {{^loggedIn}}<p>The owner of this dataset hasn't uploaded any data yet! Perhaps you should check back later.</p>{{/loggedIn}}
+            </div>
+            <img class="bigCouch" src="/images/couch-big.png">
+          </div>
+        {{/rows}}
+      </tbody>
+    </table>
+  </script>
+
+  <script type='text/mustache' class="urlImportTemplate">
+    <div class="infopanel">
+      <div class="top">
+        <div class="title">
+          JSON API Import
+        </div>
+        <div class="subtitle">
+          Download and import data from a JSONP-capable API
+        </div>
+      </div>
+      <div class="bottom">
+        <p class="info">
+          Currently only <a href="http://en.wikipedia.org/wiki/JSONP">JSONP</a>-enabled APIs are supported, for example:
+        </p>
+        <p class="info">
+          <code>https://api.github.com/repos/maxogden/recline/commits</code>
+        </p>
+        <form name="api-import-form" id="import-api-form">
+          <label for="url">URL:</label>
+          <input type="text" size="85" id="url-input" name="url">
+          <input type="submit" style="height: 0px; width: 0px; border: none; padding: 0px; display: none;" hidefocus="true" />
+        </form>
+      </div>
+      <div class="modal-footer">
+        <input type="submit" class="btn primary ok" value="Fetch">
+        <a href="#/cancel!" class="btn secondary cancel">Cancel</a>
+      </div>
+    </div>
+  </script>
+  
+  <script type='text/mustache' class="pasteImportTemplate">
+    <div class="infopanel">
+      <div class="top">
+        <div class="title">
+          JSON Bulk Import
+        </div>
+        <div class="subtitle">
+          Copy & paste JSON data
+        </div>
+      </div>
+      <div class="bottom">
+        <p class="info">
+          Paste in an array of JSON objects representing the documents that you would like to insert into the database.
+        </p>
+        <p class="info">
+          <code>[{"woo": "pizza"}, {"tasty": "muffins"}]</code>
+        </p>
+        <div class="menu-container data-table-cell-editor">
+          <textarea class="data-table-cell-copypaste-editor" bind="textarea">{{value}}</textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <input type="submit" class="btn primary ok" value="Import">
+        <a href="#/cancel!" class="btn secondary cancel">Cancel</a>
+      </div>
+    </div>
+  </script>
+  
+  <script type='text/mustache' class="uploadImportTemplate">
+    <div class="infopanel">
+      <div class="top">
+        <div class="title">
+          CSV Import
+        </div>
+        <div class="subtitle">
+          Upload a CSV file from your computer
+        </div>
+      </div>
+      <div class="bottom">
+        <strong>Please choose a CSV file to upload:</strong><br />
+        <input type="file" id="file" />
+      </div>
+      <div class="modal-footer">
+        <input type="submit" class="btn primary ok" value="Upload">
+        <a href="#/cancel!" class="btn secondary cancel">Cancel</a>
+      </div>
+    </div>
+  </script>
+  
+  <script type='text/mustache' class="renameTemplate">
+    <div class="infopanel">
+      <div class="top">
+        <div class="title">
+          Rename column {{name}}
+        </div>
+        <div class="subtitle">
+          You might clobber data if you overwrite an existing column
+        </div>
+      </div>
+      <div class="bottom">
+        <strong>New column name:</strong><br />
+        <input type="text" id="columnName" value="{{name}}" />
+      </div>
+      <div class="modal-footer">
+        <input type="submit" class="btn primary ok" value="Rename">
+        <a href="#/cancel!" class="btn secondary cancel">Cancel</a>
+      </div>
+    </div>
+  </script>
+  
+  <script type='text/mustache' class="bulkEditTemplate">
+    <div class="infopanel">
+      <div class="top">
+        <div class="title">
+          Transform column <strong>{{name}}</strong>
+        </div>
+        <div class="subtitle">
+          Write a JavaScript function that updates your data.
+        </div>
+      </div>
+      <div class="bottom">
+        <table>
+          <tbody>
+            <tr>
+              <td colspan="4">
+                <div class="grid-layout layout-tight layout-full">
+                  <table rows="4" cols="4">
+                  <tbody>
+                  <tr style="vertical-align: bottom;">
+                    <td colspan="4">
+                      Expression
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="3">
+                      <div class="input-container">
+                        <textarea class="expression-preview-code"></textarea>
+                      </div>
+                    </td>
+                    <td class="expression-preview-parsing-status" width="150" style="vertical-align: top;">
+                      No syntax error.
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="4">
+                      <div id="expression-preview-tabs" class="refine-tabs ui-tabs ui-widget ui-widget-content ui-corner-all">
+                        <span>Preview</span>
+                        <div id="expression-preview-tabs-preview" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
+                          <div class="expression-preview-container" style="width: 652px; ">
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  </tbody>
+                  </table>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <input type="submit" class="btn primary ok" value="Update All">
+        <a href="#/cancel!" class="btn secondary cancel">Cancel</a>
+      </div>
+    </div>
+  </script>
+  
+  <script type='text/mustache' class="reprojectTemplate">
+    <div class="infopanel">
+      <div class="top">
+        <div class="title">
+          Reproject coordinates
+        </div>
+        <div class="subtitle">
+          Write a JavaScript function that emits your EPSG X and Y coordinates and they will be converted to lat+lon GeoJSON
+        </div>
+      </div>
+      <div class="bottom">
+       <div class="clearfix">
+          <label for="xlInput">Source EPSG code:</label>
+          <div class="input">
+            <input class="xlarge" id="epsg-code" name="epsg-code" size="30" type="text">
+          </div>
+        </div>
+        <table>
+          <tbody>
+            <tr>
+              <td colspan="4">
+                <div class="grid-layout layout-tight layout-full">
+                  <table rows="4" cols="4">
+                  <tbody>
+                  <tr style="vertical-align: bottom;">
+                    <td colspan="4">
+                      Expression
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="3">
+                      <div class="input-container">
+                        <textarea class="expression-preview-code"></textarea>
+                      </div>
+                    </td>
+                    <td class="expression-preview-parsing-status" width="150" style="vertical-align: top;">
+                      No syntax error.
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="4">
+                      <div id="expression-preview-tabs" class="refine-tabs ui-tabs ui-widget ui-widget-content ui-corner-all">
+                        <span>Preview</span>
+                        <div id="expression-preview-tabs-preview" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
+                          <div class="expression-preview-container" style="width: 652px; ">
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  </tbody>
+                  </table>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <input type="submit" class="btn primary ok" value="Reproject">
+        <a href="#/cancel!" class="btn secondary cancel">Cancel</a>
+      </div>
+    </div>
+  </script>
+  
+  <script type='text/mustache' class="geocodeTemplate">
+    <div class="infopanel">
+      <div class="top">
+        <div class="title">
+          Geocode addresses
+        </div>
+        <div class="subtitle">
+          Emit your address to have it geocoded by either Google or Yahoo
+        </div>
+      </div>
+      <div class="bottom">
+        <div class="clearfix">
+          <label for="geocoderSelect">Geocoder</label>
+          <div class="input">
+            <select class="medium" name="geocoderSelect" id="geocoderSelect">
+              <option data-value="yahoo">yahoo (50K/day limit)</option>
+              <option data-value="google">google (2500/day limit)</option>
+            </select>
+          </div>
+        </div>
+        <table>
+          <tbody>
+            <tr>
+              <td colspan="4">
+                <div class="grid-layout layout-tight layout-full">
+                  <table rows="4" cols="4">
+                  <tbody>
+                  <tr style="vertical-align: bottom;">
+                    <td colspan="4">
+                      Expression
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="3">
+                      <div class="input-container">
+                        <textarea class="expression-preview-code"></textarea>
+                      </div>
+                    </td>
+                    <td class="expression-preview-parsing-status" width="150" style="vertical-align: top;">
+                      No syntax error.
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="4">
+                      <div id="expression-preview-tabs" class="refine-tabs ui-tabs ui-widget ui-widget-content ui-corner-all">
+                        <span>Preview</span>
+                        <div id="expression-preview-tabs-preview" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
+                          <div class="expression-preview-container" style="width: 652px; ">
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  </tbody>
+                  </table>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <input type="submit" class="btn primary ok" value="Geocode All">
+        <a href="#/cancel!" class="btn secondary cancel">Cancel</a>
+      </div>
+    </div>
+  </script>
+  
+  <script type='text/mustache' class="cellEditorTemplate">
+    <div class="menu-container data-table-cell-editor">
+      <textarea class="data-table-cell-editor-editor" bind="textarea">{{value}}</textarea>
+      <div id="data-table-cell-editor-actions">
+        <div class="data-table-cell-editor-action">
+          <button class="okButton button">Update</button>
+        </div>
+        <div class="data-table-cell-editor-action">
+          <button class="cancelButton button">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </script>
+  
+  <script type='text/mustache' class="jsonTreeTemplate">
+    <div class="infopanel">
+      <div class="top">
+        <div class="title">
+          JSON Selector
+        </div>
+        <div class="subtitle">
+          Please highlight an array of JSON objects to convert to documents.
+        </div>
+      </div>
+      <div class="bottom">
+        <div id="document-container">
+          <div id="document-editor"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <input type="submit" class="btn primary ok" value="Import">
+        <a href="#/cancel!" class="btn secondary cancel">Cancel</a>
+      </div>
+    </div>
+  </script>
+ 
+  <script type='text/mustache' class="editPreviewTemplate">
+    <div class="expression-preview-table-wrapper">
+      <table>
+      <tbody>
+      <tr>
+        <td class="expression-preview-heading">
+          before
+        </td>
+        <td class="expression-preview-heading">
+          after
+        </td>
+      </tr>
+      {{#rows}}
+      <tr>
+        <td class="expression-preview-value">
+          {{before}}
+        </td>
+        <td class="expression-preview-value">
+          {{after}}
+        </td>
+      </tr>
+      {{/rows}}
+      </tbody>
+      </table>
+    </div>
+  </script>
+  
+  <img src="/analytics.gif">
+</body>
+</html>

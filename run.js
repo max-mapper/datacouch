@@ -1,5 +1,5 @@
 var logging = require('logref')
-if (process.env['DATACOUCHDEBUG']) logging.stdout()
+logging.stdout()
 process.logging = logging
 
 var service = require('./service')() // we can pass debug/production options to this later
