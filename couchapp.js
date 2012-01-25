@@ -3,50 +3,7 @@ var couchapp = require('couchapp')
   ;
 
 ddoc =
-  { _id:'_design/datacouch'
-  , rewrites :
-    [ {from:"/", to:'pages/index.html'}
-    , {from:"/edit", to:"pages/recline.html"}
-    , {from:"/edit/*", to:"pages/recline.html"}
-    // , {from:"/fakelogin", to:"../../../_twitter/auth/fakelogin"} // only enable when testing offline
-    , {from:"/proxy", to:"../../../_smalldata/"}
-    , {from:"/proxy/*", to:"../../../_smalldata/*"}
-    , {from:"/socket.io", to:"../../../_smalldata/wiki/socket.io"}
-    , {from:"/socket.io/*", to:"../../../_smalldata/wiki/socket.io/*"}
-    , {from:"/login", to:"../../../_smalldata/twitter/auth/twitter"}
-    , {from:"/login/callback", to:"../../../_smalldata/twitter/auth/twitter/callback"}
-    , {from:"/logout", to:"../../../_smalldata/twitter/logout"}
-    , {from:"/api/token", to:"../../../_smalldata/twitter/auth/token"}
-    , {from:"/api/upload/*", to:"../../../_smalldata/upload/*"}
-    , {from:"/api/applications/:dataset", to:"_view/applications", query:{endkey:":dataset", startkey:":dataset", include_docs:"true", descending: "true"}}
-    , {from:"/api/applications", to:"_view/applications", query:{include_docs:"true", descending: "true"}}
-    , {from:"/api/applications/user/:user", to:"_view/applications_by_user", query:{endkey:":user", startkey:":user", include_docs:"true", descending: "true"}}
-    , {from:"/api/datasets/:user", to:"_view/by_user", query:{endkey: [":user",null], startkey:[":user",{}], include_docs:"true", descending: "true"}}
-    , {from:"/api/datasets", to:"_view/by_date", query:{include_docs:"true", descending: "true"}}
-    , {from:"/api/forks/:id", to:"_view/forks", query:{endkey:":id", startkey:":id", include_docs:"true", descending: "true"}}
-    , {from:"/api/forks", to:"_view/forks", query:{include_docs:"true", descending: "true"}}
-    , {from:"/api/profile/all", to:"../../../datacouch-users/_design/users/_list/all/users"}
-    , {from:"/api/trending", to:"_view/popular", query:{include_docs: "true", descending: "true", limit: "10"}}
-    , {from:"/api/templates", to:"_view/templates", query:{include_docs: "true"}}
-    , {from:"/api/users/search/:user", to:"../../../datacouch-users/_design/users/_view/users", query:{startkey:":user", endkey:":user", include_docs: "true"}}
-    , {from:"/api/users", to:'../../../datacouch-users/'}
-    , {from:"/api/users/*", to:'../../../datacouch-users/*'}
-    , {from:"/api/couch", to:"../../../"}
-    , {from:"/api/couch/*", to:"../../../*"}
-    , {from:"/api/epsg/:code", to:"../../../epsg/:code"}
-    , {from:"/api", to:"../../"}
-    , {from:"/api/*", to:"../../*"}
-    , {from:"/analytics.gif", to:"../../../_analytics/spacer.gif"}
-    , {from:"/db/:id/csv", to:'../../../:id/_design/recline/_list/csv/all'}
-    , {from:"/db/:id/json", to:'../../../:id/_design/recline/_list/bulkDocs/all'}
-    , {from:"/db/:id/headers", to:'../../../:id/_design/recline/_list/array/headers', query: {group: "true"}}
-    , {from:"/db/:id/rows", to:'../../../:id/_design/recline/_view/all'}
-    , {from:"/db/:id", to:"../../../:id/"}
-    , {from:"/db/:id/*", to:"../../../:id/*"}
-    , {from:"/:user", to:"pages/index.html"}
-    , {from:"/*", to:'*'}
-    ]
-  }
+  { _id:'_design/datacouch'}
   ;
 
 ddoc.views = {
@@ -197,7 +154,5 @@ ddoc.validate_doc_update = function (newDoc, oldDoc, userCtx, securityObj) {
   if( newDoc.forkedFromUser && ( newDoc.forkedFromUser === userCtx.name )) throw({forbidden : "You can't fork your own datasets."});
   if( newDoc.type === "transformation" && ( newDoc.user !== userCtx.name )) throw({forbidden : "You can't transform other users datasets."});
 };
-
-couchapp.loadAttachments(ddoc, path.join(__dirname, 'attachments'));
 
 module.exports = ddoc;
