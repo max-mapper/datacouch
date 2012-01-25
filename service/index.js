@@ -2,8 +2,8 @@ var tako = require('tako')
   , couch = require('couch')
   , http = require('http')
   , api = require('./api')
+  , auth = require('./auth')
   , defaults = require('./defaults')
-  , website = require('./website')
   ;
   
 module.exports = function (opts) {
@@ -14,10 +14,9 @@ module.exports = function (opts) {
   for (i in exports.opts) t[i] = exports.opts[i]
   
   // Run through all the sub applications
+  auth(t)
   api(t)
-  
-  // website must go last because it has a catchall route for file serving
-  website(t)
+  // website(t)
   
   exports.app = t
   t._listen = t.listen

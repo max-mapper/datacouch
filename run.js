@@ -8,6 +8,5 @@ var service = require('./service')() // we can pass debug/production options to 
 
 var t = service.createServer()
 t.listen(function () {
-  console.log('running...')
-  console.error(service.opts)
+  console.log('running on ' + t.port)
 })

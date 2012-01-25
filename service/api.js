@@ -50,6 +50,6 @@ module.exports = function (t) {
     , {from:"/:user", to:"pages/index.html"}
   ]
   var ddoc = couch + "datacouch/_design/datacouch/"
-  rewrite(t, rewrites, {port: t.port, ddoc: ddoc, attachments: path.resolve(__dirname, 'attachments')})
+  rewrite(t, rewrites, {port: t.port, ddoc: ddoc, attachments: path.resolve(__dirname, '..', 'attachments')})
 }
 

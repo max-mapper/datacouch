@@ -1,9 +1,11 @@
 var _ = require('underscore')
   , url = require('url')
   , defaults = 
-    { couchurl : "http://data.ic.ht"
-    , vhosturl : "http://datacouch.com"
+    { couchurl : "http://localhost:5984"
+    , vhosturl : "http://localhost:9999"
     , port : 9999
+    , twitterKey: ""
+    , twitterSecret: ""
     }
   ;
   

@@ -18,7 +18,7 @@ $(function(){
     // binds UX interaction and form submit event handlers to the signup/login forms
     function showLogin(callback) {
       $.oauthpopup({
-        path: app.baseURL + "login",
+        path: app.baseURL + "auth/twitter/login",
         callback: callback
       });
     }
