@@ -36,9 +36,7 @@ This will walk you through getting datacouch dev environment running on your loc
 
 Requirements: node.js >= 0.6 and CouchDB >= 1.1
 
-get Couch and set up an admin user account
-
-![_users db security settings](http://i.imgur.com/vBMw7.png)
+get Couch and _set up an admin user account_
 
 create these databases:
 
@@ -82,6 +80,7 @@ go to dev.twitter.com and make an app and then add some environment variables to
     export DATACOUCH_TWITTER_KEY="KEY FROM https://dev.twitter.com/ HERE"
     export DATACOUCH_TWITTER_SECRET="SECRET FROM https://dev.twitter.com/ HERE"
 
-now you can open datacouch!
+now you can start datacouch!
 
+    node run.js
     open http://localhost:9999
