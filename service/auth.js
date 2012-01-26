@@ -113,7 +113,6 @@ module.exports = function (t) {
   Session.prototype.save = function (cb) {
     var self = this
     sessions.post(self, function (e, info) {
-      console.log(info);
       self._id = info.id
       self._rev = info.rev
       self.callback = t.vhosturl + 'api/twitter/callback/' + self._id
