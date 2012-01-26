@@ -1,3 +1,4 @@
+
 # DataCouch
 
 A dataset collaboration network built on top of CouchDB. Developed as a free software @codeforamerica project for the City of Boston by @maxogden
@@ -36,9 +37,9 @@ This will walk you through getting datacouch dev environment running on your loc
 
 Requirements: node.js >= 0.6 and CouchDB >= 1.1
 
-get Couch and _set up an admin user account_
+Simply [build couchdb](build-couchdb](https://github.com/iriscouch/build-couchdb). Once the install is successful, start your server and visit the [Futon](http://localhost:5984/). Create a new admin user via the admin / logout area in the bottom right corner of the screen.
 
-create these databases:
+Create these databases:
 
     // the main database. each document inside it will correspond to a user's dataset or app
     // and will contain metadata such as # docs, if it was forked, etc
@@ -50,11 +51,11 @@ create these databases:
     // user auth sessions will be stored here
     datacouch-sessions
 
-setup the Couch configuration like so:
+Setup the Couch configuration like so:
 
     httpd, allow_jsonp, true
 
-install node.js v0.6.7 and npm
+Install node.js v0.6.7 and npm
 
     // install node
     git clone clone git://github.com/joyent/node.git
@@ -64,25 +65,29 @@ install node.js v0.6.7 and npm
     // then install npm
     curl http://npmjs.org/install.sh | sh
 
-install the required npm modules
+Install the required npm modules
 
     cd datacouch/
     npm install (this installs the deps defined in `/package.json`)
     npm install couchapp -g (this installs the `couchapp` binary command globally)
 
-deploy the main datacouch couchapp to your Couch. it mostly sets database permissions and adds database views:
+Deploy the main datacouch couchapp to your Couch. It mostly sets database permissions and adds database views:
 
     couchapp push couchapp.js http://admin:pass@localhost:5984/datacouch
 
-go to dev.twitter.com and make an app and then add some environment variables to your `.bashrc`/`.bash_profile`:
+
+Once deployed you will need to go [create a twitter app](https://dev.twitter.com/apps/new) in order to use datacouch. 
+NOTE: If you create a new app and leave the callback url blank then datacouch will fail to authenticate. Twitter will respond with a 401 of "Desktop applications only support the oauth_callback value 'oob'"
+
+Once your app is complete copy the consumer secret and key into your envirnonment via `.bashrc`/`.bash_profile`:
 
     export DATACOUCH_ROOT="http://admin:pass@localhost:5984"
     export DATACOUCH_TWITTER_KEY="KEY FROM https://dev.twitter.com/ HERE"
     export DATACOUCH_TWITTER_SECRET="SECRET FROM https://dev.twitter.com/ HERE"
 
-once you save your environment variables either close your terminal or run `source .bashrc` or `source .bash_profile` so  your changes take effect
+Once you save your environment variables either: close your terminal or run `source .bashrc` or `source .bash_profile` to load your environment changes.
 
-now you can start datacouch!
+Now you can start datacouch!
 
     node run.js
     open http://localhost:9999
