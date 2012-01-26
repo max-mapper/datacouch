@@ -115,7 +115,7 @@ module.exports = function (t) {
     sessions.post(self, function (e, info) {
       self._id = info.id
       self._rev = info.rev
-      self.callback = t.vhosturl + 'auth/twitter/callback/' + self._id
+      self.callback = t.vhosturl + 'api/twitter/callback/' + self._id
       cb(e, self)
     })
   }
@@ -135,7 +135,7 @@ module.exports = function (t) {
   }
   
   t
-    .route('/auth/twitter/login', function (req, resp) {
+    .route('/api/twitter/login', function (req, resp) {
       session(req.user, function (err, session) {
         if (err) return resp.error(err)
         session.requestTwitterToken(function (e) {
@@ -151,16 +151,29 @@ module.exports = function (t) {
     })
   
   t
-    .route('/auth/twitter/callback/:id', function (req, resp) {
+    .route('/api/twitter/callback/:id', function (req, resp) {
       session({_id:req.params.id}, function (e, session) {
         if (e) return resp.error(e)
         session.verifyTwitterToken(req.qs, function (e) {
           if (e) return resp.error(e)
-          session.redirect(t.vhosturl, resp)
+          session.redirect(t.vhosturl + 'loggedin', resp)
         })
       })
     })
-   
+  
+  t
+    .route('/api/profile', function (req, resp) {
+      var user = req.user.twitter.token.screen_name
+      jsonreq(users.url + user).pipe(resp)
+    })
+    .must('auth')
+  
+  t
+    .route('/api/logout', function (req, resp) {
+      // todo!
+    })
+    .must('auth')
+
   t
     .auth(function (req, resp, cb) {
       var userToken = extractToken(req)

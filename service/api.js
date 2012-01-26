@@ -20,6 +20,7 @@ module.exports = function (t) {
     , {from:"/login", to: couch + "_smalldata/twitter/auth/twitter"}
     , {from:"/login/callback", to: couch + "_smalldata/twitter/auth/twitter/callback"}
     , {from:"/logout", to: couch + "_smalldata/twitter/logout"}
+    , {from:"/loggedin", to: 'pages/loggedin.html'}
     , {from:"/api/token", to: couch + "_smalldata/twitter/auth/token"}
     , {from:"/api/upload/*", to: couch + "_smalldata/upload/*"}
     , {from:"/api/applications/:dataset", to:"_view/applications", query:{endkey:":dataset", startkey:":dataset", include_docs:"true", descending: "true"}}
