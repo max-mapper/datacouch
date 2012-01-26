@@ -53,7 +53,7 @@ app.routes = {
       util.showDatasets(username);
       if (username) {
         couch.request({url: app.baseURL + 'api/users/' + username}).then(function(profile) {
-          profile.avatar = profile.avatar.replace('_normal.', '_bigger.');
+          profile.avatar = profile.twitter.profile_image_url.replace('_normal.', '_bigger.');
           util.render('bio', 'infoContainer', profile);
         })
       } else {
