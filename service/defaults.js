@@ -6,6 +6,7 @@ var _ = require('underscore')
     , port : 9999
     , twitterKey: process.env['DATACOUCH_TWITTER_KEY']
     , twitterSecret: process.env['DATACOUCH_TWITTER_SECRET']
+    , uploaderurl: "http://localhost:9878"
     }
   ;
   
@@ -14,5 +15,6 @@ module.exports = function (obj) {
   if (obj.vhosturl && !obj.port) obj.port = url.parse(obj.vhosturl).port
   if (obj.vhosturl[obj.vhosturl.length - 1] !== '/') obj.vhosturl += '/' 
   if (obj.couchurl[obj.couchurl.length - 1] !== '/') obj.couchurl += '/'
+  if (obj.uploaderurl[obj.uploaderurl.length - 1] !== '/') obj.uploaderurl += '/'
   return obj 
 }

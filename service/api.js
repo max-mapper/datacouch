@@ -13,16 +13,9 @@ module.exports = function (t) {
       {from:"/", to:'pages/index.html'}
     , {from:"/edit", to:"pages/recline.html"}
     , {from:"/edit/*", to:"pages/recline.html"}
-    , {from:"/proxy", to: couch + "_smalldata/"}
-    , {from:"/proxy/*", to: couch + "_smalldata/*"}
-    , {from:"/socket.io", to: couch + "_smalldata/wiki/socket.io"}
-    , {from:"/socket.io/*", to: couch + "_smalldata/wiki/socket.io/*"}
-    , {from:"/login", to: couch + "_smalldata/twitter/auth/twitter"}
-    , {from:"/login/callback", to: couch + "_smalldata/twitter/auth/twitter/callback"}
-    , {from:"/logout", to: couch + "_smalldata/twitter/logout"}
     , {from:"/loggedin", to: 'pages/loggedin.html'}
-    , {from:"/api/token", to: couch + "_smalldata/twitter/auth/token"}
-    , {from:"/api/upload/*", to: couch + "_smalldata/upload/*"}
+    // , {from:"/api/token", to: } TODO http basic auth tokens
+    , {from:"/api/upload/*", to: t.uploaderurl + "*"}
     , {from:"/api/applications/:dataset", to:"_view/applications", query:{endkey:":dataset", startkey:":dataset", include_docs:"true", descending: "true"}}
     , {from:"/api/applications", to:"_view/applications", query:{include_docs:"true", descending: "true"}}
     , {from:"/api/applications/user/:user", to:"_view/applications_by_user", query:{endkey:":user", startkey:":user", include_docs:"true", descending: "true"}}
@@ -53,4 +46,3 @@ module.exports = function (t) {
   var ddoc = couch + "datacouch/_design/datacouch/"
   rewrite(t, rewrites, {port: t.port, ddoc: ddoc, attachments: path.resolve(__dirname, '..', 'attachments')})
 }
-

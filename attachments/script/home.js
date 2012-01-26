@@ -83,7 +83,7 @@ app.routes = {
       });
     },
     logout: function() {
-      couch.logout().then(function() {
+      $.getJSON(app.baseURL + 'api/logout').then(function() {
         util.render('empty', 'userButtons');
         util.render('userControls', 'userControls');
         delete app.session;

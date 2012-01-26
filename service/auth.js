@@ -130,7 +130,7 @@ module.exports = function (t) {
   
   function session (obj, cb) {
     if (!obj) obj = {}
-    if (obj._id) return sessions.get(obj._id, function (e, doc) { cb(e, new Session(doc)) })
+    if (obj._id) return sessions.getCached(obj._id, function (e, doc) { cb(e, new Session(doc)) })
     else new Session(obj).save(cb)
   }
   
@@ -170,7 +170,13 @@ module.exports = function (t) {
   
   t
     .route('/api/logout', function (req, resp) {
-      // todo!
+      if (sessions.cache) delete sessions.cache[req.user._id]
+      sessions.post(_.extend(req.user, {_deleted: true}), function(err) {
+        if(err) console.error(err)
+      })
+      setCookie('', resp)
+      resp.setHeader('content-type', 'application/json')
+      resp.end(JSON.stringify({ok: true, status: 'Logged out successfully'}))
     })
     .must('auth')
 
