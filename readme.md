@@ -80,6 +80,8 @@ go to dev.twitter.com and make an app and then add some environment variables to
     export DATACOUCH_TWITTER_KEY="KEY FROM https://dev.twitter.com/ HERE"
     export DATACOUCH_TWITTER_SECRET="SECRET FROM https://dev.twitter.com/ HERE"
 
+once you save your environment variables either close your terminal or run `source .bashrc` or `source .bash_profile` so  your changes take effect
+
 now you can start datacouch!
 
     node run.js
