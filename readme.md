@@ -77,7 +77,7 @@ Deploy the main datacouch couchapp to your Couch. It mostly sets database permis
 
 
 Once deployed you will need to go [create a twitter app](https://dev.twitter.com/apps/new) in order to use datacouch. 
->NOTE: If you create a new app and leave the callback url blank then datacouch will fail to authenticate. Twitter will respond with a 401 of "Desktop applications only support the oauth_callback value 'oob'"
+NOTE: If you create a new app and leave the callback url blank then datacouch will fail to authenticate. Twitter will respond with a 401 of "Desktop applications only support the oauth_callback value 'oob'"
 
 Once your app is complete copy the consumer secret and key into your envirnonment via `.bashrc`/`.bash_profile`:
 
