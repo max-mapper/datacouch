@@ -48,6 +48,9 @@ create these databases:
     
     // user profile documents will be stored here
     datacouch-users
+    
+    // user auth sessions will be stored here
+    datacouch-sessions
 
 setup the Couch configuration like so:
 
@@ -69,16 +72,13 @@ install the required npm modules
     npm install (this installs the deps defined in `/package.json`)
     npm install couchapp -g (this installs the `couchapp` binary command globally)
 
-deploy the various couchapps to your Couch. these mostly set database permissions and adds database views:
+deploy the main datacouch couchapp to your Couch. it mostly sets database permissions and adds database views:
 
     couchapp push couchapp.js http://admin:pass@localhost:5984/datacouch
-    couchapp push users.js http://admin:pass@localhost:5984/datacouch-users
 
 go to dev.twitter.com and make an app and then add some environment variables to your `.bashrc`/`.bash_profile`:
 
     export DATACOUCH_ROOT="http://admin:pass@localhost:5984"
-    export DATACOUCH_NONADMIN_ROOT="http://localhost:5984"
-    export DATACOUCH_VHOST="couchdb.dev:5984"
     export DATACOUCH_TWITTER_KEY="KEY FROM https://dev.twitter.com/ HERE"
     export DATACOUCH_TWITTER_SECRET="SECRET FROM https://dev.twitter.com/ HERE"
 
