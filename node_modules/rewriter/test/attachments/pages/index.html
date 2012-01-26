@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">  
+  <title>DataCouch | Collaborative Data</title>
+  <link rel='shortcut icon' href='images/favicon.ico' type='image/x-icon' />
+  <link rel='stylesheet' media='all' href='style/reset.css' />
+  <link rel='stylesheet' media='all' href='style/common.css' />
+  <link rel='stylesheet' media='all' href='style/home.css' />
+  <link rel="stylesheet" href="style/bootstrap.css">
+  <!-- <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js"></script>
+  <script type="text/javascript">
+    // google chrome frame
+    CFInstall.check({mode: "overlay", destination: "http://datacouch.com"});
+  </script> -->
+  <script type='text/javascript' src='script/deps-min.js'></script>
+  <script type='text/javascript' src='script/lib/jquery.oauthpopup.js'></script>
+  <script type='text/javascript' src='script/util.js'></script>
+  <script type='text/javascript' src='script/monocles.js'></script>
+  <script type='text/javascript' src='script/home.js'></script>
+  
+</head>
+<body style="margin: 0">
+
+  <div class="content">
+    <div class="container">
+      <div class="span12 columns">    
+        <div class="alert-message block-message info">
+          <p><strong>Howdy!</strong> Datacouch is a place to share and collaborate on open and public datasets. This is the loading screen! Give it a moment. This message may never go away if you have javascript turned off.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="dialog-overlay" style="display: none; z-index: 101; ">&nbsp;</div>
+  <div class="dialog" style="display: none">
+    <div class="modal" style="position: relative; top: 50px; left: auto; margin: 0 auto; z-index: 102"></div>
+  </div>
+  
+  <script type="text/mustache" class="welcomeTemplate">
+    <div class="userControls"></div>
+  
+    <div class="header">
+      <div class='icons'>
+        <img class="datacouch-logo" src="images/datacouch-logo.png">
+        <a href="#/" class='logo'></a>
+        <div class="userButtons"></div>
+      </div>
+    </div>
+  
+    <div class="row bannerContainer"></div>
+  
+    <div class="container">
+    
+      <div class="alert-message warning" style="margin-top: 10px">
+        <p>
+          <strong>
+            This is pre-alpha software!
+          </strong>
+          Datacouch is still being built and tested. Be aware that your stuff might get deleted randomly! Watch progress <a href="http://github.com/maxogden/datacouch">on Github</a>
+        </p>
+      </div>
+      
+      <div class="row">
+        <div class="span4">
+          <h2>
+            <a href="#/newurbanmechs">@newurbanmechs</a>
+          </h2>
+          <p>
+            <code>
+              Featured User
+            </code>
+          </p>
+          <p>
+            The City of Boston Mayor's Office of New Urban Mechanics works to bridge the gap between technology and local government by connecting citizen developers with open data feeds.
+          </p>
+          <p>
+            <a class="btn js-btn" href="#/newurbanmechs">See their profile</a>
+          </p>
+        </div>
+        <div class="span12">
+          <h3>Newest datasets from @newurbanmechs</h3>
+          <div class="featured-datasets"></div>
+        </div>
+      </div>
+
+      <section id="examples">
+        <div class="page-header">
+          <h1>
+            Collaborative tools
+            <small>
+              to help share the burden of releasing and formatting messy data
+            </small>
+          </h1>
+        </div>
+        <div class="row">
+          <div class="span4 columns">
+            <h2>
+              Upload data
+            </h2>
+            <p>
+              You can upload CSV files or JSON data using a few different methods. Once uploaded, anyone will be able to fork your datasets and help clean them up.
+            </p>
+          </div>
+          <div class="span12 columns">
+            <img class="screenshot" src="images/import-data.png">
+          </div>
+        </div>
+        <div class="row">
+          <div class="span4 columns">
+            <h2>
+              Refine your data
+            </h2>
+            <p>
+              Use the HTML5 data editor to clean up or update any datasets that you have uploaded or forked to your account.
+            </p>
+          </div>
+          <div class="span12 columns">
+            <img class="screenshot" src="images/refine-data.png">
+          </div>
+        </div>
+        <div class="row">
+          <div class="span4 columns">
+            <h2>
+              Share & visualize
+            </h2>
+            <p>
+              Build HTML5 apps using the in-browser editor or consume data from the API. 
+            </p>
+          </div>
+          <div class="span12 columns">
+            <img class="screenshot" src="images/visualize-data.png">
+          </div>
+        </div>
+      </section>
+    </div>
+    
+    <footer class="footer">
+      <div class="container">
+        <p>
+          Built by
+          <a href="http://twitter.com/maxogden" target="_blank">@maxogden</a>
+          at
+          <a href="http://twitter.com/codeforamerica" target="_blank">@codeforamerica</a>.
+          Beautiful illustrations courtesy of
+          <a href="http://twitter.com/kriesse" target="_blank">@kriesse</a>.
+          <br>
+          Code available on
+          <a href="http://github.com/maxogden/datacouch" target="_blank">Github</a>.
+          Powered by 
+          <a href="http://couchdb.org">Apache CouchDB</a>
+          and
+          <a href="http://nodejs.org">node.js</a>.
+        </p>
+      </div>
+    </footer>
+  </script>
+  
+  <script type="text/mustache" class="emptyTemplate">
+  </script>
+
+  <script type="text/mustache" class="bannerTemplate">    
+  <div class="quickstart">
+    <div class="container">
+    <div class="row">
+      <div class="span5 columns">
+        <h6>
+          Open data
+        </h6>
+        <p>
+          Turn spreadsheets into APIs and share them with anyone in the world.
+        </p>
+      </div>
+      <div class="span5 columns">
+        <h6>
+          <span class="fork icon"></span>Dataset forking
+        </h6>
+        <p>
+          Let others fork, edit and send you back enhanced versions of your data.
+        </p>
+      </div>
+      <div class="span5 columns">
+        <h6>
+          Free for public data
+        </h6>
+        <p>
+          As long as you share your data we will host it for free (until we run out of money).
+        </p>
+      </div>
+    </div>
+    </div>
+  </div>
+  </script>
+  
+  <script class="streamTemplate" type="text/mustache">
+    <div class="wrapper">
+      <div class="stream">
+          <div class="top_bar">
+            <a href="#/">
+              <img id="couchLogo" src="images/fancycouch-small.png">
+              <span class="project-title">DataCouch</span>
+            </a>
+            <span class="separator"> — </span>
+            <span class="lightest_gray">collaborative data</span>
+            <div class="userControls"></div>
+          </div>
+        <div class="showbar" id="showbar">
+          <div class="userButtons"></div>
+        </div>
+        <div class="container">
+          <div class="row">
+            <div class="infoContainer"></div>
+            <div class="span16 datasetsContainer"></div>
+            <div class="span16 stream-loading hidden"><div class="spinner"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </script>
+
+  <script type="text/mustache" class="infoTemplate">
+    <div class="alert-message block-message warning">
+      <p>
+        <strong>
+          This is an alpha test!
+        </strong>
+        If you find bugs or have suggestions please open issues <a href="https://github.com/maxogden/datacouch/issues">on Github</a>. Here are some things to try:
+      </p>
+      <ul>
+        <li>
+          <strong>
+            Forking & Refining
+          </strong>
+          You can create new datasets by uplooading CSV/JSON data or fork datasets from other users to your account. You can only edit data in datasets that are under your account. Soon you will be able to submit pull requests back to dataset owners.
+        </li>
+        <li>
+          <strong>
+            App/Visualization Templates
+          </strong>
+          From the <code>Applications</code> tab inside a dataset you can install some HTML5 application templates and edit them from your browser. This is pretty half-baked right now and will be improving soon. If you have ideas for useful app templates open an issue on Github with the recommendation!
+        </li>
+        <li>
+          <strong>
+            Full CouchDB API
+          </strong>
+          Every dataset is it's own CouchDB database under the ownership of your user account. This means you can take advantage of all the fun real-time sync and replication features offered by CouchDB. There will be API documentation soon but you can get started by using <a href="/api/token">your token</a> to make authenticated requests to any of your datasets via the Couch endpoint: <code>http://datacouch.com/api/couch/database-id-here</code>
+        </li>
+      </ul>
+    </div>
+  </script>
+  
+  <script type="text/mustache" class="bioTemplate">
+    <div class="bio">
+      <ul class="media-grid span2">
+        <li>
+          <a href="JavaScript:void(0);">
+            <img class="thumbnail" src="{{avatar}}" alt="">
+          </a>
+          <div class="doohicky"></div>
+        </li>
+      </ul>
+      <div class="span5">
+        <h2>{{_id}}</h2>
+        <span class="item">{{bio}}</span>
+        <span class="item">{{city}}</span>
+        <span class="item"><a href="{{url}}">{{url}}</a></span>
+      </div>
+    </div>
+  </script>
+  
+  <script type="text/mustache" class="userControlsTemplate">
+    <div class="session_actions">
+      <div class="session_status"></div>
+    </div>
+  </script>
+  
+  <script type="text/mustache" class="adminPartyTemplate">
+    <strong>Admin party, everyone is admin!</strong>
+    Fix this in <a href="/_utils/index.html">Futon</a> before proceeding.
+  </script>
+
+  <script type="text/mustache" class="loggedInTemplate">
+    <div class="user_profile">
+      <div class="message">hello,</div>
+      <a href="#/{{username}}">
+        <div class="username">
+          <span>{{username}}</span>
+        </div>
+      </a>
+    </div>
+    <div class="dot_separator">•</div>
+    <a class="editProfile option" href="#/settings!">edit profile</a>
+    <a class="logout option" href="#/logout!">logout</a>
+  </script>
+
+  <script type="text/mustache" class="loginButtonTemplate">
+    <div class="register_mod">
+      <div>
+        <div>
+          <a href="#/login!">Sign in with the Twitters</a>
+        </div>
+      </div>
+    </div>
+  </script>
+  
+  <script type="text/mustache" class="smallLoginTemplate">
+    <a id="logged-in-status" href="#/login!" class="secondary"><img src="/images/sign-in-with-twitter.png"></a>
+  </script>
+
+  <script type="text/mustache" class="editProfileFormTemplate">
+    <form class="profile_setup">
+      <div class="modal-header">
+        <h3>Editing {{_id}}'s profile.</h3>
+        <a href="#/cancel!" class="close cancel">×</a>
+      </div>
+      <div class="modal-body">
+        
+        <div class="clearfix">
+          <label for="city">One Line Bio</label>
+          <div class="input">
+            <input class="xlarge" id="xlInput" name="bio" size="30" type="text" value="{{bio}}">
+          </div>
+        </div>
+
+        <div class="clearfix">
+          <label for="city">City</label>
+          <div class="input">
+            <input class="xlarge" id="xlInput" name="city" size="30" type="text" value="{{city}}">
+          </div>
+        </div>
+    
+        <div class="clearfix">
+          <label for="url">URL (<em>for shameless self promotion</em>)</label>
+          <div class="input">
+          <input class="xlarge" id="xlInput" name="url" size="30" type="text" value="{{url}}">
+          </div>
+        </div>
+      
+      </div>
+      <div class="modal-footer">
+        <input type="submit" class="btn primary" value="Save">
+        <a href="#/cancel!" class="btn secondary cancel">Cancel</a>
+        <input type="hidden" name="_id" value="{{_id}}">
+      </div>        
+    </form>
+  </script>
+  
+  <script type="text/mustache" class="appsTemplate">  
+    <div class="applications-label"></div>
+    <div class="ornament-hr"></div>
+    <div class="resources">
+      {{#apps}}
+        <div class="individual span4">
+          <a href="http://{{url}}" class="thumbnail" alt="Project Name"></a>
+          <div class="description">
+            <strong><a href="http://{{url}}">{{ddoc}}</a></strong>
+            <p class="user"><small>{{user}}</small></p>
+            <p>{{description}}</p>
+          </div>
+          <hr />
+          <div class="stats"></div>
+        </div>
+      {{/apps}}
+    </div>
+  </script>
+  
+  <script type="text/mustache" class="datasetsListTemplate">
+    <div class="ornament-hr"></div>
+    <ol class="datasets detailed" data-name="{{name}}">
+      <div xmlns="http://www.w3.org/1999/xhtml" id="column-wrapper" class="datasets-wrapper">
+      </div>
+    </ol>
+  </script>
+  
+  <script type="text/mustache" class="datasetsTemplate">
+    {{#datasets}}
+      <div class="column-main">
+        {{#nouns}}
+          <div class="icon big">
+            <a href="http://thenounproject.com/noun/{{noun}}/">{{{svg}}}</a>
+          </div>
+        {{/nouns}}
+        {{^nouns}}
+          <div xmlns="http://www.w3.org/1999/xhtml" class="icon big">
+            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+            version="1.0" id="Layer_1" x="0px" y="0px" width="70px" height="70px" viewBox="0 0 100 90.682"
+            enable-background="new 0 0 100 90.682" xml:space="preserve" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+              <path d="M8.769,18.373v43.646h-6.53C1.004,62.019,0,61.024,0,59.78V3.459C0,1.554,1.42,0,3.372,0h28.857  c1.944,0,3.372,1.546,3.372,3.452v3.308h44.617c1.241,0,2.238,1.001,2.238,2.231v12.666H44.37v-3.315  c0-1.901-1.42-3.451-3.379-3.451H12.147C10.188,14.89,8.769,16.461,8.769,18.373z"
+              />
+              <path d="M97.761,35.426H53.146v-3.308c0-1.905-1.429-3.452-3.381-3.452H20.914c-1.95,0-3.371,1.554-3.371,3.458V88.45  c0,1.237,0.997,2.231,2.239,2.231h6.527h71.451c1.241,0,2.239-0.994,2.239-2.231V37.657C100,36.427,99.002,35.426,97.761,35.426z"
+              />
+            </svg>
+          </div>
+        {{/nouns}}
+      </div>
+      <div class="column-side">
+        <aside id="info-box" class="info-table-wrapper">
+          <div class="avatar"><a href="#/{{user}}"><img src="{{#avatar}}{{avatar}}{{/avatar}}{{^avatar}}images/avatar_default.png{{/avatar}}"></a></div>
+          <h4>
+            <a class="owner" href="#/{{user}}">{{user}}</a>&nbsp;/ <a class="dataset" href="edit/#/{{id}}">{{name}}</a>
+          </h4>
+          <div class="ich_tmpl">
+            <table xmlns="http://www.w3.org/1999/xhtml">
+              <tbody>
+                {{#forkedFrom}}
+                  <tr>
+                    <td>
+                      <span class="fork icon"></span>
+                      Fork of
+                    </td>
+                    <td>
+                      <a href="#/{{forkedFromUser}}">{{forkedFromUser}}</a>&nbsp;/ <a class="dataset" href="/edit/#/{{forkedFrom}}">{{name}}</a>
+                    </td>
+                  </tr>
+                {{/forkedFrom}}
+                {{#description}}
+                  <tr>
+                    <td>
+                      Description
+                    </td>
+                    <td>
+                      {{description}}
+                    </td>
+                  </tr>
+                {{/description}}
+                <tr>
+                  <td>
+                    Created
+                  </td>
+                  <td>
+                    <span class="timeago" title="{{date}}"></span>
+                  </td>
+                </tr>
+                {{#count}}
+                   <tr>
+                    <td>
+                      Documents
+                    </td>
+                    <td>
+                      {{count}}
+                    </td>
+                  </tr>
+                {{/count}}
+                {{#size}}
+                   <tr>
+                    <td>
+                      Size
+                    </td>
+                    <td>
+                      {{size}}
+                    </td>
+                  </tr>
+                {{/size}}
+              </tbody>
+            </table>
+          </div>
+        </aside>
+      </div>
+    {{/datasets}}
+  </script>
+  
+  <script type="text/mustache" class="recentDatasetsTemplate">
+    {{#datasets}}
+      <a href="/edit/#/{{_id}}">
+        <div class="breadcrumb">
+          {{name}}
+          <span class="divider">-</span>
+          {{description}}
+        </div>
+      </a>
+    {{/datasets}}
+  </script>
+  
+  <script type="text/mustache" class="noUserTemplate">
+    <div class="user-missing alert-message block-message warning">
+      <p>
+        <strong>
+          Oopsies!
+        </strong>
+        There is no user named {{name}} :(
+      </p>
+    </div>
+  </script>
+  
+  <script type="text/mustache" class="userActionsTemplate">
+    <a href="#/new!" class="btn primary">
+      New Dataset
+    </a>
+  </script>
+  
+  <script type="text/mustache" class="newDatasetFormTemplate">
+    <div class="infopanel">
+      <div class="top">
+        <div class="title">
+          Create a new dataset
+        </div>
+        <div class="subtitle">
+          Give it a proper name and description so that it can be discovered!
+        </div>
+      </div>
+      <div class="bottom">
+        <form>
+          <fieldset>
+            <div class="clearfix">
+              <label for="name">
+                Name
+              </label>
+              <div class="input">
+                <input class="xlarge" id="name" name="name" size="30" type="text" value="{{name}}">
+              </div>
+            </div>
+            <div class="clearfix">
+              <label for="source">
+                Data source
+              </label>
+              <div class="input">
+                <input class="xlarge" id="source" name="source" size="30" type="text" value="{{source}}">
+              </div>
+            </div>
+            <div class="clearfix">
+              <label for="description">
+                Description
+              </label>
+              <div class="input">
+                <textarea class="xlarge" id="description" name="description" rows="3">{{description}}</textarea>
+              </div>
+            </div>
+            <div class="clearfix">
+              <label for="icon">
+                Icon
+              </label>
+              <div class="input">
+                <div class="input-prepend">
+                  <span class="add-on"><span class="magnifier icon"></span></span>
+                  <input class="medium" id="icon-picker" size="16" type="text">
+                </div>
+                <span class="help-block">
+                  Pick one icon from the <a href="http://thenounproject.com" target="_blank">Noun Project</a> that represents this dataset.
+                </span>
+              </div>
+              <div class="nounContainer"></div>
+            </div>
+          </fieldset>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <input type="submit" class="btn primary ok" value="Upload">
+        <a href="#/cancel!" class="btn secondary cancel">Cancel</a>
+      </div>
+    </div>
+  </script>
+
+  <script type="text/mustache" class="nounsTemplate">
+    <div class="nounsBoundary">
+      {{#nouns}}
+        <div class="nounWrapper">
+          <div class="noun-icon">{{{svg}}}</div>
+          <span class="icon-subtitle">{{noun}}</span>
+        </div>
+      {{/nouns}}
+  </script>
+  
+  <script type="text/mustache" class="formLoadingTemplate">
+    <h1>Loading! Please hold on...</h1>
+  </script>
+  
+  <script type="text/mustache" class="loadingMessageTemplate">
+    <div id="loading-message">
+      <img src="images/large-spinner.gif">
+      <span>{{message}}</span>
+    </div>
+  </script>
+  
+  <script type="text/javascript">
+
+  var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-25240840-1']);
+    _gaq.push(['_trackPageview']);
+  
+    (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  
+  </script>
+  </body>
+</html>

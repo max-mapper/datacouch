@@ -1,7 +1,8 @@
 {
   "name": "datacouch",
   "dependencies": {
-    "couchapp": ">=0.8.1"
+    "couchapp": ">=0.8.1",
+    "rewriter": "0.0.1"
   },
   "version": "0.0.1"
 }

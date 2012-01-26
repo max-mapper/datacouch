@@ -1,0 +1,20 @@
+/* FROM REDIRECTORY */
+
+.infopanel .appTemplate:hover {background-color:#F0FFFD; cursor: pointer; cursor: hand}
+.infopanel .appTemplate {font-size: 12px; position: relative; padding-left: 150px; height: 150px}
+.infopanel .appTemplate .title {padding-top: 20px}
+.infopanel .appTemplates img {margin: 10px;position: absolute;left: 0px;top: 0;}
+.infopanel{height:100%;position:relative;border-right:1px solid #C0CCCA;}
+.infopanel .title{font-family:"Geneva";font-size:18px;line-height:18px;}
+.infopanel .subtitle{opacity:0.3;font-family:"Geneva";font-size:12px;line-height:24px;height: 24px}
+.infopanel .edit{opacity:0.3;font-family:"Geneva";font-size:10px;line-height:18px;padding-left:12px;background-image:url('images/edit.png');background-position:0 4px;background-repeat:no-repeat;}
+.infopanel .close{position:absolute;right:10px;top:15px;width:16px;height:16px;opacity:0.2;background-image:url('images/close.png');}
+.infopanel .close:hover,.infopanel .edit:hover{opacity:1;}
+.infopanel .top{text-align: left;height:37px;background-image:url('images/infopanel-bg.png');background-repeat:repeat-x;border-bottom:1px solid #E1EEEC;padding:16px;}
+.infopanel .bottom{padding:10px 16px;}
+.infopanel p{font-family:"Geneva";font-size:11px;line-height:12px;padding-bottom:10px;color:#252525;}
+
+.hidden {
+  display: none !important;
+  visibility: hidden !important;
+}

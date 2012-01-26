@@ -18,46 +18,21 @@ $(function(){
     // binds UX interaction and form submit event handlers to the signup/login forms
     function showLogin(callback) {
       $.oauthpopup({
-        path: app.baseURL + "login",
+        path: app.baseURL + "api/twitter/login",
         callback: callback
       });
-    }
-
-    function ensureProfile() {
-      var dfd = $.Deferred();
-      if( !app.session || !app.profile ) {
-        fetchSession().then(function(session) {
-          fetchProfile(session).then(function(profile) {
-            dfd.resolve(profile);
-          })
-        })
-      } else if (app.profile) {
-        dfd.resolve(app.profile);
-      }
-      return dfd.promise()
-    }
-
-    function fetchSession() {
-      var dfd = $.Deferred();
-      couch.session().then(function( session ) {
-        app.session = session;
-        if(session.userCtx.name) app.emitter.emit(session.userCtx, 'login');
-        dfd.resolve(app.session);
-      });
-      return dfd.promise();
     }
 
     // gets user's stored profile info from couch
     function fetchProfile(session) {
       var dfd = $.Deferred();
-      couch.request({url: app.baseURL + "api/users/" + session.userCtx.name}).then(
+      couch.request({url: app.baseURL + "api/profile"}).then(
         function(profile) {
           app.profile = profile;
           dfd.resolve( profile );
         },
         function(error) {
-          console.log('no profile?!')
-          if(window.location.hash !== "#/activity") window.location.href = "#/";
+          dfd.reject(error)
         }
       )
       return dfd.promise();
@@ -476,8 +451,6 @@ $(function(){
       db: db,
       userProfile: userProfile,
       showLogin: showLogin,
-      ensureProfile: ensureProfile,
-      fetchSession: fetchSession,
       fetchProfile: fetchProfile,
       updateProfile: updateProfile,
       generateProfile: generateProfile,

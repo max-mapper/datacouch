@@ -38,16 +38,14 @@ app.routes = {
     },
     activity: function(username) {
       util.render('stream', 'content');
-      monocles.fetchSession().then(function() {
-        if(util.loggedIn()) {
-          monocles.ensureProfile().then(function(profile) {
-            util.render('userControls', 'userControls');
-            util.render('userActions', 'userButtons');
-            util.render( 'loggedIn', 'session_status', {
-              username : profile._id,
-              avatar : profile.avatar
-            });
-          })
+      monocles.fetchProfile().then(function(profile) {
+        if(profile) {
+          util.render('userControls', 'userControls');
+          util.render('userActions', 'userButtons');
+          util.render( 'loggedIn', 'session_status', {
+            username : profile._id,
+            avatar : profile.twitter.profile_image_url
+          });
         } else {
           util.render('smallLogin', 'userControls');
         }
@@ -68,13 +66,13 @@ app.routes = {
       window.close();
     },
     "new": function() {
-      monocles.ensureProfile().then(function(profile) {
+      monocles.fetchProfile().then(function(profile) {
         util.show('dialog');
         util.render( 'newDatasetForm', 'modal' );
       })
     },    
     settings: function() {
-      monocles.ensureProfile().then(function(profile) {
+      monocles.fetchProfile().then(function(profile) {
         util.show('dialog');
         util.render( 'editProfileForm', 'modal', profile );
       })    
@@ -204,15 +202,13 @@ $(function() {
   });
   
   app.defaultRoute = function() {
-    monocles.fetchSession().then( function( session ) {
-      if ( session.userCtx.name ) {
+    monocles.fetchProfile().then(
+      function( profile ) {
         window.location.href = "#/activity";
-      } else if ( util.isAdminParty( session.userCtx ) ) {
-        util.render( 'adminParty', 'userButtons' );
-      } else {
+      }, function() {
         window.location.href = "#/welcome";
       }
-    });
+    );
   }
   
   app.router = Router({
