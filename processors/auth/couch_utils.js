@@ -1,7 +1,6 @@
 var couch         = process.env['DATACOUCH_ROOT']
   , couchVhost    = process.env['DATACOUCH_VHOST']
   , crypto  = require('crypto')
-  , rbytes  = require('rbytes')
   , request = require('request')
   , url     = require('url')
   , qs      = require('querystring')
@@ -12,8 +11,8 @@ var couch         = process.env['DATACOUCH_ROOT']
 module.exports = function() {
 
   function couchUserDoc(userData) {
-    var salt = rbytes.randomBytes(16).toHex()
-      , password = rbytes.randomBytes(16).toHex()
+    var salt = crypto.randomBytes(16).toString('hex')
+      , password = crypto.randomBytes(16).toString('hex')
       ;
     return _.extend(userData, {
          _id: "org.couchdb.user:" + userData.screen_name
