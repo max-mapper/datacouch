@@ -23,6 +23,7 @@ module.exports = function (t, rewrites, options) {
         })
       }
     })
+    return to
   }
   
   function proxyRequest(rewrite) {
@@ -31,11 +32,11 @@ module.exports = function (t, rewrites, options) {
         , query = _.extend({}, rewrite.query)
       if (req.route.splats) to = to.replace('*', req.route.splats.join('/'))
       if (req.query) _.extend(query, qs.parse(req.query))
-      if (query && req.route.params) resolveSymbols(to, req.route.params, query)
+      if (req.route.params) to = resolveSymbols(to, req.route.params, query)
       if (query.key) query.key = JSON.stringify(query.key)
       if (query.startkey) query.startkey = JSON.stringify(query.startkey)
       if (query.endkey) query.endkey = JSON.stringify(query.endkey)
-      if (query) to += "?" + qs.stringify(query)
+      if (_.keys(query).length) to += "?" + qs.stringify(query)
       request({url: to, json: rewrite.json}).pipe(resp)
     })
   }
