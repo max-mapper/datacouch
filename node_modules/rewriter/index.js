@@ -37,7 +37,9 @@ module.exports = function (t, rewrites, options) {
       if (query.startkey) query.startkey = JSON.stringify(query.startkey)
       if (query.endkey) query.endkey = JSON.stringify(query.endkey)
       if (_.keys(query).length) to += "?" + qs.stringify(query)
-      request({url: to, json: rewrite.json}).pipe(resp)
+      var proxy = request({url: to, json: rewrite.json})
+      req.pipe(proxy)
+      proxy.pipe(resp)
     })
   }
   

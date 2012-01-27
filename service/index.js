@@ -11,6 +11,7 @@ module.exports = function (opts) {
   exports.opts = defaults(opts)
   
   var t = tako()
+
   for (i in exports.opts) t[i] = exports.opts[i]
   
   // Run through all the sub applications
