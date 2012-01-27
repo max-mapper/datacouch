@@ -46,7 +46,7 @@ app.routes = {
     logout: function() {
       util.notify("Signing you out...", {persist: true, loader: true});
       couch.logout().then(function(response) {
-        delete app.session.userCtx.name;
+        delete app.profile;
         util.notify("Signed out");
         util.render('signIn', 'project-controls');
         app.routes.tabs.data();
@@ -105,7 +105,7 @@ app.routes = {
   tabs: {
     data: function() {
       var datasetInfo = _.extend({}, app.datasetInfo, { 
-        canEdit: function() { return util.loggedIn() && ( app.datasetInfo.user === app.session.userCtx.name ) }
+        canEdit: function() { return util.loggedIn() && ( app.datasetInfo.user === app.profile._id ) }
       });
       if (datasetInfo.nouns) datasetInfo.hasNouns = true;
       util.render('dataTab', 'sidebar', datasetInfo)

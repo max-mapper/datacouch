@@ -255,10 +255,11 @@ var recline = function() {
   }
   
   function showSessionButtons() {
-    couch.session().then(function(session) {
-      app.session = session;
-      if ( session.userCtx.name ) util.render('signOut', 'project-controls');
-      else util.render('signIn', 'project-controls')
+    monocles.fetchProfile().then(function(profile) {
+      app.profile = profile;
+      util.render('signOut', 'project-controls');
+    }, function() {
+      util.render('signIn', 'project-controls')
     })
   }
   
@@ -266,7 +267,7 @@ var recline = function() {
     couch.request({url: app.baseURL + 'api/forks/' + app.dbInfo.db_name}).then(
       function ( response ) {
         var isOwner = _.detect(response.rows, function(row) {
-          return row.doc.user === app.session.userCtx.name;
+          return row.doc.user === app.profile._id;
         })
         if(isOwner) isOwner = isOwner.id;
         callback(isOwner);
@@ -274,7 +275,7 @@ var recline = function() {
   }
   
   function isOwner() {
-    return app.datasetInfo.user === app.session.userCtx.name;
+    return app.datasetInfo.user === app.profile._id;
   }
   
   function initializeTable(offset) {
