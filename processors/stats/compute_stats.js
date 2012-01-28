@@ -21,13 +21,14 @@ require('http').createServer(function (req, res) {
 
 function getAllDatasets(callback) {
   request({url: datasetsURL}, function(err, resp, data) {
-    callback(data.rows)
+    if (err || data.error) callback(data)
+    else callback(false, data.rows)
   })
 }
 
 function getAllDocs(db, callback) {
   request({url: couch + "/" + db.id + '/_all_docs?startkey=%22_design/%22&endkey=%22_design0%22'}, function(err, resp, data) {
-    if (err) callback(err, data)
+    if (err) callback(err)
     else callback(false, data)
   })
 }
@@ -42,16 +43,18 @@ function getDbInfo(db, callback) {
 function updateDoc(doc, callback) {
   doc.statsGenerated = new Date();
   request.post({uri: couch + '/datacouch', body: doc}, function(err, resp, data) {
-    callback()
+    if(err || data.error) callback(data)
+    else callback(false, data)
   })
 }
 
 function computeStats(couch, datasetsURL, callback) {
-  getAllDatasets(function(datasets) {
+  getAllDatasets(function(err, datasets) {
+    if (err) return callback(err)
     _.each(datasets, function(db) {
       q.push(db, function (err) {
-        console.log('updated stats on ' + db.id);
-      });
+        if(err) callback(err)
+      })
     })
   })
 }
@@ -61,7 +64,7 @@ var couch = process.env['DATACOUCH_ROOT']
   ;
   
 var q = async.queue(function (db, callback) {
-  getDbInfo(db, function(dbInfo) {         
+  getDbInfo(db, function(err, dbInfo) {         
     getAllDocs(db, function(err, docs) {
       var ddocCount = docs.rows.length
         , docCount = dbInfo.doc_count
@@ -88,8 +91,14 @@ var startTime = new Date()
 
 q.drain = function() {
   console.log('last run took ' + (new Date() - startTime) + "ms")
-  startTime = new Date()
-  computeStats(couch, datasetsURL)
+  setTimeout(function() {
+    startTime = new Date()
+    computeStats(couch, datasetsURL, done)
+  }, 60000)
 }
 
-computeStats(couch, datasetsURL);
+function done(err) {
+  if(err) console.error(err)
+}
+
+computeStats(couch, datasetsURL, done);
