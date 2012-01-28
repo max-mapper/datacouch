@@ -146,7 +146,7 @@ app.after = {
     $('.modal-footer .ok').click(function(e) {
       var defaultProperties = {
         _id: "dc" + docID,
-        type: "database",
+        type: "newDatabase",
         user: app.profile._id,
         avatar: app.profile.avatar,
         createdAt: new Date()

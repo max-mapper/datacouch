@@ -3,6 +3,7 @@ var tako = require('tako')
   , http = require('http')
   , api = require('./api')
   , auth = require('./auth')
+  , database_provisioner = require('./database_provisioner')
   , defaults = require('./defaults')
   ;
   
@@ -16,6 +17,7 @@ module.exports = function (opts) {
   
   // Run through all the sub applications
   auth(t)
+  database_provisioner(t)
   api(t)
   // website(t)
   
