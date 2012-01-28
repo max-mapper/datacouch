@@ -5,6 +5,7 @@ var tako = require('tako')
   , auth = require('./auth')
   , database_provisioner = require('./database_provisioner')
   , csv_uploader = require('./csv_uploader')
+  , transformer = require('./transformer')
   , defaults = require('./defaults')
   ;
   
@@ -20,6 +21,7 @@ module.exports = function (opts) {
   auth(t)
   database_provisioner(t)
   csv_uploader(t)
+  transformer(t)
   api(t)
   
   exports.app = t

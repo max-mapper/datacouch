@@ -4,7 +4,9 @@
     "couchapp": "0.8.1",
     "rewriter": "0.0.1",
     "txn": "0.2.6",
-    "csv": "0.0.10"
+    "csv": "0.0.10",
+    "JSONStream": "0.1.2",
+    "transfuse": "0.0.3"
   },
   "version": "0.0.1"
 }
