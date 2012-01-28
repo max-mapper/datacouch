@@ -75,17 +75,17 @@ Deploy the main datacouch couchapp to your Couch. It mostly sets database permis
 
     couchapp push couchapp.js http://admin:pass@localhost:5984/datacouch
 
-
 Once deployed you will need to go [create a twitter app](https://dev.twitter.com/apps/new) in order to use datacouch. 
 NOTE: If you create a new app and leave the callback url blank then datacouch will fail to authenticate. Twitter will respond with a 401 of "Desktop applications only support the oauth_callback value 'oob'"
 
 Once your app is complete copy the consumer secret and key into your envirnonment via `.bashrc`/`.bash_profile`:
 
-    export DATACOUCH_ROOT="http://admin:pass@localhost:5984"
     export DATACOUCH_TWITTER_KEY="KEY FROM https://dev.twitter.com/ HERE"
     export DATACOUCH_TWITTER_SECRET="SECRET FROM https://dev.twitter.com/ HERE"
 
 Once you save your environment variables either: close your terminal or run `source .bashrc` or `source .bash_profile` to load your environment changes.
+
+Last thing to do is to edit the default settings in `service/defaults.js`.
 
 Now you can start datacouch!
 

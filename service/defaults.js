@@ -1,12 +1,11 @@
 var _ = require('underscore')
   , url = require('url')
   , defaults = 
-    { couchurl : "http://localhost:5984"
+    { couchurl : "http://admin:admin@localhost:5984"
     , vhosturl : "http://localhost:9999"
     , port : 9999
     , twitterKey: process.env['DATACOUCH_TWITTER_KEY']
     , twitterSecret: process.env['DATACOUCH_TWITTER_SECRET']
-    , uploaderurl: "http://localhost:9878"
     }
   ;
   

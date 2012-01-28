@@ -10,15 +10,16 @@ var follow = require('follow')
 
 module.exports = function (t) {
 
-  var configURL = url.parse(t.couchurl + "datacouch")
-    , vhostDomain = t.vhosturl
-    , couch = configURL.protocol + "//" + configURL.host
-    , db = couch + configURL.pathname
+  var vhostDomain = t.vhosturl
+    , couch = t.couchurl
+    , db = t.couchurl + "datacouch"
     ;
 
   follow({db: db, filter: "datacouch/by_value", query_params: {k: "type", v: "newDatabase"}}, function(error, change) {
     if (error) return console.error(error)
-    provision(db + '/' + change.id, function(err, newData) { })
+    provision(db + '/' + change.id, function(err, newData) {
+      if(err) console.error(err)
+    })
   })
     
   function provision(docURL, cb) {
@@ -31,7 +32,7 @@ module.exports = function (t) {
   
   function processDatabase(doc, txncb) {
     var dbName = doc._id
-     , dbPath = couch + "/" + dbName
+     , dbPath = couch + dbName
      , startTime = new Date()
      ;
      
@@ -58,7 +59,7 @@ module.exports = function (t) {
   function registerApp(appURL, doc, db, callback) {
     // addVhost(appURL, "/" + doc.dataset + "/_design/" + doc.ddoc + "/_rewrite").then(function() {
       request.post({url: db, body: _.extend({}, doc, {url: appURL})}, function(e,r,b) {
-        if (callback) callback(b)
+        if (callback) return callback(b)
       })
     // });
   }
@@ -69,13 +70,13 @@ module.exports = function (t) {
   }
 
   function pushCouchapp(app, target, cb) {
-    var source = couch + '/apps/_design/' + app + "?attachments=true"
+    var source = couch + 'apps/_design/' + app + "?attachments=true"
       , destination = target + '/_design/' + app + "?new_edits=false"
       , headers = {'accept':"multipart/related,application/json"}
       , down = request.get({url: source, headers: headers})
       , up = request.put(destination, function(err, resp, body) { 
-          if(err) cb(err)
-          cb(false, body)
+          if(err) return cb(err)
+          return cb(false, body)
         })
     down.pipe(up)
   }
@@ -83,32 +84,32 @@ module.exports = function (t) {
   function replicate(source, target, ddoc, cb) {
     var reqData = {"source": source,"target": target, "create_target": true};
     if (ddoc) reqData["doc_ids"] = [ddoc];
-    request({uri: couch + "/_replicate", method: "POST", body: reqData}, function (err, resp, body) {
-      if (err) cb(new Error('ahh!! ' + err))
-      if (body.doc_write_failures > 0) cb(new Error('error creating: ' + body))
-      cb(false, body)
+    request({uri: couch + "_replicate", method: "POST", body: reqData}, function (err, resp, body) {
+      if (err) return cb(new Error('ahh!! ' + err))
+      if (body.doc_write_failures > 0) return cb(new Error('error creating: ' + body))
+      return cb(false, body)
     })
   }
 
   function checkExistenceOf(url, cb) {
     request({uri: url, method: "HEAD", json: false}, function(err, resp, body) {
-      if(err) cb(err)
-      cb(false, resp.statusCode);
+      if(err) return cb(err)
+      return cb(false, resp.statusCode);
     })
   }
 
   function createDB(url, cb) {
     request({uri: url, method: "PUT"}, function (err, resp, body) {
-      if (err) cb(new Error('ahh!! ' + err))
+      if (err) return cb(new Error('ahh!! ' + err))
       var response = body
       if (!response) response = {"ok": true}
-      if (!response.ok) cb(new Error(url + " - " + body))
-      cb(false, resp.statusCode)
+      if (!response.ok) return cb(new Error(url + " - " + body))
+      return cb(false, resp.statusCode)
     })
   }
 
   function addVhost(url, couchapp, cb) {
-    request({uri: couch + "/_config/vhosts/" + encodeURIComponent(url), method: "PUT", body: JSON.stringify(couchapp), json: false}, function (err, resp, body) {
+    request({uri: couch + "_config/vhosts/" + encodeURIComponent(url), method: "PUT", body: JSON.stringify(couchapp), json: false}, function (err, resp, body) {
       if (err) cb(new Error('ahh!! ' + err))
       cb(false, body)
     })
@@ -116,7 +117,7 @@ module.exports = function (t) {
 
   function setAdmin(dbName, username, cb) {
     var data = {"admins":{"names":[username],"roles":[]},"members":{"names":[],"roles":[]}};
-    request({uri: couch + "/" + dbName + "/_security", method: "PUT", body: data}, function (err, resp, body) {
+    request({uri: couch + dbName + "/_security", method: "PUT", body: data}, function (err, resp, body) {
       if (err) cb(new Error('ahh!! ' + err))
       if (!body.ok) cb(new Error('error setting admin: ' + body))
       cb(false, body);
