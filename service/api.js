@@ -15,7 +15,6 @@ module.exports = function (t) {
     , {from:"/edit/*", to:"pages/recline.html"}
     , {from:"/loggedin", to: 'pages/loggedin.html'}
     // , {from:"/api/token", to: } TODO http basic auth tokens
-    , {from:"/api/upload/*", to: t.uploaderurl + "*"}
     , {from:"/api/applications/:dataset", to:"_view/applications", query:{endkey:":dataset", startkey:":dataset", include_docs:"true", descending: "true"}}
     , {from:"/api/applications", to:"_view/applications", query:{include_docs:"true", descending: "true"}}
     , {from:"/api/applications/user/:user", to:"_view/applications_by_user", query:{endkey:":user", startkey:":user", include_docs:"true", descending: "true"}}

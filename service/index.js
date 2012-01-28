@@ -4,6 +4,7 @@ var tako = require('tako')
   , api = require('./api')
   , auth = require('./auth')
   , database_provisioner = require('./database_provisioner')
+  , csv_uploader = require('./csv_uploader')
   , defaults = require('./defaults')
   ;
   
@@ -18,8 +19,8 @@ module.exports = function (opts) {
   // Run through all the sub applications
   auth(t)
   database_provisioner(t)
+  csv_uploader(t)
   api(t)
-  // website(t)
   
   exports.app = t
   t._listen = t.listen
