@@ -1,4 +1,3 @@
-
 # DataCouch
 
 A dataset collaboration network built on top of CouchDB. Developed as a free software @codeforamerica project for the City of Boston by @maxogden
@@ -37,7 +36,7 @@ This will walk you through getting datacouch dev environment running on your loc
 
 Requirements: node.js >= 0.6 and CouchDB >= 1.1
 
-Simply [build couchdb](build-couchdb](https://github.com/iriscouch/build-couchdb). Once the install is successful, start your server and visit the [Futon](http://localhost:5984/). Create a new admin user via the admin / logout area in the bottom right corner of the screen.
+Simply [build couchdb](https://github.com/iriscouch/build-couchdb). Once the install is successful, start your server and visit the [Futon](http://localhost:5984/). Create a new admin user via the admin / logout area in the bottom right corner of the screen.
 
 Create these databases:
 
