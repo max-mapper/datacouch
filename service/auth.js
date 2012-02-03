@@ -124,6 +124,7 @@ module.exports = function (t) {
     var self = this;
     resp.statusCode = 302
     resp.setHeader('location', location)
+    console.log(location)
     setCookie(self._id, resp)
     resp.end()
   }
