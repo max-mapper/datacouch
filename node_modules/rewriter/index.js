@@ -26,8 +26,15 @@ module.exports = function (t, rewrites, options) {
     return to
   }
   
+  function createProxy(req, resp, opts) {
+    var proxy = request(opts)
+    req.pipe(proxy)
+    proxy.pipe(resp)
+  }
+  
   function proxyRequest(rewrite) {
     t.route(rewrite.from, function(req, resp) {
+      if (rewrite.before) rewrite.before(req, resp)
       var to = rewrite.to
         , query = _.extend({}, rewrite.query)
       if (req.route.splats) to = to.replace('*', req.route.splats.join('/'))
@@ -37,9 +44,7 @@ module.exports = function (t, rewrites, options) {
       if (query.startkey) query.startkey = JSON.stringify(query.startkey)
       if (query.endkey) query.endkey = JSON.stringify(query.endkey)
       if (_.keys(query).length) to += "?" + qs.stringify(query)
-      var proxy = request({url: to, json: rewrite.json})
-      req.pipe(proxy)
-      proxy.pipe(resp)
+      createProxy(req, resp, {url: to, json: rewrite.json})
     })
   }
   
@@ -52,11 +57,26 @@ module.exports = function (t, rewrites, options) {
   
   function proxyFile(rewrite, req, resp) {
     t.route(rewrite.from, function(req, resp) {
+      if (rewrite.before) rewrite.before(req, resp)
       filed(path.resolve(opts.attachments, rewrite.to)).pipe(resp)
     })
   }
   
-  _.each(rewrites, function(rewrite) {
+  function flattenRewrites(rewrites) {
+    var flattened = []
+    _.each(rewrites, function(rewrite) {
+      if (rewrite.rewrites) {
+        _.each(rewrite.rewrites, function(subRewrite) {
+          flattened.push(_.extend({}, subRewrite, {before: rewrite.before}))
+        })
+      } else {
+        flattened.push(rewrite)
+      }
+    })
+    return flattened
+  }
+  
+  _.each(flattenRewrites(rewrites), function(rewrite) {
     var to = rewrite.to
       , protocol = url.parse(to).protocol
     if (_.first(to) === "/") to = _.rest(to).join('')

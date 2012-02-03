@@ -32,7 +32,7 @@ module.exports = function (t) {
     , {from:"/api/couch/*", to: couch + "*"}
     , {from:"/api/epsg/:code", to: couch + "epsg/:code"}
     , {from:"/api", to: couch + 'datacouch'}
-    , {from:"/api/*", to:couch + 'datacouch/*'}
+    , {from:"/api/*", to: couch + 'datacouch/*'}
     , {from:"/analytics.gif", to: couch + "_analytics/spacer.gif"}
     , {from:"/db/:id/csv", to: couch + ':id/_design/recline/_list/csv/all'}
     , {from:"/db/:id/json", to: couch + ':id/_design/recline/_list/bulkDocs/all'}

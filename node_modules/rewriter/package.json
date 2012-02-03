@@ -1,7 +1,7 @@
 { "name" : "rewriter"
-, "description" : "CouchApp emulator for node."
-, "tags" : ["couch", "couchdb"]
-, "version" : "0.0.1"
+, "description" : "streaming http + file routing proxy. serve apps easily!"
+, "tags" : ["framework", "server", "static", "couch", "couchdb", "nodepointjavascript"]
+, "version" : "0.0.3"
 , "author" : "Max Ogden <max@maxogden.com>"
 , "repository" :
   { "type" : "git"
