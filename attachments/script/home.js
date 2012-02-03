@@ -1,7 +1,7 @@
 // redirect /someuser to /#/someuser
 (function() {
   var user = $.url(window.location.href).segment(1)
-  if (user.length > 0) window.location.href = $.url(window.location.href).attr('base') + '/#/' + user;  
+  if (user.length > 0) window.location.href = $.url(window.location.href).attr('base') + '/#/' + user;
 })()
 
 var app = {
@@ -19,6 +19,14 @@ couch.rootPath = couch.dbPath + "couch/";
     - pages (URL routed with SugarSkull, hrefs like "#/" or "#/bob")
     - modals (no URL change triggered, hrefs like "#/cancel!" or "#/logout!")
 */
+
+var io = io.connect('http://localhost:1337');
+
+io.on('datasetComplete', function (id) {
+  console.log(id)
+  util.hide('dialog');
+  window.location.href = app.baseURL + "edit/#/" + id;
+});
 
 app.routes = {
   pages: {
@@ -158,27 +166,12 @@ app.after = {
       if (selectedNoun.length > 0) doc.nouns = [app.nouns[selectedNoun]];
 
       util.hide('dialog');
-      couch.request({url: app.baseURL + "api/" + doc._id, type: "PUT", data: JSON.stringify(doc)}).then(function(resp) {
-        var dbID = resp.id
-          , dbName = dbID + "/_design/recline"
-          ;
-        function waitForDB(url) {
-          couch.request({url: url, type: "HEAD"}).then(
-            function(resp, status){
-              window.location = app.baseURL + 'edit/#/' + dbID;
-            },
-            function(resp, status){
-              console.log("not created yet...", resp, status);
-              setTimeout(function() {
-                waitForDB(url);
-              }, 500);
-            }
-          )
-        }
-        util.show('dialog');
-        util.render('loadingMessage', 'modal', {message: "Creating dataset..."});
-        waitForDB(couch.rootPath + dbName);
-      })
+
+      var url = app.baseURL + "api/" + doc._id, type = "PUT", data = JSON.stringify(doc);
+      io.emit('createDataset', url, type, data);
+      util.show('dialog');
+      util.render('loadingMessage', 'modal', {message: "Creating dataset..."});
+
     })
   },
   datasets: function() {
