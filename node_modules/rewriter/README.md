@@ -35,11 +35,13 @@ rewriter was built to work easily with couchdb! you can do things like serve cou
       
     rewriter(t, rewrites)
     
-you can specify a middleware function that proxied request will be run through either singularly or using a group:
+you can specify an async middleware errback function that the proxied request will be run through either singularly or using a group
+
+the callback is in the form `callback(err)` and must be called for the request to continue. call with no arguments to resume normally or with an error message as the first argument to `res.end()` the request with that message.
 
     var rewrites = [ 
-          {from:"/awesome", to: couch + "/", before: function(req, res) { console.log(req.connection.remoteAddress) }}
-        , {before: function(req, res) { if (req.headers.referrer !== "awesome.com") res.end('go away hotlinkers') }
+          {from:"/awesome", to: couch + "/", before: function(req, res, cb) { console.log(req.connection.remoteAddress); cb() }}
+        , {before: function(req, res, cb) { if (req.headers.referrer !== "awesome.com") cb('go away hotlinkers') }
           , rewrites: [
               {from:"/api/couch/*", to: couch + "/*"}
             , {from:"/api", to: couch + "/appdatabase"}
