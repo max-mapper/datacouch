@@ -8,48 +8,6 @@ var follow = require('follow')
   , _ = require('underscore')
   ;
 
-// note, io.listen() will create a http server for you
-var io = require('socket.io').listen(1337), c = console;
-
-io.sockets.on('connection', function (socket) {
-  io.sockets.emit('news', { will: 'be received by everyone'});
-
-  socket.on('myEvent', function (from, msg) {
-    console.log('I received a private message by ', from, ' saying ', msg);
-  });
-
-  socket.on('createDataset', function (url, type, data) { 
-    createDataset(url, type, data);
-  });
-
-  socket.on('disconnect', function () {
-    io.sockets.emit('user disconnected');
-  });
-
-
-});
-
-function createDataset(url, type, data){
-  
-    var d = JSON.parse(data);
-    c.log('');
-    c.log(type + ' -> ' + url);
-    c.log('{');
-    c.log('    _id: ' + d._id);
-    c.log('  , createdAt: ' + d.createdAt);
-    c.log('  , name: ' + d.name);
-    c.log('  , description: ' + d.description);
-    c.log('  , source: ' + d.source);
-    c.log('  , type: ' + d.type);
-    c.log('  , user: ' + d.user);
-    c.log('}');
-    c.log('');
-
-    request({method: 'PUT', uri: url, json: d}, function(err, resp){
-      io.sockets.emit('datasetComplete', d._id);
-    });
-}
-
 module.exports = function (t) {
 
   var vhostDomain = t.vhosturl
