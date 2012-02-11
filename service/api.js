@@ -11,7 +11,10 @@ module.exports = function (t) {
   var couch = t.couchurl
 
   function validateUpdate(req, res, cb) {
-    if (_.include(["GET", "HEAD", "OPTIONS"], req.method)) return cb()
+    // allow all reading operations
+    if (_.include(["GET", "HEAD", "OPTIONS", "COPY"], req.method)) return cb()
+    
+    // validate all writes
     request(couch + 'datacouch/' + req.route.params.id, function(err, resp, doc) {
       if (!req.user) return cb('not logged in')
       if (err) return cb(err)
@@ -37,13 +40,6 @@ module.exports = function (t) {
     , { from:"/api/trending", to:"_view/popular", query:{include_docs: "true", descending: "true", limit: "10"}}
     , { from:"/api/templates", to:"_view/templates", query:{include_docs: "true"}}
     , { from:"/api/users/search/:user", to: couch + "datacouch-users/_design/users/_view/users", query:{startkey:":user", endkey:":user", include_docs: "true"}}
-    , { from:"/api/epsg/:code", to: couch + "epsg/:code"}
-    , { from:"/api/users", to: couch + 'datacouch-users/'}
-    , { from:"/api/users/*", to: couch + 'datacouch-users/*'}
-    , { from:"/api/couch", to: couch + ""}
-    , { from:"/api/couch/*", to: couch + "*"}
-    , { from:"/api", to: couch + 'datacouch'}
-    , { from:"/api/*", to: couch + 'datacouch/*'}
     , { from:"/analytics.gif", to: couch + "_analytics/spacer.gif"}
     , { from:"/db/:id/csv", to: couch + ':id/_design/recline/_list/csv/all'}
     , { from:"/db/:id/json", to: couch + ':id/_design/recline/_list/bulkDocs/all'}
@@ -51,7 +47,14 @@ module.exports = function (t) {
     , { from:"/db/:id/rows", to: couch + ':id/_design/recline/_view/all'}
     , { before: validateUpdate
       , rewrites: [
-          {from:"/db/:id", to: couch + ":id/"}
+          { from:"/api/epsg/:code", to: couch + "epsg/:code"}
+        , { from:"/api/users", to: couch + 'datacouch-users/'}
+        , { from:"/api/users/*", to: couch + 'datacouch-users/*'}
+        , { from:"/api/couch", to: couch + ""}
+        , { from:"/api/couch/*", to: couch + "*"}
+        , { from:"/api", to: couch + 'datacouch'}
+        , { from:"/api/*", to: couch + 'datacouch/*'}
+        , {from:"/db/:id", to: couch + ":id/"}
         , {from:"/db/:id/*", to: couch + ":id/*"}
         ]
       }

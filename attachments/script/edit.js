@@ -45,8 +45,8 @@ app.routes = {
     },
     logout: function() {
       util.notify("Signing you out...", {persist: true, loader: true});
-      couch.logout().then(function(response) {
-        delete app.profile;
+      $.getJSON(app.baseURL + 'api/logout').then(function() {
+        delete app.session;
         util.notify("Signed out");
         util.render('signIn', 'project-controls');
         app.routes.tabs.data();
