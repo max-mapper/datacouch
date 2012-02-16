@@ -1,6 +1,7 @@
 var tako = require('tako')
   , couch = require('couch')
   , http = require('http')
+  , stoopid = require('stoopid')
   , api = require('./api')
   , auth = require('./auth')
   , database_provisioner = require('./database_provisioner')
@@ -13,7 +14,7 @@ module.exports = function (opts) {
   var exports = {}
   exports.opts = defaults(opts)
   
-  var t = tako()
+  var t = tako({logger:stoopid.logger('tako'), socketio:{logger:stoopid.logger('socketio')}})
 
   for (i in exports.opts) t[i] = exports.opts[i]
   
@@ -24,17 +25,5 @@ module.exports = function (opts) {
   transformer(t)
   api(t)
   
-  exports.app = t
-  t._listen = t.listen
-  
-  // Setup listen function for default port
-  exports.createServer = function (cb) {
-    t.listen = function (cb) {
-      t._listen(function(handler) {   
-        return http.createServer(handler)
-      }, t.port, cb)
-    }
-    return t
-  }
-  return exports
+  return t
 }
