@@ -7,6 +7,7 @@ var tako = require('tako')
   , database_provisioner = require('./database_provisioner')
   , csv_uploader = require('./csv_uploader')
   , transformer = require('./transformer')
+  , socks = require('./socks')
   , defaults = require('./defaults')
   ;
   
@@ -20,6 +21,7 @@ module.exports = function (opts) {
   
   // Run through all the sub applications
   auth(t)
+  socks(t)
   database_provisioner(t)
   csv_uploader(t)
   transformer(t)

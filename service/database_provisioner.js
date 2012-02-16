@@ -18,7 +18,8 @@ module.exports = function (t) {
   follow({db: db, filter: "datacouch/by_value", query_params: {k: "type", v: "newDatabase"}}, function(error, change) {
     if (error) return console.error(error)
     provision(db + '/' + change.id, function(err, newData) {
-      if(err) console.error(err)
+      if (err) return t.sockets.emit(newData._id, err)
+      t.sockets.emit(newData._id, false, newData)
     })
   })
     
@@ -31,7 +32,6 @@ module.exports = function (t) {
   }
   
   function processDatabase(doc, txncb) {
-    console.log('processDatabase');
     var dbName = doc._id
      , dbPath = couch + dbName
      , startTime = new Date()

@@ -13,6 +13,7 @@ var app = {
 
 couch.dbPath = app.baseURL + "api/";
 couch.rootPath = couch.dbPath + "couch/";
+app.io = io.connect('/');
 
 /*
   app.routes
@@ -158,28 +159,13 @@ app.after = {
       if (selectedNoun.length > 0) doc.nouns = [app.nouns[selectedNoun]];
 
       util.hide('dialog');
-
-      couch.request({url: app.baseURL + "api/" + doc._id, type: "PUT", data: JSON.stringify(doc)}).then(function(resp) {
-        var dbID = resp.id
-          , dbName = dbID + "/_design/recline"
-          ;
-        function waitForDB(url) {
-          couch.request({url: url, type: "HEAD"}).then(
-            function(resp, status){
-              window.location = app.baseURL + 'edit/#/' + dbID;
-            },
-            function(resp, status){
-              console.log("not created yet...", resp, status);
-              setTimeout(function() {
-                waitForDB(url);
-              }, 500);
-            }
-          )
-        }
-        util.show('dialog');
-        util.render('loadingMessage', 'modal', {message: "Creating dataset..."});
-        waitForDB(couch.rootPath + dbName);
+      util.render('loadingMessage', 'modal', {message: "Creating dataset..."});
+      app.io.emit('createDataset', doc)
+      app.io.on(doc._id, function (err, data) {
+        if (err) return util.render('loadingMessage', 'modal', {message: "Error... please refresh and try again. " + err})
+        window.location = app.baseURL + 'edit/#/' + doc._id;
       })
+      
     })
   },
   datasets: function() {
