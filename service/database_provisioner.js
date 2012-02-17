@@ -51,7 +51,6 @@ module.exports = function (t) {
          // TODO prevent user from forking the same dataset twice
          if (doc.forkedFrom) replicate(doc.forkedFrom, dbName, done)
          else pushCouchapp("recline", dbPath, done)
-         // setAdmin(dbName, doc.user)
        })
      
      })
@@ -100,28 +99,30 @@ module.exports = function (t) {
   }
 
   function createDB(url, cb) {
-    request({uri: url, method: "PUT"}, function (err, resp, body) {
+    request({uri: url, method: "PUT"}, function (err, resp, response) {
       if (err) return cb(new Error('ahh!! ' + err))
-      var response = body
-      if (!response) response = {"ok": true}
-      if (!response.ok) return cb(new Error(url + " - " + body))
-      return cb(false, resp.statusCode)
+      if (!response) response = {"ok": true}      
+      if (!response.ok) return cb(new Error(url + " - " + response))
+      makePrivate(url, function(err) {
+        if (err) return cb(err)
+        return cb(false, resp.statusCode)
+      })
     })
   }
 
   function addVhost(url, couchapp, cb) {
     request({uri: couch + "_config/vhosts/" + encodeURIComponent(url), method: "PUT", body: JSON.stringify(couchapp), json: false}, function (err, resp, body) {
-      if (err) cb(new Error('ahh!! ' + err))
-      cb(false, body)
+      if (err) return cb(new Error('ahh!! ' + err))
+      return cb(false, body)
     })
   }
 
-  function setAdmin(dbName, username, cb) {
-    var data = {"admins":{"names":[username],"roles":[]},"members":{"names":[],"roles":[]}};
-    request({uri: couch + dbName + "/_security", method: "PUT", body: data}, function (err, resp, body) {
-      if (err) cb(new Error('ahh!! ' + err))
-      if (!body.ok) cb(new Error('error setting admin: ' + body))
-      cb(false, body);
+  function makePrivate(dbURL, cb) {
+    var permissions = {"admins":{"names":[],"roles":[]},"members":{"names":[],"roles":["_admin"]}};
+    request({uri: dbURL + "/_security", method: "PUT", body: permissions}, function (err, resp, body) {
+      if (err) return cb(new Error('ahh!! ' + err))
+      if (!body.ok) return cb(new Error('error setting admin: ' + body))
+      return cb(false, body);
     })
   }
   
