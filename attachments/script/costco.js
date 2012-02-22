@@ -74,12 +74,13 @@ var costco = function() {
       var _id = data.uuids[0]
       transformDoc["_id"] = _id
       app.io.emit('save', transformDoc)
-      util.notify("Transforming documents. This could take a while... (you can close and come back later)", {persist: true, loader: true})
-      app.io.on(_id, function (err, doc) {
+      util.notify("Transforming documents...", {persist: true, loader: true})
+      app.io.on(_id, function (err, data) {
         if (err && callback) callback(err)
+        if (data.progress) return util.notify("Transforming documents... " + data.progress + "%", {persist: true, loader: true})
         util.notify("Documents updated successfully!")
         recline.initializeTable(app.offset)
-        if (callback) callback(false, doc)
+        if (callback) callback(false, data)
       })
     })
 
