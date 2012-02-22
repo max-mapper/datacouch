@@ -7,24 +7,23 @@ var request = require('request').defaults({json: true}),
   txn = require('txn')
 
 module.exports = function (t) {
-
   var configURL = url.parse(t.couchurl + "datacouch")
     , couch = configURL.protocol + "//" + configURL.host
     , db = couch + configURL.pathname
     ;
-
+    
   follow({db: db, include_docs: true, filter: "datacouch/by_value", query_params: {k: "type", v: "pendingTransformation"}}, function(error, change) {
     if (error) return console.error(error)
     txn({"uri": db + '/' + change.id}, transform, function(error, newData) {
       if (error) return console.error('transformation error on ' + change.id, err)
-      return console.log('transformation success on ', + newData.dataset)
-      throw error // Unknown error
+      t.sockets.emit(newData._id, false, newData)
+      return console.log('transformation success on ' + newData.dataset)
     })
   })
 
   function transform(doc, txncb) {
-    var down = request({url: couch + "/" + doc.dataset + '/_all_docs?include_docs=true'}),
-      up = request({url: couch + '/' + doc.dataset + '/_bulk_docs', method: "POST"}),
+    var down = request({url: t.couchurl + "/" + doc.dataset + '/_all_docs?include_docs=true'}),
+      up = request({url: t.couchurl + '/' + doc.dataset + '/_bulk_docs', method: "POST"}),
       tr = transfuse(['rows', /./, 'doc'], doc.transform, JSONStream.stringify("{\"docs\":[\n", "\n,\n", "\n]}\n"));
     down.pipe(tr)
     tr.pipe(up)

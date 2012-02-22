@@ -10,6 +10,10 @@ var app = {
   emitter: util.registerEmitter()
 };
 
+couch.dbPath = app.baseURL + "api/";
+couch.rootPath = couch.dbPath + "couch/";
+app.io = io.connect('/');
+
 app.handler = function(route) {
   if (route.params && route.params.id) {
     var path = route.params.route;
@@ -289,9 +293,10 @@ app.after = {
   geocode: function() {
     $('.modal-footer .ok').click(function(e) {
       util.hide('dialog');
-      costco.updateDocs(app.geocodeFunction).then(function(updated) {
-        util.notify('Geocoded ' + updated.length + ' docs and stored them in the "geometry" column', {showFor: 5000})
-      });
+      costco.updateDocs(app.geocodeFunction, function(updated) {
+        console.log('update resp', updated)
+        util.notify('Geocoded docs and stored them in the "geometry" column', {showFor: 5000})
+      })
     })
     
     var editor = $('.expression-preview-code');

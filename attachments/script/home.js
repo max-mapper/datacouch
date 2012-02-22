@@ -160,7 +160,7 @@ app.after = {
 
       util.hide('dialog');
       util.render('loadingMessage', 'modal', {message: "Creating dataset..."});
-      app.io.emit('createDataset', doc)
+      app.io.emit('save', doc)
       app.io.on(doc._id, function (err, data) {
         if (err) return util.render('loadingMessage', 'modal', {message: "Error... please refresh and try again. " + err})
         window.location = app.baseURL + 'edit/#/' + doc._id;

@@ -1,14 +1,13 @@
 // adapted from https://github.com/harthur/costco. heather rules
 
 var costco = function() {
+  var vm = require('vm');
   
   function evalFunction(funcString) {
-    try {
-      eval("var editFunc = " + funcString);
-    } catch(e) {
-      return {errorMessage: e+""};
-    }
-    return editFunc;
+    var funcString = '(' + funcString + ')'
+    try { eval(funcString) }
+    catch (e) { return {errorMessage: e+""} }
+    return vm.runInNewContext(funcString, {})
   }
   
   function previewTransform(docs, editFunc, currentColumn) {
@@ -26,7 +25,7 @@ var costco = function() {
         }
       }
       util.render('editPreview', 'expression-preview-container', {rows: preview});
-      util.notify('Geocoded ' + preview.length + ' preview docs')
+      util.notify('Rendered ' + preview.length + ' preview docs')
     });
   }
 
@@ -63,35 +62,27 @@ var costco = function() {
     })
   }
   
-  function updateDocs(editFunc) {
+  function updateDocs(editFunc, callback) {
     var transformDoc = {
       "transform": editFunc.toString(),
       "dataset": app.datasetInfo._id,
-      "type": "transformation",
-      "createdAt": new Date(),
-      "user": app.session.userCtx.name
+      "type": "pendingTransformation",
+      "user": app.profile._id
     }
     
-    var dfd = $.Deferred();
-    couch.request({type: "POST", url: app.baseURL + 'api', data: JSON.stringify(transformDoc)}).then(function(resp) {      
-      util.notify("Transforming documents. This could take a while... (you can close and come back later)", {persist: true, loader: true});
-      util.waitFor(function() {
-        var dfd = $.Deferred()
-        couch.request({url: app.baseURL + 'api/' + resp.id}).then(function(doc) {
-          if (doc.finishedAt) dfd.resolve()
-          else dfd.reject()
-        }, function(err) {
-          dfd.reject(err)
-        })
-        return dfd.promise()
-      }, function() { 
-        util.notify("Documents updated successfully!");
-        recline.initializeTable(app.offset);
+    couch.request({url: couch.rootPath + "_uuids"}).then( function( data ) {
+      var _id = data.uuids[0]
+      transformDoc["_id"] = _id
+      app.io.emit('save', transformDoc)
+      util.notify("Transforming documents. This could take a while... (you can close and come back later)", {persist: true, loader: true})
+      app.io.on(_id, function (err, doc) {
+        if (err && callback) callback(err)
+        util.notify("Documents updated successfully!")
+        recline.initializeTable(app.offset)
+        if (callback) callback(false, doc)
       })
-    }, function(err) {
-      dfd.reject(err);
-    });
-    return dfd.promise()
+    })
+
   }
   
   function updateDoc(doc) {
