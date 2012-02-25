@@ -9,5 +9,6 @@
     "transfuse": "0.0.3",
     "socket.io": "0.8.7"
   },
-  "version": "0.0.1"
+  "version": "0.0.1",
+  "start": "node run.js"
 }
