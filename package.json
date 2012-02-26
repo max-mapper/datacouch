@@ -17,6 +17,7 @@
     "watch"
   ],
   "dependencies": {
+    "async": "0.1.16",
     "couchapp": "0.8.1",
     "txn": "0.2.6",
     "csv": "0.0.10",

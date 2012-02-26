@@ -7,9 +7,8 @@ var request = require('request').defaults({json: true}),
   txn = require('txn')
 
 module.exports = function (t) {
-  var configURL = url.parse(t.couchurl + "datacouch")
-    , couch = configURL.protocol + "//" + configURL.host
-    , db = couch + configURL.pathname
+   var couch = t.couchurl
+    , db = t.couchurl + "datacouch"
     ;
     
   follow({db: db, include_docs: true, filter: "datacouch/by_value", query_params: {k: "type", v: "pendingTransformation"}}, function(error, change) {

@@ -115,23 +115,4 @@ ddoc.lists = {
   }
 }
 
-ddoc.validate_doc_update = function (newDoc, oldDoc, userCtx, securityCtx) {
-  if (userCtx.roles.indexOf('_admin') > -1) return;
-  if (newDoc.user === userCtx.name) return;
-
-  if (!userCtx.name) {
-    if ( !oldDoc && (newDoc.crowdsourced) ) return;
-    throw({forbidden : "You have to be signed in to change stuff."});;  
-  }
-  
-  if (!securityCtx.admins) securityCtx.admins = {names: []};
-
-  if (newDoc._deleted && securityCtx.admins.names.indexOf(userCtx.name) === -1) {
-    throw({forbidden : "Only dataset owners can delete documents."});;
-  }
-  if (newDoc && securityCtx.admins.names.indexOf(userCtx.name) === -1) {
-    throw({forbidden : "Only dataset owners can add or edit documents."});;
-  }
-};
-
 module.exports = ddoc;

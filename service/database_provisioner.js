@@ -14,7 +14,6 @@ module.exports = function (t) {
     , couch = t.couchurl
     , db = t.couchurl + "datacouch"
     ;
-
   follow({db: db, filter: "datacouch/by_value", query_params: {k: "type", v: "newDatabase"}}, function(error, change) {
     if (error) return console.error(error)
     provision(db + '/' + change.id, function(err, newData) {
@@ -70,7 +69,7 @@ module.exports = function (t) {
   }
 
   function pushCouchapp(app, target, cb) {
-    var source = couch + 'apps/_design/' + app + "?attachments=true"
+    var source = couch + 'datacouch-apps/_design/' + app + "?attachments=true"
       , destination = target + '/_design/' + app + "?new_edits=false"
       , headers = {'accept':"multipart/related,application/json"}
       , down = request.get({url: source, headers: headers})

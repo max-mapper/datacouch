@@ -39,7 +39,7 @@ function get(uri) {
 get(db + "/_design/datacouch/_view/by_date").then(function(datasets) {
   _.each(datasets, function(dataset) {
     console.log(dataset)
-    pushCouchapp("../db.js", couch + "/" + dataset.id).then(function() {
+    pushCouchapp("../recline.js", couch + "/" + dataset.id).then(function() {
       console.log('updated ' + dataset.id);
     });
   })
