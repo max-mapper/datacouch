@@ -90,3 +90,13 @@ Now you can start datacouch!
 
     node run.js
     open http://localhost:9999
+
+
+notes:
+
+twitter keys registration sucks, use localhost for callback
+apps database was missing
+dont do npm install, use bundled
+transforming errors
+catch transform syntax errors
+rename column

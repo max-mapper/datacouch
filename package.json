@@ -1,14 +1,34 @@
 {
   "name": "datacouch",
+  "subdomain": "data",
+  "bundleDependencies": [
+    "couchapp",
+    "filed",
+    "logref",
+    "request",
+    "routes",
+    "stoopid",
+    "underscore",
+    "couch",
+    "follow",
+    "morestreams",
+    "rewriter",
+    "tako",
+    "watch"
+  ],
   "dependencies": {
     "couchapp": "0.8.1",
-    "rewriter": "0.0.1",
     "txn": "0.2.6",
     "csv": "0.0.10",
     "JSONStream": "0.1.2",
     "transfuse": "0.0.3",
     "socket.io": "0.8.7"
   },
-  "version": "0.0.1",
-  "start": "node run.js"
+  "engine": {
+    "node": "0.6.x"
+  },
+  "version": "0.0.1-13",
+  "scripts": {
+    "start": "run.js"
+  }
 }
