@@ -2,6 +2,7 @@ var _ = require('underscore')
   , url = require('url')
   , defaults = 
     { couchurl : process.env['DATACOUCH_ROOT']
+    , appsurl : "http://burritomap.com"
     , vhosturl : "http://localhost:9999"
     , port : 9999
     , twitterKey: process.env['DATACOUCH_TWITTER_KEY']

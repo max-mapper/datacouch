@@ -10,8 +10,7 @@ var follow = require('follow')
 
 module.exports = function (t) {
 
-  var vhostDomain = t.vhosturl
-    , couch = t.couchurl
+  var couch = t.couchurl
     , db = t.couchurl + "datacouch"
     ;
   follow({db: db, filter: "datacouch/by_value", query_params: {k: "type", v: "newDatabase"}}, function(error, change) {

@@ -14,7 +14,10 @@ module.exports = function (t) {
   follow({db: db, include_docs: true, filter: "datacouch/by_value", query_params: {k: "type", v: "pendingTransformation"}}, function(error, change) {
     if (error) return console.error(error)
     txn({"uri": db + '/' + change.id, "timeout": 120000}, transform, function(err, newData) {
-      if (err) return console.error('transformation error on ' + change.id, err)
+      if (err) {
+        t.sockets.emit(newData._id, err)
+        return console.error('transformation error on ' + change.id, err)
+      }
       t.sockets.emit(newData._id, false, newData)
       return console.log('transformation success on ' + newData.dataset)
     })
@@ -49,5 +52,4 @@ module.exports = function (t) {
       })
     })
   }
-
 }
