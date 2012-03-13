@@ -15,6 +15,7 @@ module.exports = function (t) {
     if (_.include(["GET", "HEAD", "OPTIONS", "COPY"], req.method)) return cb()
     
     // validate all writes
+    if (!req.route.params.id) return cb()
     request(couch + 'datacouch/' + req.route.params.id, function(err, resp, doc) {
       if (!req.user) return cb('not logged in')
       if (err) return cb(err)
@@ -61,5 +62,6 @@ module.exports = function (t) {
     , { from:"/:user", to:"pages/index.html"}
   ]
   var ddoc = couch + "datacouch/_design/datacouch/"
+  console.log(ddoc)
   rewrite(t, rewrites, {port: t.port, ddoc: ddoc, attachments: path.resolve(__dirname, '..', 'attachments')})
 }

@@ -1,6 +1,6 @@
 serve apps with node point javascript! uses the unreleased streaming web framework codenamed tako
 
-all you need is a folder full of static assets and a little bit o' javascripts:
+all you need is a folder (or existing http server) full of static assets and a little bit o' javascripts:
 
     var tako = require('tako')
       , http = require('http')
@@ -14,6 +14,7 @@ all you need is a folder full of static assets and a little bit o' javascripts:
     var t = tako()
     
     rewriter(t, rewrites, { attachments: path.resolve(__dirname, 'attachments') })
+    // you can also do { attachments: "http://myawesomestaticfileserver.com" }
     
     t.listen(function(handler) {
       return http.createServer(handler)
