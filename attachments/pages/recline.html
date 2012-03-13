@@ -302,11 +302,11 @@
   
   <script type='text/mustache' class="ddocIframeTemplate">
     <div class="iframeDetails">
-      <span class="title">{{ddoc}}</span> (<a href="http://{{url}}">permalink</a>)
+      <span class="title">{{subdomain}}</span> (<a href="http://{{subdomain}}.burritomap.com:9999">permalink</a>)
     </div>
     <div id="view-panel">
       <div class="iframeContainer">
-        <iframe class="ddocIframe" src="http://{{url}}"></iframe>
+        <iframe class="ddocIframe" src="http://{{subdomain}}.burritomap.com:9999"></iframe>
       </div>
     </div>
   </script>
@@ -324,7 +324,7 @@
     <div class="bottom">
       {{#apps}}
         <ul>
-          <li class="root" data-url="{{url}}" data-ddoc="{{ddoc}}" id="project"><img src="/images/project.png">{{ddoc}}
+          <li class="root" data-subdomain="{{subdomain}}" id="project"><img src="/images/project.png">{{ddoc}}
           <div id="files">
             <ul>
               <li class="hidden"><img src="/images/ajax-loader.gif">Loading project...

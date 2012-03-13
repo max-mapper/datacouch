@@ -44,7 +44,7 @@ var util = function() {
   }
   
   function loggedIn() {
-    return app.session && app.session.userCtx.name;
+    return app.profile && app.profile._id
   }
   
   function catchModals( route ) {
@@ -736,25 +736,14 @@ var util = function() {
         util.hide('dialog');
         util.notify('That app is already installed');
       } else {
-        var doc = {type: "app", user: app.session.userCtx.name, dataset: dataset, ddoc: ddoc};
+        var doc = {type: "app", user: app.profile._id, dataset: dataset, ddoc: ddoc};
         couch.request({url: app.baseURL + "api", type: "POST", data: JSON.stringify(doc)}).then(function(resp) {
-          function waitUntilExists(docURL, property) {
-            couch.request({url: docURL}).then(
-              function(resp) {
-                if(resp[property]) {
-                  util.hide('dialog');
-                  app.routes.tabs['apps']();
-                } else {
-                  console.log("not created yet...", resp);
-                  setTimeout(function() {
-                    waitUntilExists(docURL, property);
-                  }, 500);
-                }
-              }
-            )
-          }
+          console.log('resp', resp)
+          app.io.on(resp.id, function (err, data) {
+            util.hide('dialog');
+            app.routes.tabs['apps']();
+          })
           util.render('busy', 'modal', {message: "Installing app..."});
-          waitUntilExists(couch.rootPath + "api/" + resp.id, "url");
         })
       }
     })

@@ -7,7 +7,7 @@ var tako = require('tako')
   ;
 
 module.exports = function (t) {
-  
+
   var users = couch(t.couchurl + 'datacouch-users')
   var sessions = couch(t.couchurl + 'datacouch-sessions')
   

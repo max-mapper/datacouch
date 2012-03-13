@@ -7,19 +7,19 @@ var follow = require('follow')
 module.exports = function (router, t) {
   follow({db: t.couchurl+ 'datacouch', include_docs: true, filter: "datacouch/by_value", query_params: {k: "type", v: "app"}}, function(err, change) {
     if (err) return console.error(err)
-    if (!change.doc.subdomain) return false //console.error("no subdomain in", change.doc._id)
     var ddoc = t.couchurl + change.doc.dataset + '/_design/' + change.doc.ddoc
     request(ddoc, function(err, resp, app) {
       function bootApp(app) {
         var burritomap = tako({logger:stoopid.logger(change.doc._id), socketio:false})
         new Rewriter(burritomap, app.rewrites.concat({from:"pizza", to:"carl"}), {ddoc: ddoc, attachments: ddoc})
-        console.log(change.doc.subdomain + "." + t.appsurl)
-        router.host(change.doc.subdomain + "." + t.appsurl, burritomap)
+        console.log(change.doc._id + "." + t.appsurl)
+        router.host(change.doc._id + "." + t.appsurl, burritomap)
+        t.sockets.emit(change.doc._id, {ok: true, url: change.doc._id + "." + t.appsurl})
       }
       if (err) return console.err(err)
       if (resp.statusCode === 404) {
         return copyCouchapp(change.doc.ddoc, t.couchurl + change.doc.dataset, function(err, resp) {
-          if (err) return console.err(err)
+          if (err) return console.error(err)
           request(ddoc, function(err, resp, app) {
             if (err) return console.err(err)
             return bootApp(app)
