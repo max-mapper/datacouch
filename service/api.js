@@ -3,7 +3,7 @@ var request = require('request').defaults({json: true})
   , filed = require('filed')
   , path = require('path')
   , url = require('url')
-  , rewrite = require('rewriter')
+  , Rewriter = require('rewriter')
   , _ = require('underscore')
   ;
 
@@ -60,8 +60,8 @@ module.exports = function (t) {
         ]
       }
     , { from:"/:user", to:"pages/index.html"}
+    , { from:"/*", to:"*"}
   ]
   var ddoc = couch + "datacouch/_design/datacouch/"
-  console.log(ddoc)
-  rewrite(t, rewrites, {port: t.port, ddoc: ddoc, attachments: path.resolve(__dirname, '..', 'attachments')})
+  new Rewriter(t, rewrites, {ddoc: ddoc, attachments: path.resolve(__dirname, '..', 'attachments')})
 }

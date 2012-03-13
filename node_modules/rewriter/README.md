@@ -5,7 +5,7 @@ all you need is a folder (or existing http server) full of static assets and a l
     var tako = require('tako')
       , http = require('http')
       , path = require('path')
-      , rewriter = require('rewriter')
+      , Rewriter = require('rewriter')
       , rewrites = [ 
           { from:"/", to:'index.html' }
         ]
@@ -13,7 +13,7 @@ all you need is a folder (or existing http server) full of static assets and a l
    
     var t = tako()
     
-    rewriter(t, rewrites, { attachments: path.resolve(__dirname, 'attachments') })
+    new Rewriter(t, rewrites, { attachments: path.resolve(__dirname, 'attachments') })
     // you can also do { attachments: "http://myawesomestaticfileserver.com" }
     
     t.listen(function(handler) {
@@ -34,7 +34,7 @@ rewriter was built to work easily with couchdb! you can do things like serve cou
         ]
       ;
       
-    rewriter(t, rewrites)
+    new Rewriter(t, rewrites)
     
 you can specify an async middleware errback function that the proxied request will be run through either singularly or using a group
 
@@ -54,7 +54,7 @@ the callback is in the form `callback(err)` and must be called for the request t
         ]
       ;
 
-    rewriter(t, rewrites)
+    new Rewriter(t, rewrites)
 
 there is also a shorthand for querying the couch view server (start to: with _ and pass in the design document URL):
 
@@ -66,6 +66,6 @@ there is also a shorthand for querying the couch view server (start to: with _ a
       , {from:"/api/datasets", to:"_view/by_date", query:{include_docs:"true", descending: "true"}}
     ]
     
-    rewriter(t, rewrites, {ddoc: "http://localhost:5984/mydataset/_design/mydesigndocument"})
+    new Rewriter(t, rewrites, {ddoc: "http://localhost:5984/mydataset/_design/mydesigndocument"})
 
 MIT License

@@ -1,6 +1,9 @@
 {
   "name": "datacouch",
   "subdomain": "data",
+  "domains": [
+    "burritomap.com"
+  ],
   "bundleDependencies": [
     "couchapp",
     "filed",
@@ -11,9 +14,10 @@
     "underscore",
     "couch",
     "follow",
-    "morestreams",
     "rewriter",
+    "morestreams",
     "tako",
+    "transfuse",
     "watch"
   ],
   "dependencies": {
@@ -22,14 +26,16 @@
     "txn": "0.2.6",
     "csv": "0.0.10",
     "JSONStream": "0.1.2",
-    "transfuse": "0.0.3",
     "socket.io": "0.8.7"
   },
   "engine": {
     "node": "0.6.x"
   },
-  "version": "0.0.1-13",
+  "version": "0.0.1-30",
   "scripts": {
     "start": "run.js"
+  },
+  "engines": {
+    "node": "v0.6.x"
   }
 }
