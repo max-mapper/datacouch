@@ -430,6 +430,7 @@ app.after = {
     $('.root').live('click', function(e) {
       var clicked = $(e.target)
         , subdomain = clicked.attr('data-subdomain')
+        , ddoc = clicked.attr('data-ddoc')
         ;
       if(clicked.hasClass('selected')) return;
       $('.sidebar .selected').removeClass('selected');

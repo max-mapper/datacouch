@@ -11,17 +11,17 @@ module.exports = function (router, t) {
     request(ddoc, function(err, resp, app) {
       function bootApp(app) {
         var burritomap = tako({logger:stoopid.logger(change.doc._id), socketio:false})
-        new Rewriter(burritomap, app.rewrites.concat({from:"pizza", to:"carl"}), {ddoc: ddoc, attachments: ddoc})
+        new Rewriter(burritomap, app.rewrites, {ddoc: ddoc, attachments: ddoc})
         console.log(change.doc._id + "." + t.appsurl)
         router.host(change.doc._id + "." + t.appsurl, burritomap)
         t.sockets.emit(change.doc._id, {ok: true, url: change.doc._id + "." + t.appsurl})
       }
-      if (err) return console.err(err)
+      if (err) return console.error(err)
       if (resp.statusCode === 404) {
         return copyCouchapp(change.doc.ddoc, t.couchurl + change.doc.dataset, function(err, resp) {
           if (err) return console.error(err)
           request(ddoc, function(err, resp, app) {
-            if (err) return console.err(err)
+            if (err) return console.error(err)
             return bootApp(app)
           })
         })
