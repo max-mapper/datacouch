@@ -7,7 +7,7 @@ var _ = require('underscore')
 
 module.exports = function (router, t) {
   
-  t.route("/api/burritomaps", function(req, resp) {
+  t.route("/burritomaps", function(req, resp) {
     resp.end(JSON.stringify(Object.keys(router.hosts)))
   })
   

@@ -9,7 +9,7 @@ var _ = require('underscore')
     , twitterSecret: process.env['DATACOUCH_TWITTER_SECRET']
     }
   ;
-  
+
 module.exports = function (obj) { 
   obj = _.extend(defaults, obj || {})
   if (obj.vhosturl && !obj.port) obj.port = url.parse(obj.vhosturl).port
