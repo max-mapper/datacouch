@@ -14,7 +14,6 @@ Very much a work in progress as of Spring 2012!
 - Real-time dataset replication and changes feed (SLEEP/syncable.org)
 - Geospatial queries
 - Data-driven HTML5 application hosting
-- Etherpad/Google docs style collaborative wiki
 - Out of the box app visualizations + templates
 - In-browser application source editor
 - Geographic point reprojection (between any EPSG definitions)
@@ -25,6 +24,7 @@ Very much a work in progress as of Spring 2012!
 - UI for rolling back through different dataset revisions
 - Dataset pull requests and merging interface
 - XML, XLS and other import/export options
+- Etherpad/Google docs style collaborative wiki
 - Additional bulk data editing helper functions
 - Integration with BuzzData/CKAN/Infochimps (by convincing them to make better APIs)
 
@@ -57,6 +57,7 @@ Once your app is complete copy the consumer secret, key and couch url (with admi
 
     export DATACOUCH_TWITTER_KEY="KEY FROM https://dev.twitter.com/ HERE"
     export DATACOUCH_TWITTER_SECRET="SECRET FROM https://dev.twitter.com/ HERE"
+    export DATACOUCH_NONADMIN_ROOT="http://localhost:5984"
     export DATACOUCH_ROOT="http://admin:pass@localhost:5984"
 
 Once you save your environment variables either: close your terminal or run `source .bashrc` or `source .bash_profile` to load your environment changes.
@@ -65,3 +66,5 @@ Now you can start datacouch!
 
     node run.js
     open http://localhost:9999
+
+if you get errors the first time you run `run.js` just run it a few times and it should work itself out hehehehe!
