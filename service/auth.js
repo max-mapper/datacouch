@@ -164,6 +164,11 @@ module.exports = function (t) {
   
   t
     .route('/api/profile', function (req, resp) {
+      if (!req.user.twitter.token) {
+        resp.setHeader('content-type', 'application/json')
+        resp.end(JSON.stringify({ok: false, status: 'User has no profile yet'}))
+        return
+      }
       var user = req.user.twitter.token.screen_name
       jsonreq(users.url + user).pipe(resp)
     })
@@ -177,7 +182,7 @@ module.exports = function (t) {
       })
       setCookie('', resp)
       resp.setHeader('content-type', 'application/json')
-      resp.end(JSON.stringify({ok: true, status: 'Logged out successfully'}))
+      resp.end(JSON.stringify({ok: true, error: 'Logged out successfully'}))
     })
     .must('auth')
 

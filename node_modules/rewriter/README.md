@@ -56,16 +56,16 @@ the callback is in the form `callback(err)` and must be called for the request t
 
     new Rewriter(t, rewrites)
 
-there is also a shorthand for querying the couch view server (start to: with _ and pass in the design document URL):
+there is also a shorthand for specifying a `root` url that will be used in all absolute `to` rewrites (ones that begin with a forward slash e.g. `to: "/hello"`). conversely, all relative rewrites (no forward slash at the beginning e.g. `to: "hello.html"`) will be routed to the `attachments` directory
 
     var rewrites = [ 
-        {from:"/api/applications/:dataset", to:"_view/applications", query:{endkey:":dataset", startkey:":dataset", include_docs:"true", descending: "true"}}
-      , {from:"/api/applications", to:"_view/applications", query:{include_docs:"true", descending: "true"}}
-      , {from:"/api/applications/user/:user", to:"_view/applications_by_user", query:{endkey:":user", startkey:":user", include_docs:"true", descending: "true"}}
-      , {from:"/api/datasets/:user", to:"_view/by_user", query:{endkey: [":user",null], startkey:[":user",{}], include_docs:"true", descending: "true"}}
-      , {from:"/api/datasets", to:"_view/by_date", query:{include_docs:"true", descending: "true"}}
+        {from:"/api/applications/:dataset", to:"/_view/applications", query:{endkey:":dataset", startkey:":dataset", include_docs:"true", descending: "true"}}
+      , {from:"/api/applications", to:"/_view/applications", query:{include_docs:"true", descending: "true"}}
+      , {from:"/api/applications/user/:user", to:"/_view/applications_by_user", query:{endkey:":user", startkey:":user", include_docs:"true", descending: "true"}}
+      , {from:"/api/datasets/:user", to:"/_view/by_user", query:{endkey: [":user",null], startkey:[":user",{}], include_docs:"true", descending: "true"}}
+      , {from:"/api/datasets", to:"/_view/by_date", query:{include_docs:"true", descending: "true"}}
     ]
     
-    new Rewriter(t, rewrites, {ddoc: "http://localhost:5984/mydataset/_design/mydesigndocument"})
+    new Rewriter(t, rewrites, {root: "http://localhost:5984/mydataset/_design/mydesigndocument"})
 
 MIT License

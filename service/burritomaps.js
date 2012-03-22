@@ -18,7 +18,7 @@ module.exports = function (router, t) {
     request(ddoc, function(err, resp, app) {
       function bootApp(app) {
         var burritomap = tako({logger:stoopid.logger(change.doc._id), socketio:false})
-        new Rewriter(burritomap, app.rewrites, {ddoc: ddoc, attachments: ddoc})
+        new Rewriter(burritomap, app.rewrites, {root: ddoc, attachments: ddoc})
         console.log(change.doc._id + "." + t.appsurl)
         router.host(change.doc._id + "." + t.appsurl, burritomap)
         t.sockets.emit(change.doc._id, {ok: true, url: change.doc._id + "." + t.appsurl})

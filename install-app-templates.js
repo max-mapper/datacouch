@@ -40,8 +40,7 @@ function pushCouchapp(app, target, callback) {
 getRepos('burritomaps', function(err, repos) {
   if (err) return console.error('repo fetch error', err)
   repos.forEach(function(repo) {
-    cloneOrPull(repo, function(err) {
-      if (err) return console.error('clone stderr', err)
+    cloneOrPull(repo, function() {
       var app = require('./' + repo.name + '/couchapp.js')
       pushCouchapp(app, couchapps, function() {
         console.log("pushed", app._id)

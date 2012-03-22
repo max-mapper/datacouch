@@ -11,9 +11,9 @@ var app = {
   cache: {}
 };
 
-couch.dbPath = app.baseURL + "api/";
-couch.rootPath = couch.dbPath + "couch/";
-app.io = io.connect('/');
+couch.dbPath = app.baseURL + "api/"
+couch.rootPath = couch.dbPath + "couch/"
+app.io = io.connect(app.baseURL)
 
 /*
   app.routes

@@ -28,8 +28,9 @@ $(function(){
       var dfd = $.Deferred();
       couch.request({url: app.baseURL + "api/profile"}).then(
         function(profile) {
-          app.profile = profile;
-          dfd.resolve( profile );
+          if (("ok" in profile) && profile.ok == false) return dfd.reject(profile.error)
+          app.profile = profile
+          dfd.resolve( profile )
         },
         function(error) {
           dfd.reject(error)
