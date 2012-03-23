@@ -10,9 +10,9 @@ var app = {
   emitter: util.registerEmitter()
 };
 
-couch.dbPath = app.baseURL + "api/";
-couch.rootPath = couch.dbPath + "couch/";
-app.io = io.connect('/');
+couch.dbPath = app.baseURL + "api/"
+couch.rootPath = couch.dbPath + "couch/"
+app.io = io.connect(app.baseURL);
 
 app.handler = function(route) {
   if (route.params && route.params.id) {
@@ -36,11 +36,15 @@ app.routes = {
   modals: {
     browse: function() {
       couch.request({url: app.baseURL + "api/templates"}).then(function(templates) {
-        var templateData = {templates: _(templates.rows).map(function(row) { 
-          return _.extend({}, row.doc, { 
-            screenshot: app.baseURL + "api/" + row.doc._id + '/screenshot.png'
-          })
-        })}
+        var valid = []
+        _(templates.rows).each(function(row) {
+          if (!row.doc.name || !row.doc.description) return
+          valid.push(_.extend({}, row.doc, { 
+            screenshot: app.baseURL + "api/templates/" + row.doc._id + '/screenshot.png',
+            ddoc: row.doc._id.split('/')[1]
+          }))
+        })
+        var templateData = {templates: valid}
         recline.showDialog("appTemplates", templateData);
       })
     },
@@ -59,7 +63,7 @@ app.routes = {
     edit: function() { recline.showDialog('editDatasetInfo', app.datasetInfo) },
     loggedIn: function() { },
     fork: function(id) {
-      monocles.ensureProfile().then(function(profile) {
+      monocles.fetchProfile().then(function(profile) {
         recline.showDialog('busy', {message: "Forking to your account..."});
         couch.request({url: app.baseURL + "api/" + id }).then( function( dataset ) { 
           couch.request({url: couch.rootPath + "_uuids"}).then( function( data ) { 

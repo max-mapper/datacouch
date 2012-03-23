@@ -6,14 +6,9 @@ var follow = require('follow')
 var _ = require('underscore')
 
 module.exports = function (router, t) {
-  
-  t.route("/burritomaps", function(req, resp) {
-    resp.end(JSON.stringify(Object.keys(router.hosts)))
-  })
-  
   follow({db: t.couchurl+ 'datacouch', include_docs: true, filter: "datacouch/by_value", query_params: {k: "type", v: "app"}}, function(err, change) {
     if (err) return console.error("follow error", t.couchurl+ 'datacouch',  err)
-    if (change.doc.deleted) return
+    if (change.deleted) return
     var ddoc = t.couchurl + change.doc.dataset + '/_design/' + change.doc.ddoc
     request(ddoc, function(err, resp, app) {
       function bootApp(app) {

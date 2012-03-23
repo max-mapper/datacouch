@@ -26,13 +26,13 @@
     "couchapp": "0.8.1",
     "txn": "0.2.6",
     "csv": "0.0.10",
-    "JSONStream": "0.1.2",
+    "JSONStream": "0.1.3",
     "socket.io": "0.8.7"
   },
   "engine": {
     "node": "0.6.x"
   },
-  "version": "0.0.1-47",
+  "version": "0.0.1-57",
   "scripts": {
     "start": "run.js"
   },

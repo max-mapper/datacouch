@@ -29,9 +29,15 @@ module.exports = function (opts) {
   transformer(t)
   api(t)
 
+  router.default(t)
   router.port = exports.opts.port
   burritomaps(router, t)
-  router.default(t)
+  
+  var burritomap = tako()
+  burritomap.route("/", function(req, resp) {
+    resp.end(JSON.stringify(Object.keys(router.hosts)))
+  })
+  router.host('burritomap.com', burritomap)
   
   return router
 }

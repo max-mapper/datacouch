@@ -42,6 +42,7 @@ module.exports = function (t) {
     , { from:"/api/profile/all", to:"/datacouch-users/_design/users/_list/all/users"}
     , { from:"/api/trending", to: ddoc + "_view/popular", query:{include_docs: "true", descending: "true", limit: "10"}}
     , { from:"/api/templates", to:"/datacouch-apps/_all_docs", query:{include_docs:"true", startkey: "_design/", endkey: "_design0"}}
+    , { from:"/api/templates/*", to:"/datacouch-apps/*",}
     , { from:"/api/users/search/:user", to:"/datacouch-users/_design/users/_view/users", query:{startkey:":user", endkey:":user", include_docs: "true"}}
     , { from:"/db/:id/csv", to:'/:id/_design/recline/_list/csv/all'}
     , { from:"/db/:id/json", to:'/:id/_design/recline/_list/bulkDocs/all'}
@@ -63,5 +64,5 @@ module.exports = function (t) {
     , { from:"/:user", to:"pages/index.html"}
     , { from:"/*", to:"*"}
   ]
-  new Rewriter(t, rewrites, {root: couch, attachments: path.resolve(__dirname, '..', 'attachments')})
+  new Rewriter(t, rewrites, {verbose: true, root: couch, attachments: path.resolve(__dirname, '..', 'attachments')})
 }

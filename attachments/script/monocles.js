@@ -24,7 +24,7 @@ $(function(){
     }
 
     // gets user's stored profile info from couch
-    function fetchProfile(session) {
+    function fetchProfile() {
       var dfd = $.Deferred();
       couch.request({url: app.baseURL + "api/profile"}).then(
         function(profile) {
