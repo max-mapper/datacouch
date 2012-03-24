@@ -237,25 +237,44 @@ var recline = function() {
   function bootstrap(id) {
     app.dbPath = app.baseURL + "db/" + id;
     
-    util.listenFor(['esc', 'return']);
-    
     getDbInfo(app.dbPath).then(function( dbInfo ) {
-      util.render( 'generating', 'project-actions' );    
-            
-      showSessionButtons();
+      util.render( 'generating', 'project-actions' );
       
-      couch.request({url: app.baseURL + "api/" + id}).then(function(datasetInfo) {
+      var sessionButtonsRenderer = showSessionButtons()
+      
+      updateDocCount(dbInfo.doc_count)
+      
+      app.emitter.on('metadata', function(datasetInfo) {
         app.datasetInfo = datasetInfo;
         app.ddocs = {};
         util.render('sidebar', 'left-panel');
       })
-
-      initializeTable();
+      
+      showDialog('busy')
+      app.emitter.on('headers', function ( headers ) {
+        util.hide('dialog')
+        app.headers = headers;
+        app.csvUrl = app.dbPath + '/csv?headers=' + escape(JSON.stringify(headers));
+        sessionButtonsRenderer.then(function() {
+          hasFork(function(fork) {
+            util.render( 'actions', 'project-actions',
+              $.extend({}, app.dbInfo, {
+                url: app.csvUrl,
+                isOwner: recline.isOwner(),
+                showForkButton: function() {
+                  return (util.loggedIn() && !recline.isOwner() && !fork);
+                },
+                fork: fork
+              })
+            )
+          })
+        })
+      })
     })
   }
   
   function showSessionButtons() {
-    monocles.fetchProfile().then(function(profile) {
+    return monocles.fetchProfile().then(function(profile) {
       app.profile = profile;
       util.render('signOut', 'project-controls');
     }, function() {
@@ -278,32 +297,6 @@ var recline = function() {
     return app.datasetInfo.user === app.profile._id;
   }
   
-  function initializeTable(offset) {
-    util.render( 'tableContainer', 'right-panel' );
-    showDialog('busy');
-    couch.request({url: app.dbPath + '/headers'}).then(function ( headers ) {
-      util.hide('dialog');
-      getDbInfo(app.dbPath).then(function(dbInfo) { 
-        updateDocCount(dbInfo.doc_count);
-      });
-      app.headers = headers;
-      app.csvUrl = app.dbPath + '/csv?headers=' + escape(JSON.stringify(headers));
-      hasFork(function(fork) {
-        util.render( 'actions', 'project-actions', 
-          $.extend({}, app.dbInfo, {
-            url: app.csvUrl,
-            isOwner: recline.isOwner(),
-            showForkButton: function() {
-              return (util.loggedIn() && !recline.isOwner() && !fork);
-            },
-            fork: fork
-          })
-        );
-      })
-      fetchRows(false, offset);
-    })
-  }
-  
   return {
     formatDiskSize: formatDiskSize,
     handleMenuClick: handleMenuClick,
@@ -316,7 +309,6 @@ var recline = function() {
     getPageSize: getPageSize,
     renderRows: renderRows,
     hasFork: hasFork,
-    isOwner: isOwner,
-    initializeTable: initializeTable
+    isOwner: isOwner
   };
 }();

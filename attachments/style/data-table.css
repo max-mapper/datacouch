@@ -24,9 +24,29 @@
 td.collapsed {width: 5%; overflow: auto;}
 .column-header-title.collapsed { background: url('images/raquo.png') no-repeat right 8px; }
 .data-table-cell-value.collapsed {width: 60px; overflow: hidden;}
-.alert-messages {
-  pos
+#loading-message {
+  text-align: center;
+  font-size: 300%;
+  color: #999;
+  padding: 3em .5em;
 }
+
+#loading-message img {
+  position: relative;
+  top: -4px;
+}
+
+#notification-container {
+  width: 400px;
+  left: 520px;
+  position: fixed;
+  top: 2px;
+  height: 40px;
+  overflow: hidden;
+  z-index: 100;
+  text-align: center;
+}
+
 /*end custom styles*/
 
 /*
@@ -179,3 +199,4 @@ a#logged-in-status {
 #facet-panel, #history-panel {
   overflow: auto;
 }
+

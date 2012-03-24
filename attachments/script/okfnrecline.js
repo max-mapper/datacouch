@@ -1474,7 +1474,7 @@ my.notify = function(message, options) {
         {{/loader}} \
     </div>';
   var _templated = $.mustache(_template, tmplData); 
-  _templated = $(_templated).appendTo($('.data-explorer .alert-messages'));
+  _templated = $(_templated).appendTo($('#notification-container'));
   if (!options.persist) {
     setTimeout(function() {
       $(_templated).fadeOut(1000, function() {

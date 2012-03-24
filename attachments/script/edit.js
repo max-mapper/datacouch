@@ -488,6 +488,7 @@ $(function() {
   // see if route matches /edit/#/somedatasetid
   var id = $.url(window.location.href).segment(2);
   if (id.length > 0) {
+    recline.bootstrap(id)
     app.routes.pages.dataset(id)
   } else {
     app.routes.pages.noID()

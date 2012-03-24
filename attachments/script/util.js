@@ -948,22 +948,24 @@ var util = function() {
   
   function loadDataset(datasetId, callback) {
     var dbPath = app.baseURL + "db/" + datasetId
-    console.log(app.baseURL, dbPath)
     var table = {}
     
     var headersRequest = couch.request({url: dbPath + '/headers'})
-    headersRequest.then(function ( headers ) { table.fields = _.map(headers, function(h) { return {id: h}})})
+    headersRequest.then(function ( headers ) { 
+      app.emitter.emit(headers, 'headers')
+      table.fields = _.map(headers, function(h) { return {id: h}})
+    })
     
     var rowsRequest = couch.request({url: dbPath + '/json'})
     rowsRequest.then(function ( data ) { table.documents = data.docs })
     
     var metadataRequest = couch.request({url: app.baseURL + "api/" + datasetId})
     metadataRequest.then(function ( dbInfo ) {
+      app.emitter.emit(dbInfo, 'metadata')
       table.metadata = {id: dbInfo._id, title: dbInfo.name}
     })
     
     $.when.apply(null, [headersRequest, rowsRequest, metadataRequest]).then(function() {
-      console.log('done', table)
       var backend = new recline.Backend.Memory();
       backend.addDataset(table);
       var dataset = new recline.Model.Dataset({id: datasetId}, backend);
