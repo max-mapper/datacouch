@@ -47,6 +47,13 @@ td.collapsed {width: 5%; overflow: auto;}
   text-align: center;
 }
 
+.project-actions .btn-group {
+  float: left;
+}
+
+.project-actions .dropdown-menu {
+  left: -97px;
+}
 /*end custom styles*/
 
 /*

@@ -85,76 +85,7 @@ var recline = function() {
       e.preventDefault();
     }) 
   }
-  
-  function renderRows(response) {
-    var rows = response.rows;
-    
-    if (rows.length < 1) {
-      util.render('dataTable', 'data-table-container', {loggedIn: util.loggedIn()});
-      return;
-    };
-    
-    var tableRows = [];
-    
-    rows.map(function(row) {
-      var cells = [];
-      app.headers.map(function(header) {
-        var value = "";
-        if (row.value[header]) {
-          value = row.value[header];
-          if (typeof(value) == "object") value = JSON.stringify(value);
-        }
-        var cell = {header: header, value: value};
-        if (_.include(["_id", "_rev"], header)) cell.state = "collapsed";
-        cells.push(cell);
-      })
-      tableRows.push({id: row.value._id, cells: cells});
-      
-    })
-    
-    var headers = app.headers.map(function(header) {
-      var header = {header: header};
-      if (_.include(["_id", "_rev"], header.header)) header.state = "collapsed";
-      return header;
-    })
-    
-    util.render('dataTable', 'data-table-container', {
-      rows: tableRows,
-      headers: headers,
-      notEmpty: function() { return app.headers.length > 0 },
-      loggedIn: util.loggedIn(),
-      isOwner: isOwner()
-    })
-    
-    app.newest = rows[0].id;
-    app.oldest = rows[rows.length - 1].id;
-    app.offset = response.offset;
 
-    function activate(e) {
-      e.removeClass('inaction').addClass('action');
-    }
-    
-    function deactivate(e) {
-      e.removeClass('action').addClass('inaction');
-    }
-        
-    if (app.offset + getPageSize() >= app.dbInfo.doc_count) {
-      deactivate($( '.viewpanel-paging .last'));
-      deactivate($( '.viewpanel-paging .next'));
-    } else {
-      activate($( '.viewpanel-paging .last'));
-      activate($( '.viewpanel-paging .next'));
-    }
-    
-    if (app.offset === 0) {
-      deactivate($( '.viewpanel-paging .previous'));
-      deactivate($( '.viewpanel-paging .first'));
-    } else {
-      activate($( '.viewpanel-paging .previous'));
-      activate($( '.viewpanel-paging .first'));
-    }
-  }
-  
   function activateControls() {
     $( '.viewPanel-pagingControls-page' ).click(function( e ) {      
       $(".viewpanel-pagesize .selected").removeClass('selected');
@@ -248,6 +179,19 @@ var recline = function() {
         app.datasetInfo = datasetInfo;
         app.ddocs = {};
         util.render('sidebar', 'left-panel');
+        var datasetInfo = _.extend({}, app.datasetInfo, { 
+          canEdit: function() { return util.loggedIn() && ( app.datasetInfo.user === app.profile._id ) }
+        });
+        if (datasetInfo.nouns) datasetInfo.hasNouns = true;
+        util.render('dataTab', 'sidebar', datasetInfo)
+        
+        couch.request({url: app.baseURL + 'api/applications/' + app.dbInfo.db_name}).then(function(resp) {
+          var apps = _.map(resp.rows, function(row) {
+            return {ddoc: row.doc.ddoc, url: row.doc.url, subdomain: row.doc._id};
+          })
+          util.render('appsTab', 'bottom', {apps: apps, loggedIn: util.loggedIn()})        
+        })
+        
       })
       
       showDialog('busy')
@@ -307,7 +251,6 @@ var recline = function() {
     fetchRows: fetchRows,
     activateControls: activateControls,
     getPageSize: getPageSize,
-    renderRows: renderRows,
     hasFork: hasFork,
     isOwner: isOwner
   };

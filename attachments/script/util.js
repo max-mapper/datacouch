@@ -203,8 +203,7 @@ var util = function() {
   function render( template, target, data ) {
     if (! (target instanceof jQuery)) target = $( "." + target + ":first" );
     target.html( $.mustache( $( "." + template + "Template:first" ).html(), data || {} ) );
-    // commented out in backbone-ification
-    // if (template in app.after) app.after[template]();
+    if (template in app.after) app.after[template]();
   }
 
   function notify( message, options ) {

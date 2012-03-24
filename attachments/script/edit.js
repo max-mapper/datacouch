@@ -109,31 +109,6 @@ app.routes = {
     close: function() {
       util.hide('dialog');
     }
-  },
-  tabs: {
-    data: function() {
-      var datasetInfo = _.extend({}, app.datasetInfo, { 
-        canEdit: function() { return util.loggedIn() && ( app.datasetInfo.user === app.profile._id ) }
-      });
-      if (datasetInfo.nouns) datasetInfo.hasNouns = true;
-      util.render('dataTab', 'sidebar', datasetInfo)
-      util.searchTwitter(window.location.href).then(
-        function(results) {
-          util.render('tweetStream', 'tweetsContainer', results)
-        })
-      recline.initializeTable(app.offset);
-    },
-    apps: function() {
-      couch.request({url: app.baseURL + 'api/applications/' + app.dbInfo.db_name}).then(function(resp) {
-        var apps = _.map(resp.rows, function(row) {
-          return {ddoc: row.doc.ddoc, url: row.doc.url, subdomain: row.doc._id};
-        })
-        util.render('appsTab', 'sidebar', {apps: apps, loggedIn: util.loggedIn()})        
-      })
-    },
-    wiki: function() {
-      util.render('wikiTab', 'sidebar', {loggedIn: util.loggedIn()});
-    }
   }
 }
 

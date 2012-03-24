@@ -111,26 +111,25 @@
         <span class="fork icon"></span><span>Your fork</span>
       </a>
     {{/fork}}
-    {{#isOwner}}
-      <a class="button" data-action="import" href="javascript:{}"><span data-action="import" class="button-menu">Import</span></a>
-      <a class="button" data-action="edit" href="javascript:{}"><span data-action="transform" class="button-menu">Edit</span></a>
-    {{/isOwner}}
-    <a class="button" data-action="export" href="javascript:{}"><span data-action="export" class="button-menu">Export</span></a>
-  </script>
-
-  <script type='text/mustache' class="importActionsTemplate">
-    <li><a data-action="urlImport" class="menuAction" href="JavaScript:void(0);">JSON API</a></li>
-    <li><a data-action="pasteImport" class="menuAction" href="JavaScript:void(0);">Paste JSON</a></li>
-    <li><a data-action="uploadImport" class="menuAction" href="JavaScript:void(0);">Upload CSV</a></li>
-  </script>
     
-  <script type='text/mustache' class="exportActionsTemplate">
-    <li><a data-action="csv" class="menuAction" href="JavaScript:void(0);">CSV</a></li>
-    <li><a data-action="json" class="menuAction" href="JavaScript:void(0);">JSON</a></li>
-  </script>
-  
-  <script type='text/mustache' class="transformActionsTemplate">
-    <li><a data-action="transform" class="menuAction" href="JavaScript:void(0);">Global transform...</a></li>
+    {{#isOwner}}
+      <div class="btn-group">
+        <a class="btn dropdown-toggle" data-toggle="dropdown">Import<span class="caret"></span></a>
+        <ul class="dropdown-menu data-table-menu">
+          <li><a data-action="urlImport" class="menuAction" href="JavaScript:void(0);">JSON API</a></li>
+          <li><a data-action="pasteImport" class="menuAction" href="JavaScript:void(0);">Paste JSON</a></li>
+          <li><a data-action="uploadImport" class="menuAction" href="JavaScript:void(0);">Upload CSV</a></li>
+        </ul>
+      </div>
+    {{/isOwner}}
+    
+    <div class="btn-group">
+      <a class="btn dropdown-toggle" data-toggle="dropdown">Export<span class="caret"></span></a>
+      <ul class="dropdown-menu data-table-menu">
+        <li><a data-action="csv" class="menuAction" href="JavaScript:void(0);">CSV</a></li>
+        <li><a data-action="json" class="menuAction" href="JavaScript:void(0);">JSON</a></li>
+      </ul>
+    </div>
   </script>
   
   <script type='text/mustache' class="columnActionsTemplate">
@@ -148,13 +147,6 @@
   </script>
 
   <script type='text/mustache' class="sidebarTemplate">
-    <div bind="leftPanelTabs" class="refine-tabs ui-tabs ui-widget ui-widget-content">
-      <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header">
-        <li class="ui-state-default ui-corner-top"><a data-tab="data" href="javascript:{}">Data</a></li>
-        <li class="ui-state-default ui-corner-top"><a data-tab="apps" href="javascript:{}">Applications</a></li>
-        <!-- <li class="ui-state-default ui-corner-top"><a data-tab="wiki" href="javascript:{}">Wiki</a></li> -->        
-      </ul>
-    </div>
     <div class="sidebar">
     </div>
   </script>
@@ -313,27 +305,23 @@
   </script>
   
   <script type='text/mustache' class="appsTabTemplate">
-    <div class="top">
-      {{^apps}}
-        <div class="description">
-          {{#loggedIn}}You haven't made any apps on top of this data yet.{{/loggedIn}}
-          {{^loggedIn}}There aren't any applications on top of this data yet.{{/loggedIn}}
+    {{^apps}}
+      <div class="description">
+        {{#loggedIn}}You haven't made any apps on top of this data yet.{{/loggedIn}}
+        {{^loggedIn}}There aren't any applications on top of this data yet.{{/loggedIn}}
+      </div>
+    {{/apps}}
+    {{#loggedIn}}<a href="#/browse!" class="btn"><span class="iconic magnifying-glass"></span>Browse available apps</a>{{/loggedIn}}
+    {{#apps}}
+      <ul>
+        <li class="root" data-subdomain="{{subdomain}}" data-ddoc="{{ddoc}}" id="project"><img src="/images/project.png">{{ddoc}}
+        <div id="files">
+          <ul>
+            <li class="hidden"><img src="/images/ajax-loader.gif">Loading project...
+          </ul>
         </div>
-      {{/apps}}
-      {{#loggedIn}}<a href="#/browse!" class="btn"><span class="iconic magnifying-glass"></span>Browse available apps</a>{{/loggedIn}}
-    </div>
-    <div class="bottom">
-      {{#apps}}
-        <ul>
-          <li class="root" data-subdomain="{{subdomain}}" data-ddoc="{{ddoc}}" id="project"><img src="/images/project.png">{{ddoc}}
-          <div id="files">
-            <ul>
-              <li class="hidden"><img src="/images/ajax-loader.gif">Loading project...
-            </ul>
-          </div>
-        </ul>
-      {{/apps}}
-    </div>
+      </ul>
+    {{/apps}}
   </script>
   
   <script type='text/mustache' class="historyTabTemplate"></script>
