@@ -1,9 +1,3 @@
-// redirect /edit/somedatasetid to /edit/#/somedatasetid
-(function() {
-  var id = $.url(window.location.href).segment(2);
-  if (id && id.length > 0) window.location.href = $.url(window.location.href).attr('base') + '/edit/#/' + id;
-})()
-
 var app = {
   baseURL: util.getBaseURL(window.location.href),
   container: 'main_content',
@@ -27,7 +21,13 @@ app.routes = {
   pages: {
     dataset: function(id) {
       $('.homeButton').attr('href', app.baseURL);
-      recline.bootstrap(id);
+      util.loadDataset(id, function(err, dataset) {
+        if (err) return console.error(err)
+        util.createExplorer(dataset);
+        Backbone.history.start();
+      })
+      // setup the loader menu in top bar
+      // util.setupLoader(createExplorer);
     },
     noID: function() {
       alert('you have to specify an id!');
@@ -485,23 +485,12 @@ $(function() {
     util.notify("Server error: " + error);
   })
   
-  $('a').live('click', function(event) {
-    var route =  $(this).attr('href');
-    util.catchModals(route);
-  });
-
-  app.router = Router({
-    '/': {on: 'noID'},
-    '/(\\w+)!': {on: function(modal) { util.catchModals("#/" + modal + "!") }},
-    '/:dataset': {on: 'dataset'}
-  }).use({ resource: app.routes.pages });
-  
   // see if route matches /edit/#/somedatasetid
-  var id = $.url(window.location.href).fsegment(1);
+  var id = $.url(window.location.href).segment(2);
   if (id.length > 0) {
-    app.router.init("/" + id);
+    app.routes.pages.dataset(id)
   } else {
-    app.router.init('/');
+    app.routes.pages.noID()
   }
   
 })

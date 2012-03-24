@@ -8,7 +8,7 @@
   <link rel='stylesheet' media='all' href='style/reset.css' />
   <link rel='stylesheet' media='all' href='style/common.css' />
   <link rel='stylesheet' media='all' href='style/home.css' />
-  <link rel="stylesheet" href="style/bootstrap.css">
+  <link rel="stylesheet" href="/style/bootstrap/2.0.0/css/bootstrap.css" media="screen"> 
   
   <!-- <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js"></script>
   <script type="text/javascript">
@@ -401,7 +401,7 @@
         <aside id="info-box" class="info-table-wrapper">
           <div class="avatar"><a href="#/{{user}}"><img src="{{#avatar}}{{avatar}}{{/avatar}}{{^avatar}}images/avatar_default.png{{/avatar}}"></a></div>
           <h4>
-            <a class="owner" href="#/{{user}}">{{user}}</a>&nbsp;/ <a class="dataset" href="edit/#/{{id}}">{{name}}</a>
+            <a class="owner" href="#/{{user}}">{{user}}</a>&nbsp;/ <a class="dataset" href="edit/{{id}}">{{name}}</a>
           </h4>
           <div class="ich_tmpl">
             <table xmlns="http://www.w3.org/1999/xhtml">
@@ -413,7 +413,7 @@
                       Fork of
                     </td>
                     <td>
-                      <a href="#/{{forkedFromUser}}">{{forkedFromUser}}</a>&nbsp;/ <a class="dataset" href="/edit/#/{{forkedFrom}}">{{name}}</a>
+                      <a href="#/{{forkedFromUser}}">{{forkedFromUser}}</a>&nbsp;/ <a class="dataset" href="/edit/{{forkedFrom}}">{{name}}</a>
                     </td>
                   </tr>
                 {{/forkedFrom}}
@@ -465,7 +465,7 @@
   
   <script type="text/mustache" class="recentDatasetsTemplate">
     {{#datasets}}
-      <a href="/edit/#/{{_id}}">
+      <a href="/edit/{{_id}}">
         <div class="breadcrumb">
           {{name}}
           <span class="divider">-</span>

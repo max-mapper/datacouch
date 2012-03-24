@@ -77,7 +77,7 @@ var util = function() {
     }
 
   }
-  
+
   function registerEmitter() {
     var Emitter = function(obj) {
       this.emit = function(obj, channel) { 
@@ -167,10 +167,11 @@ var util = function() {
   
   function observeExit(elem, callback) {
     var cancelButton = elem.find('.cancelButton');
-    app.emitter.on('esc', function() { 
-      cancelButton.click();
-      app.emitter.clear('esc');
-    });
+    // TODO: remove (commented out as part of Backbon-i-fication
+    // app.emitter.on('esc', function() { 
+    //  cancelButton.click();
+    //  app.emitter.clear('esc');
+    // });
     cancelButton.click(callback);
   }
   
@@ -182,11 +183,12 @@ var util = function() {
   function hide( thing ) {
     $('.' + thing ).hide();
     $('.' + thing + '-overlay').hide();
-    if (thing === "dialog") app.emitter.clear('esc'); // todo more elegant solution
+    // TODO: remove or replace (commented out as part of Backbon-i-fication
+    // if (thing === "dialog") app.emitter.clear('esc'); // todo more elegant solution
   }
   
   function position( thing, elem, offset ) {
-    var position = $(elem.target).offset();
+    var position = $(elem.target).position();
     if (offset) {
       if (offset.top) position.top += offset.top;
       if (offset.left) position.left += offset.left;
@@ -197,11 +199,12 @@ var util = function() {
     });
     $('.' + thing).show().css({top: position.top + $(elem.target).height(), left: position.left});
   }
-
+  
   function render( template, target, data ) {
     if (! (target instanceof jQuery)) target = $( "." + target + ":first" );
     target.html( $.mustache( $( "." + template + "Template:first" ).html(), data || {} ) );
-    if (template in app.after) app.after[template]();
+    // commented out in backbone-ification
+    // if (template in app.after) app.after[template]();
   }
 
   function notify( message, options ) {
@@ -836,6 +839,206 @@ var util = function() {
     });
   }
   
+  function updateDocs(editFunc, callback) {
+    var transformDoc = {
+      "transform": editFunc.toString(),
+      "dataset": app.datasetInfo._id,
+      "type": "pendingTransformation",
+      "user": app.profile._id
+    }
+    
+    couch.request({url: couch.rootPath + "_uuids"}).then( function( data ) {
+      var _id = data.uuids[0]
+      transformDoc["_id"] = _id
+      app.io.emit('save', transformDoc)
+      util.notify("Transforming documents...", {persist: true, loader: true})
+      app.io.on(_id, function (err, data) {
+        if (err && callback) callback(err)
+        if (data.progress) return util.notify("Transforming documents... " + data.progress + "%", {persist: true, loader: true})
+        util.notify("Documents updated successfully!")
+        recline.initializeTable(app.offset)
+        if (callback) callback(false, data)
+      })
+    })
+  }
+  
+  function updateDoc(doc) {
+    return couch.request({type: "PUT", url: app.dbPath + "/" + doc._id, data: JSON.stringify(doc)})
+  }
+
+  function uploadDocs(docs) {
+    var dfd = $.Deferred();
+    if(!docs.length) dfd.resolve("Failed: No docs specified");
+    couch.request({url: app.dbPath + "/_bulk_docs", type: "POST", data: JSON.stringify({docs: docs})})
+      .then(
+        function(resp) {ensureCommit().then(function() { 
+          var error = couch.responseError(resp);
+          if (error) {
+            dfd.reject(error);
+          } else {
+            dfd.resolve(resp);            
+          }
+        })}, 
+        function(err) { dfd.reject(err.responseText) }
+      );
+    return dfd.promise();
+  }
+  
+  function ensureCommit() {
+    return couch.request({url: app.dbPath + "/_ensure_full_commit", type:'POST', data: "''"});
+  }
+  
+  function deleteColumn(name) {
+    var deleteFunc = function(doc, emit) {
+      delete doc[name];
+      emit(doc);
+    }
+    return updateDocs(deleteFunc);
+  }
+  
+  function uploadCSV(file) {
+    if (file) {
+      util.notify("Uploading file...", {persist: true, loader: true});
+      
+      var xhr = new XMLHttpRequest();
+      xhr.onerror = function (e) {
+        util.notify('upload abort', e)
+      }
+      xhr.onabort = function (e) {
+        util.notify('upload error', e)
+      }
+      xhr.upload.onprogress = function (e) {
+        var percent = (e.loaded / e.total) * 100;
+        if (percent === 100) {
+          util.notify("We got your data. Waiting for it to process... (this could take a while for large files, feel free to check back later)", {persist: true, loader: true});
+        } else {
+          util.notify("Uploading file... " + percent + "%", {persist: true, loader: true});
+        }
+      }
+      xhr.onload = function (e) { 
+        var resp = JSON.parse(e.currentTarget.response)
+          , status = e.currentTarget.status;
+        if (status > 299) { 
+          util.notify("Error! " + e.error);
+        } else {
+          util.notify(resp + " documents created.", {showFor: 10000});
+        }
+        recline.initializeTable(app.offset);
+      }
+      xhr.open('PUT', app.baseURL + "api/upload/" + app.datasetInfo._id);
+      xhr.setRequestHeader('Content-Type', file.type);
+      xhr.send(file)
+      
+      // var reader = new FileReader();
+      // reader.readAsText(file);
+      // reader.onload = function(event) {
+      //   couch.request({
+      //     url: app.baseURL + "api/upload/" + app.datasetInfo._id,
+      //     type: "POST", 
+      //     data: event.target.result
+      //   }).then(function(done) {
+      //     util.notify("Data uploaded successfully!");
+      //     recline.initializeTable(app.offset);
+      //   })
+      // };
+    } else {
+      util.notify('File not selected. Please try again');
+    }
+  };
+  
+  function loadDataset(datasetId, callback) {
+    var dbPath = app.baseURL + "db/" + datasetId
+    console.log(app.baseURL, dbPath)
+    var table = {}
+    
+    var headersRequest = couch.request({url: dbPath + '/headers'})
+    headersRequest.then(function ( headers ) { table.fields = _.map(headers, function(h) { return {id: h}})})
+    
+    var rowsRequest = couch.request({url: dbPath + '/json'})
+    rowsRequest.then(function ( data ) { table.documents = data.docs })
+    
+    var metadataRequest = couch.request({url: app.baseURL + "api/" + datasetId})
+    metadataRequest.then(function ( dbInfo ) {
+      table.metadata = {id: dbInfo._id, title: dbInfo.name}
+    })
+    
+    $.when.apply(null, [headersRequest, rowsRequest, metadataRequest]).then(function() {
+      console.log('done', table)
+      var backend = new recline.Backend.Memory();
+      backend.addDataset(table);
+      var dataset = new recline.Model.Dataset({id: datasetId}, backend);
+      callback(false, dataset)
+    }, callback)
+  }
+  
+  // make Explorer creation / initialization in a function so we can call it
+  // again and again
+  function createExplorer(dataset) {
+    // remove existing data explorer view
+    var reload = false;
+    if (window.dataExplorer) {
+      window.dataExplorer.remove();
+      reload = true;
+    }
+    window.dataExplorer = null;
+    var $el = $('<div />');
+    $el.appendTo($('.data-explorer-here'));
+    var views = standardViews(dataset);
+    window.dataExplorer = new recline.View.DataExplorer({
+      el: $el
+      , model: dataset
+      , views: views
+    });
+    // HACK (a bit). Issue is that Backbone will not trigger the route
+    // if you are already at that location so we have to make sure we genuinely switch
+    if (reload) {
+      window.dataExplorer.router.navigate('graph');
+      window.dataExplorer.router.navigate('', true);
+    }
+  }
+
+  // convenience function
+  function standardViews(dataset) {
+    var views = [
+      {
+        id: 'grid',
+        label: 'Grid',
+        view: new recline.View.DataGrid({
+          model: dataset
+        })
+      },
+      {
+        id: 'graph',
+        label: 'Graph',
+        view: new recline.View.FlotGraph({
+          model: dataset
+        })
+      }
+    ];
+    return views;
+  }
+
+  // setup the loader menu in top bar
+  function setupLoader(callback) {
+    // pre-populate webstore load form with an example url
+    var demoUrl = 'http://thedatahub.org/api/data/b9aae52b-b082-4159-b46f-7bb9c158d013';
+    $('form.webstore-load input[name="source"]').val(demoUrl);
+    $('form.webstore-load').submit(function(e) {
+      e.preventDefault();
+      var $form = $(e.target);
+      var source = $form.find('input[name="source"]').val();
+      var type = $form.find('select[name="backend_type"]').val();
+      var dataset = new recline.Model.Dataset({
+          id: 'my-dataset',
+          url: source,
+          webstore_url: source
+        },
+        type
+      );
+      callback(dataset);
+    });
+  }
+  
   return {
     inURL: inURL,
     formatDiskSize: formatDiskSize,
@@ -877,6 +1080,14 @@ var util = function() {
     showLoader: showLoader,
     hideLoader: hideLoader,
     loaderShowing: loaderShowing,
-    bindInfiniteScroll: bindInfiniteScroll
+    bindInfiniteScroll: bindInfiniteScroll,
+    uploadCSV: uploadCSV,
+    deleteColumn: deleteColumn,
+    ensureCommit: ensureCommit,
+    uploadDocs: uploadDocs,
+    loadDataset: loadDataset,
+    createExplorer: createExplorer,
+    standardViews: standardViews,
+    setupLoader: setupLoader
   };
 }();

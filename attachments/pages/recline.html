@@ -6,18 +6,19 @@
   <link rel="stylesheet" href="/style/reset.css" media="screen">
   <link rel="stylesheet" href="/style/data-table.css" media="screen"> 
   <link rel="stylesheet" href="/style/common.css">
-  <link rel="stylesheet" href="/style/bootstrap.css">
   <link rel="stylesheet" href="/style/recline.css" media="screen">
   <link rel="stylesheet" href="/style/iconic.css" media="screen">
   <link rel="stylesheet" href="/style/codemirror.css">
   <link rel="stylesheet" href="/style/codemirror-default.css">
+  <link rel="stylesheet" href="/style/data-explorer.css" media="screen"> 
+  <link rel="stylesheet" href="/style/graph-flot.css" media="screen"> 
+  <link rel="stylesheet" href="/style/bootstrap/2.0.0/css/bootstrap.css" media="screen"> 
   
   <script type='text/javascript' src='/socket.io/socket.io.js'></script>
-  <script type="text/javascript" src="/script/deps-min.js"></script>  
   <script type="text/javascript" src="/script/vm.js"></script>
+  <script type="text/javascript" src="/script/deps-min.js"></script>  
   <script type="text/javascript" src="/script/util.js"></script>
-  <script type="text/javascript" src="/script/costco.js"></script>
-  <script type="text/javascript" src="/script/recline.js"></script>
+  <script type="text/javascript" src="/script/okfnrecline.js"></script>
   <script type="text/javascript" src="/script/monocles.js"></script>
   <script type="text/javascript" src="/script/edit.js"></script>
   <script type='text/javascript' src='http://maps.google.com/maps/api/js?sensor=true'></script>
@@ -38,7 +39,11 @@
     </div>
     <div class="main_content">
       <div class="left-panel"></div>
-      <div class="right-panel"></div>
+      <div class="right-panel">
+        <div class="container-fluid">
+          <div class="data-explorer-here"></div>
+        </div>
+      </div>
     </div>
   </div>
   
@@ -127,9 +132,7 @@
   </script>
   
   <script type='text/mustache' class="transformActionsTemplate">
-    <li><a data-action="wipe" class="menuAction" href="JavaScript:void(0);">Delete all docs</a></li>
-    <li><a data-action="destroy" class="menuAction" href="JavaScript:void(0);">Delete dataset</a></li>
-    <li><a data-action="reproject" class="menuAction" href="JavaScript:void(0);">Reproject geometry...</a></li>
+    <li><a data-action="transform" class="menuAction" href="JavaScript:void(0);">Global transform...</a></li>
   </script>
   
   <script type='text/mustache' class="columnActionsTemplate">
@@ -714,13 +717,17 @@
   
   <script type='text/mustache' class="cellEditorTemplate">
     <div class="menu-container data-table-cell-editor">
-      <textarea class="data-table-cell-editor-editor" bind="textarea">{{value}}</textarea>
+      <textarea class="data-table-cell-editor-editor" bind="textarea">
+        {{value}}
+      </textarea>
       <div id="data-table-cell-editor-actions">
         <div class="data-table-cell-editor-action">
-          <button class="okButton button">Update</button>
-        </div>
-        <div class="data-table-cell-editor-action">
-          <button class="cancelButton button">Cancel</button>
+          <button class="okButton btn primary">
+            Update
+          </button>
+          <button class="cancelButton btn danger">
+            Cancel
+          </button>
         </div>
       </div>
     </div>
@@ -751,26 +758,28 @@
   <script type='text/mustache' class="editPreviewTemplate">
     <div class="expression-preview-table-wrapper">
       <table>
-      <tbody>
-      <tr>
-        <td class="expression-preview-heading">
-          before
-        </td>
-        <td class="expression-preview-heading">
-          after
-        </td>
-      </tr>
-      {{#rows}}
-      <tr>
-        <td class="expression-preview-value">
-          {{before}}
-        </td>
-        <td class="expression-preview-value">
-          {{after}}
-        </td>
-      </tr>
-      {{/rows}}
-      </tbody>
+        <thead>
+          <tr>
+            <th class="expression-preview-heading">
+              before
+            </th>
+            <th class="expression-preview-heading">
+              after
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#rows}}
+          <tr>
+            <td class="expression-preview-value">
+              {{before}}
+            </td>
+            <td class="expression-preview-value">
+              {{after}}
+            </td>
+          </tr>
+          {{/rows}}
+        </tbody>
       </table>
     </div>
   </script>
