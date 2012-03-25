@@ -163,7 +163,7 @@ app.after = {
       app.io.emit('save', doc)
       app.io.on(doc._id, function (err, data) {
         if (err) return util.render('loadingMessage', 'modal', {message: "Error... please refresh and try again. " + err})
-        window.location = app.baseURL + 'edit/#/' + doc._id;
+        window.location = app.baseURL + 'edit/' + doc._id;
       })
       
     })

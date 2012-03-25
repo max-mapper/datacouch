@@ -54,6 +54,8 @@ td.collapsed {width: 5%; overflow: auto;}
 .project-actions .dropdown-menu {
   left: -97px;
 }
+
+#header { margin: 5px; }
 /*end custom styles*/
 
 /*

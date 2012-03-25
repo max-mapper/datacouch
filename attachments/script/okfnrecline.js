@@ -736,7 +736,7 @@ my.DataGrid = Backbone.View.extend({
           {{/fields}} \
         </tr> \
       </thead> \
-      <tbody></tbody> \
+      <tbody class="data-table-body"></tbody> \
     </table> \
   ',
 
@@ -754,6 +754,7 @@ my.DataGrid = Backbone.View.extend({
     });
     var htmls = $.mustache(this.template, this.toTemplateJSON());
     this.el.html(htmls);
+    if (this.model.currentDocuments.length === 0) util.render('noData', 'data-table-body')
     this.model.currentDocuments.forEach(function(doc) {
       var tr = $('<tr />');
       self.el.find('tbody').append(tr);
@@ -1163,13 +1164,8 @@ my.DataExplorer = Backbone.View.extend({
     <div class="alert-messages"></div> \
     \
     <div class="header"> \
-      <ul class="navigation"> \
-        {{#views}} \
-        <li><a href="#{{id}}" class="btn">{{label}}</a> \
-        {{/views}} \
-      </ul> \
-      <div class="recline-results-info"> \
-        Results found <span class="doc-count">{{docCount}}</span> \
+      <div id="summary-bar"> \
+        <span id="docCount">{{docCount}}</span> \
       </div> \
     </div> \
     <div class="data-view-container"></div> \

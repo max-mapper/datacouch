@@ -311,7 +311,6 @@
         {{^loggedIn}}There aren't any applications on top of this data yet.{{/loggedIn}}
       </div>
     {{/apps}}
-    {{#loggedIn}}<a href="#/browse!" class="btn"><span class="iconic magnifying-glass"></span>Browse available apps</a>{{/loggedIn}}
     {{#apps}}
       <ul>
         <li class="root" data-subdomain="{{subdomain}}" data-ddoc="{{ddoc}}" id="project"><img src="/images/project.png">{{ddoc}}
@@ -322,6 +321,8 @@
         </div>
       </ul>
     {{/apps}}
+    {{#loggedIn}}<a href="#/browse!" class="btn"><span class="iconic magnifying-glass"></span>Browse available apps</a>{{/loggedIn}}
+    
   </script>
   
   <script type='text/mustache' class="historyTabTemplate"></script>
@@ -368,45 +369,15 @@
     </div>
   </script>
 
-  <script type='text/mustache' class="dataTableTemplate">
-    <table class="data-table" cellspacing="0">
-      <tbody>
-        <tr>
-          {{#notEmpty}}<td class="column-header"></td>{{/notEmpty}}
-          {{#headers}}
-            <td class="column-header {{state}}">
-              <div class="column-header-title {{state}}">
-                {{#isOwner}}<a class="column-header-menu"></a>{{/isOwner}}
-                <span class="column-header-name{{^isOwner}} slim{{/isOwner}}">{{header}}</span>
-              </div>
-            </td>
-          {{/headers}}
-        </tr>
-        {{#rows}}
-          <tr data-id="{{id}}">
-            <td>{{#isOwner}}<a class="row-header-menu"></a>{{/isOwner}}</td>
-            {{#cells}}
-            <td data-header="{{header}}" class="{{state}}">
-              <div class="data-table-cell-content {{state}}">
-                {{#isOwner}}<a href="javascript:{}" class="data-table-cell-edit" title="Edit this cell">&nbsp;</a>{{/isOwner}}
-                <div class="data-table-cell-value {{state}}">{{value}}</div>
-              </div>
-            </td>
-            {{/cells}}
-          </tr>
-        {{/rows}}
-        {{^rows}}
-          <div class="gettingStarted">
-            <div class="welcomeMessage">
-              <h1>Hello there!</h1>
-              {{#loggedIn}}<p>You haven't uploaded any data yet. Check out the Import menu up top to get started.</p>{{/loggedIn}}
-              {{^loggedIn}}<p>The owner of this dataset hasn't uploaded any data yet! Perhaps you should check back later.</p>{{/loggedIn}}
-            </div>
-            <img class="bigCouch" src="/images/couch-big.png">
-          </div>
-        {{/rows}}
-      </tbody>
-    </table>
+  <script type='text/mustache' class="noDataTemplate">
+    <div class="gettingStarted">
+      <div class="welcomeMessage">
+        <h1>Hello there!</h1>
+        {{#loggedIn}}<p>You haven't uploaded any data yet. Check out the Import menu up top to get started.</p>{{/loggedIn}}
+        {{^loggedIn}}<p>The owner of this dataset hasn't uploaded any data yet! Perhaps you should check back later.</p>{{/loggedIn}}
+      </div>
+      <img class="bigCouch" src="/images/couch-big.png">
+    </div>
   </script>
 
   <script type='text/mustache' class="urlImportTemplate">

@@ -87,7 +87,7 @@ app.routes = {
               function waitForDB(url) {
                 couch.request({url: url, type: "HEAD"}).then(
                   function(resp, status) {
-                    window.location = app.baseURL + 'edit/#/' + dbID;
+                    window.location = app.baseURL + 'edit/' + dbID;
                   },
                   function(resp, status){
                     console.log("not created yet...", resp, status);
@@ -460,7 +460,7 @@ $(function() {
     util.notify("Server error: " + error);
   })
   
-  // see if route matches /edit/#/somedatasetid
+  // see if route matches /edit/somedatasetid
   var id = $.url(window.location.href).segment(2);
   if (id.length > 0) {
     recline.bootstrap(id)
