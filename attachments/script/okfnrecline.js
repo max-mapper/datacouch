@@ -754,7 +754,8 @@ my.DataGrid = Backbone.View.extend({
     });
     var htmls = $.mustache(this.template, this.toTemplateJSON());
     this.el.html(htmls);
-    if (this.model.currentDocuments.length === 0) util.render('noData', 'data-table-body')
+    self.el.find('tbody').html("")
+    if (this.model.docCount === 0) util.render('noData', 'data-table-body')
     this.model.currentDocuments.forEach(function(doc) {
       var tr = $('<tr />');
       self.el.find('tbody').append(tr);
@@ -1165,7 +1166,7 @@ my.DataExplorer = Backbone.View.extend({
     \
     <div class="header"> \
       <div id="summary-bar"> \
-        <span id="docCount">{{docCount}}</span> \
+        <span id="docCount">{{docCount}} documents</span> \
       </div> \
     </div> \
     <div class="data-view-container"></div> \
@@ -1211,7 +1212,7 @@ my.DataExplorer = Backbone.View.extend({
       });
     this.model.bind('query:done', function() {
         my.clearNotifications();
-        self.el.find('.doc-count').text(self.model.docCount || 'Unknown');
+        self.el.find('#docCount').text(self.model.docCount + " documents" || 'Unknown');
         my.notify('Data loaded', {category: 'success'});
         // update navigation
         var qs = my.parseHashQueryString();

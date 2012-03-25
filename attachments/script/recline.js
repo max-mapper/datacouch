@@ -7,13 +7,13 @@ var recline = function() {
   function showDialog(template, data, modalWidth) {
     if (!data) data = {};
     if (!modalWidth) modalWidth = ""
-    util.show('dialog');
-    $('.modal').css('width', modalWidth);
-    util.render(template, 'modal', data);
-    util.observeExit($('.modal'), function() {
-      util.hide('dialog');
+    util.show('datacouch-dialog');
+    $('.datacouch-dialog .modal').css('width', modalWidth);
+    util.render(template, 'datacouch-dialog .modal', data);
+    util.observeExit($('.datacouch-dialog .modal'), function() {
+      util.hide('datacouch-dialog');
     })
-    $('.dialog').draggable({ handle: '.top', cursor: 'move' });
+    $('.datacouch-dialog').draggable({ handle: '.top', cursor: 'move' });
   }
   
   function updateWords(column, transform) {
@@ -23,8 +23,15 @@ var recline = function() {
     });
   }
   
+  function refreshTable() {
+    util.loadDataset(function(err, backend) {
+      app.recline.model.fetch()
+      app.recline.model.query(app.recline.model.queryState.attributes)
+    }, app.recline.model.backend)
+  }
+  
   function handleMenuClick() {
-    $( '.menu li' ).click(function(e) {
+    $( '.dropdown-menu li a' ).live('click', function(e) {
       var actions = {
         bulkEdit: function() { showDialog('bulkEdit', {name: app.currentColumn}, "800px") },
         reproject: function() { showDialog('reproject', {}, "800px") },
@@ -73,13 +80,12 @@ var recline = function() {
           costco.uploadDocs([doc]).then(
             function(updatedDocs) { 
               util.notify("Row deleted successfully");
-              recline.initializeTable(app.offset);
+              recline.refreshTable()
             }
           )
         }
       }
-      
-      util.hide('menu');
+
       actions[$(e.target).attr('data-action')]();
       
       e.preventDefault();
@@ -139,13 +145,8 @@ var recline = function() {
   }
   
   function updateDocCount(totalDocs) {
-    return couch.request({url: app.dbPath + '/_all_docs?' + $.param({startkey: '"_design/"', endkey: '"_design0"'})}).then(
-      function ( data ) {
-        var ddocCount = data.rows.length;
-        app.docCount = totalDocs - data.rows.length;
-        $('#docCount').text(app.docCount + " documents");
-      }
-    )    
+    app.docCount = totalDocs
+    $('#docCount').text(app.docCount + " documents");
   }
   
   function getDbInfo(url) {
@@ -167,17 +168,16 @@ var recline = function() {
   
   function bootstrap(id) {
     app.dbPath = app.baseURL + "db/" + id;
-    
+
     getDbInfo(app.dbPath).then(function( dbInfo ) {
+      app.dbInfo = dbInfo
       util.render( 'generating', 'project-actions' );
-      
       var sessionButtonsRenderer = showSessionButtons()
-      
-      updateDocCount(dbInfo.doc_count)
-      
+
       app.emitter.on('metadata', function(datasetInfo) {
         app.datasetInfo = datasetInfo;
         app.ddocs = {};
+        
         util.render('sidebar', 'left-panel');
         var datasetInfo = _.extend({}, app.datasetInfo, { 
           canEdit: function() { return util.loggedIn() && ( app.datasetInfo.user === app.profile._id ) }
@@ -196,7 +196,7 @@ var recline = function() {
       
       showDialog('busy')
       app.emitter.on('headers', function ( headers ) {
-        util.hide('dialog')
+        util.hide('datacouch-dialog')
         app.headers = headers;
         app.csvUrl = app.dbPath + '/csv?headers=' + escape(JSON.stringify(headers));
         sessionButtonsRenderer.then(function() {
@@ -245,6 +245,7 @@ var recline = function() {
     formatDiskSize: formatDiskSize,
     handleMenuClick: handleMenuClick,
     showDialog: showDialog,
+    refreshTable: refreshTable,
     updateDocCount: updateDocCount,
     bootstrap: bootstrap,
     showSessionButtons: showSessionButtons,

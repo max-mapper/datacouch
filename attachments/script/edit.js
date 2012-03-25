@@ -21,13 +21,12 @@ app.routes = {
   pages: {
     dataset: function(id) {
       $('.homeButton').attr('href', app.baseURL);
-      util.loadDataset(id, function(err, dataset) {
+      util.loadDataset(function(err, backend) {
         if (err) return console.error(err)
-        util.createExplorer(dataset);
-        Backbone.history.start();
+        var dataset = new recline.Model.Dataset({id: id}, backend)
+        util.createExplorer(dataset)
+        Backbone.history.start()
       })
-      // setup the loader menu in top bar
-      // util.setupLoader(createExplorer);
     },
     noID: function() {
       alert('you have to specify an id!');
@@ -104,10 +103,10 @@ app.routes = {
       })
     },
     cancel: function() {
-      util.hide('dialog');
+      util.hide('datacouch-dialog');
     },
     close: function() {
-      util.hide('dialog');
+      util.hide('datacouch-dialog');
     }
   }
 }
@@ -166,7 +165,7 @@ app.after = {
       util.notify("Updating row...", {persist: true, loader: true});
       costco.updateDoc(doc).then(function(response) {
         util.notify("Row updated successfully");
-        recline.initializeTable();
+        recline.refreshTable();
       })
     })
     $('.data-table-cell-editor .cancelButton').click(function(e) {
@@ -190,18 +189,8 @@ app.after = {
         app.routes.tabs.data();
         util.notify('Updated dataset info');
       })
-      util.hide('dialog');
+      util.hide('datacouch-dialog');
     })
-  },
-  actions: function() {
-    $('.button').click(function(e) { 
-      var action = $(e.target).attr('data-action');
-      if(action) {
-        util.position('menu', e, {left: -60, top: 5});
-        util.render(action + 'Actions', 'menu');
-        recline.handleMenuClick();
-      }
-    });
   },
   bulkEdit: function() {
     $('.modal-footer .ok').click(function(e) {
@@ -212,7 +201,7 @@ app.after = {
         util.notify("Error with function! " + editFunc.errorMessage);
         return;
       }
-      util.hide('dialog');
+      util.hide('datacouch-dialog');
       costco.updateDocs(editFunc);
     })
     
@@ -236,7 +225,7 @@ app.after = {
   },
   reproject: function() {
     $('.modal-footer .ok').click(function(e) {
-      util.hide('dialog');
+      util.hide('datacouch-dialog');
       costco.updateDocs(app.reprojectFunction);
     })
     
@@ -271,7 +260,7 @@ app.after = {
   },
   geocode: function() {
     $('.modal-footer .ok').click(function(e) {
-      util.hide('dialog');
+      util.hide('datacouch-dialog');
       costco.updateDocs(app.geocodeFunction, function(updated) {
         console.log('update resp', updated)
         util.notify('Geocoded docs and stored them in the "geometry" column', {showFor: 5000})
@@ -332,7 +321,7 @@ app.after = {
           recline.showDialog('jsonTree', {}, "800px");
         },
         function (err) {
-          util.hide('dialog');
+          util.hide('datacouch-dialog');
           util.notify("Data fetch error: " + err.responseText);
         }
       );
@@ -340,20 +329,20 @@ app.after = {
   },
   uploadImport: function() {
     $('.modal-footer .ok').click(function(e) {
-      util.hide('dialog');
-      util.notify("Saving documents...", {persist: true, loader: true});
-      var file = $('#file')[0].files[0];
-      costco.uploadCSV(file);
+      util.hide('datacouch-dialog')
+      util.notify("Saving documents...", {persist: true, loader: true})
+      var file = $('#file')[0].files[0]
+      util.uploadCSV(file)
     })
   },
   jsonTree: function() {
     util.renderTree(app.apiDocs);
     $('.modal-footer .ok').click(function(e) {
-      util.hide('dialog');
+      util.hide('datacouch-dialog');
       util.notify("Saving documents...", {persist: true, loader: true});
       costco.uploadDocs(util.lookupPath(util.selectedTreePath())).then(function(msg) {
         util.notify("Docs saved successfully!");
-        recline.initializeTable(app.offset);
+        recline.refreshTable()
       });
     })
   },
@@ -370,11 +359,11 @@ app.after = {
           costco.uploadDocs(docs).then(
             function(docs) {
               util.notify("Data uploaded successfully!");
-              recline.initializeTable(app.offset);
-              util.hide('dialog');
+              recline.refreshTable()
+              util.hide('datacouch-dialog');
             },
             function (err) {
-              util.hide('dialog');
+              util.hide('datacouch-dialog');
             }
           );        
         } else {
@@ -460,9 +449,16 @@ $(function() {
     util.notify("Server error: " + error);
   })
   
+  recline.handleMenuClick()
+  
+  $('.modal-footer .cancel').live('click', function() {
+    app.routes.modals.cancel()
+  })
+  
   // see if route matches /edit/somedatasetid
   var id = $.url(window.location.href).segment(2);
   if (id.length > 0) {
+    app.datasetId = id
     recline.bootstrap(id)
     app.routes.pages.dataset(id)
   } else {

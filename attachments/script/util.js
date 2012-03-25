@@ -735,14 +735,14 @@ var util = function() {
     couch.request({url: app.baseURL + "api/applications/" + dataset}).then(function(result) {
       var apps = result.rows;
       if(_.detect(apps, function(appEntry) { return appEntry.ddoc === ddoc })) {
-        util.hide('dialog');
+        util.hide('datacouch-dialog');
         util.notify('That app is already installed');
       } else {
         var doc = {type: "app", user: app.profile._id, dataset: dataset, ddoc: ddoc};
         couch.request({url: app.baseURL + "api", type: "POST", data: JSON.stringify(doc)}).then(function(resp) {
           console.log('resp', resp)
           app.io.on(resp.id, function (err, data) {
-            util.hide('dialog');
+            util.hide('datacouch-dialog');
             app.routes.tabs['apps']();
           })
           util.render('busy', 'modal', {message: "Installing app..."});
@@ -855,7 +855,7 @@ var util = function() {
         if (err && callback) callback(err)
         if (data.progress) return util.notify("Transforming documents... " + data.progress + "%", {persist: true, loader: true})
         util.notify("Documents updated successfully!")
-        recline.initializeTable(app.offset)
+        recline.refreshTable()
         if (callback) callback(false, data)
       })
     })
@@ -922,30 +922,18 @@ var util = function() {
         } else {
           util.notify(resp + " documents created.", {showFor: 10000});
         }
-        recline.initializeTable(app.offset);
+        recline.refreshTable()
       }
       xhr.open('PUT', app.baseURL + "api/upload/" + app.datasetInfo._id);
       xhr.setRequestHeader('Content-Type', file.type);
       xhr.send(file)
-      
-      // var reader = new FileReader();
-      // reader.readAsText(file);
-      // reader.onload = function(event) {
-      //   couch.request({
-      //     url: app.baseURL + "api/upload/" + app.datasetInfo._id,
-      //     type: "POST", 
-      //     data: event.target.result
-      //   }).then(function(done) {
-      //     util.notify("Data uploaded successfully!");
-      //     recline.initializeTable(app.offset);
-      //   })
-      // };
     } else {
       util.notify('File not selected. Please try again');
     }
   };
   
-  function loadDataset(datasetId, callback) {
+  function loadDataset(callback, backend) {
+    var datasetId = app.datasetId
     var dbPath = app.baseURL + "db/" + datasetId
     var table = {}
     
@@ -956,7 +944,10 @@ var util = function() {
     })
     
     var rowsRequest = couch.request({url: dbPath + '/json'})
-    rowsRequest.then(function ( data ) { table.documents = data.docs })
+    rowsRequest.then(function ( data ) { 
+      recline.updateDocCount(data.docs.length)
+      table.documents = data.docs
+    })
     
     var metadataRequest = couch.request({url: app.baseURL + "api/" + datasetId})
     metadataRequest.then(function ( dbInfo ) {
@@ -965,10 +956,9 @@ var util = function() {
     })
     
     $.when.apply(null, [headersRequest, rowsRequest, metadataRequest]).then(function() {
-      var backend = new recline.Backend.Memory();
-      backend.addDataset(table);
-      var dataset = new recline.Model.Dataset({id: datasetId}, backend);
-      callback(false, dataset)
+      backend = backend || new recline.Backend.Memory()
+      backend.addDataset(table)
+      callback(false, backend)
     }, callback)
   }
   
@@ -977,15 +967,15 @@ var util = function() {
   function createExplorer(dataset) {
     // remove existing data explorer view
     var reload = false;
-    if (window.dataExplorer) {
-      window.dataExplorer.remove();
+    if (app.recline) {
+      app.recline.remove();
       reload = true;
     }
-    window.dataExplorer = null;
+    app.recline = null;
     var $el = $('<div />');
     $el.appendTo($('.data-explorer-here'));
     var views = standardViews(dataset);
-    window.dataExplorer = new recline.View.DataExplorer({
+    app.recline = new recline.View.DataExplorer({
       el: $el
       , model: dataset
       , views: views
@@ -993,8 +983,8 @@ var util = function() {
     // HACK (a bit). Issue is that Backbone will not trigger the route
     // if you are already at that location so we have to make sure we genuinely switch
     if (reload) {
-      window.dataExplorer.router.navigate('graph');
-      window.dataExplorer.router.navigate('', true);
+      app.recline.router.navigate('graph');
+      app.recline.router.navigate('', true);
     }
   }
 
@@ -1005,13 +995,6 @@ var util = function() {
         id: 'grid',
         label: 'Grid',
         view: new recline.View.DataGrid({
-          model: dataset
-        })
-      },
-      {
-        id: 'graph',
-        label: 'Graph',
-        view: new recline.View.FlotGraph({
           model: dataset
         })
       }
