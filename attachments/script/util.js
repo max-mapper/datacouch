@@ -934,32 +934,55 @@ var util = function() {
   
   function loadDataset(callback, backend) {
     var datasetId = app.datasetId
-    var dbPath = app.baseURL + "db/" + datasetId
     var table = {}
+  
+    function done() {
+      if (table.fields && table.documents && table.metadata) callback(false, table)
+    }
     
-    var headersRequest = couch.request({url: dbPath + '/headers'})
-    headersRequest.then(function ( headers ) { 
-      app.emitter.emit(headers, 'headers')
-      table.fields = _.map(headers, function(h) { return {id: h}})
+    pouch.open(app.datasetId, function(err, db) {
+      if (window.navigator.onLine) {
+        var headersRequest = couch.request({url: app.dbPath + '/headers'})
+        headersRequest.then(function ( headers ) {
+          table.fields = _.map(headers, function(h) { return {id: h} })
+          app.emitter.emit(table.fields, 'fields')
+          localStorage.setItem(datasetId + '-fields', JSON.stringify(table.fields))
+          done()
+        })
+
+        var rowsRequest = couch.request({url: app.dbPath + '/json'})
+        rowsRequest.then(function ( data ) {
+          recline.updateDocCount(data.docs.length)
+          table.documents = data.docs
+          db.bulkDocs({docs: table.documents}, function(err, resp) {
+            if (err) return callback(err)
+            app.emitter.emit(table.documents, 'documents')
+            done()
+          })
+        })
+
+        var metadataRequest = couch.request({url: app.baseURL + "api/" + datasetId})
+        metadataRequest.then(function ( dbInfo ) {
+          app.emitter.emit(dbInfo, 'metadata')
+          table.metadata = {id: dbInfo._id, title: dbInfo.name}
+          localStorage.setItem(datasetId + '-metadata', JSON.stringify(table.metadata))
+          done()
+        })
+      } else {
+        table.fields = JSON.parse(localStorage.getItem(datasetId + '-fields'))
+        app.emitter.emit(table.fields, 'fields')
+        table.metadata = JSON.parse(localStorage.getItem(datasetId + '-metadata'))
+        app.emitter.emit(table.metadata, 'metadata')
+        var opts = {include_docs: true, conflicts: true, style: 'all_docs'}
+        db.changes(opts, function(err, changes) {
+          table.documents = _.map(changes.results, function(result) {
+            return result.doc
+          })
+          app.emitter.emit(table.documents, 'documents')
+          done()
+        })
+      }
     })
-    
-    var rowsRequest = couch.request({url: dbPath + '/json'})
-    rowsRequest.then(function ( data ) { 
-      recline.updateDocCount(data.docs.length)
-      table.documents = data.docs
-    })
-    
-    var metadataRequest = couch.request({url: app.baseURL + "api/" + datasetId})
-    metadataRequest.then(function ( dbInfo ) {
-      app.emitter.emit(dbInfo, 'metadata')
-      table.metadata = {id: dbInfo._id, title: dbInfo.name}
-    })
-    
-    $.when.apply(null, [headersRequest, rowsRequest, metadataRequest]).then(function() {
-      backend = backend || new recline.Backend.Memory()
-      backend.addDataset(table)
-      callback(false, backend)
-    }, callback)
   }
   
   // make Explorer creation / initialization in a function so we can call it

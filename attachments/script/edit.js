@@ -21,11 +21,12 @@ app.routes = {
   pages: {
     dataset: function(id) {
       $('.homeButton').attr('href', app.baseURL);
-      util.loadDataset(function(err, backend) {
+      util.loadDataset(function(err, table) {
         if (err) return console.error(err)
+        var backend = new recline.Backend.Memory()
+        backend.addDataset(table)
         var dataset = new recline.Model.Dataset({id: id}, backend)
         util.createExplorer(dataset)
-        Backbone.history.start()
       })
     },
     noID: function() {

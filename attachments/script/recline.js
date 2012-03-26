@@ -195,7 +195,7 @@ var recline = function() {
       })
       
       showDialog('busy')
-      app.emitter.on('headers', function ( headers ) {
+      app.emitter.on('fields', function ( headers ) {
         util.hide('datacouch-dialog')
         app.headers = headers;
         app.csvUrl = app.dbPath + '/csv?headers=' + escape(JSON.stringify(headers));
