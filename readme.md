@@ -39,7 +39,7 @@ Requirements: node.js >= 0.6 and CouchDB >= 1.1
 Install node.js v0.6.11 and npm
 
     // install node
-    git clone clone git://github.com/joyent/node.git
+    git clone git://github.com/joyent/node.git
     cd node/
     git checkout v0.6.11
     ./configure && make && sudo make install
