@@ -51,7 +51,7 @@ Simply [build couchdb](https://github.com/iriscouch/build-couchdb) or do `brew i
 Create a couchdb admin user via the futon admin / logout area in the bottom right corner of the screen. You can't run datacouch in admin party.
 
 You need to go [create a twitter app](https://dev.twitter.com/apps/new) in order to use datacouch (it uses Twitter for login).
-NOTE: If you create a new app and leave the callback url blank then datacouch will fail to authenticate. Twitter will respond with a 401 of "Desktop applications only support the oauth_callback value 'oob'". Just enter "http://localhost" as your callback url.
+NOTE: If you create a new app and leave the callback url blank then datacouch will fail to authenticate. Twitter will respond with a 401 of "Desktop applications only support the oauth_callback value 'oob'". Just enter "http://127.0.0.1" as your callback url.
 
 Once your app is complete copy the consumer secret, key and couch url (with admin credentials) into your environment via `.bashrc`/`.bash_profile`:
 
