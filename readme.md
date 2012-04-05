@@ -67,4 +67,6 @@ Now you can start datacouch!
     node run.js
     open http://localhost:9999
 
-if you get errors the first time you run `run.js` just run it a few times and it should work itself out hehehehe!
+If you get errors the first time you run `run.js` just run it a few times and it should work itself out hehehehe!
+
+In case you get the "Error: listen EACCESS", you should either execute node run.js as root, or modifiy the default port in the file services/defaults.js (9999 works well)
