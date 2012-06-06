@@ -1,0 +1,97 @@
+<!DOCTYPE html> 
+<html> 
+<head> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>DataCouch</title>
+  
+  <link href="styles/styles.css" media="screen" rel="stylesheet" type="text/css" />
+  
+  <script src="script/jquery-1.6.1.min.js"></script>
+  <script src="script/jquery.mustache.js"></script>
+  <script src="script/crossfilter.js"></script>
+  <script src="script/d3.v2.js"></script>
+  <script src="script/underscore.js"></script>
+  <script src="script/request.js"></script>
+  <script src="script/dominode-filestream.js"></script>
+  <script src="script/bundle.js"></script>
+  <script src="script/application.js"></script>
+
+</head>
+<body> 
+  <div id="container">
+    <div class="header">
+      <div class="title">DataCouch</div>
+      <div class="subtitle"></div>
+      <div class="channel"></div>
+      <div id="navigation">
+       
+      </div>
+    </div>
+    
+    <div id="wrapper">
+    </div>
+    <div id="chart">
+    </div>
+  </div>
+  
+  <script type="text/mustache" class="uploadFormTemplate">
+    <strong>Pick a CSV, any CSV:</strong><br />
+    <input type="file" id="file" />
+    <input id="upload" type="button" value="Load file" />
+  </script>
+  
+  <script type="text/mustache" class="navTemplate">
+   {{#token}}
+      <div class="toggle profile">
+        <div class="navitem">
+          <a href="/me">Profile</a>
+        </div>
+      </div>
+    {{/token}}
+    <div class="toggle home">
+      <div class="navitem">
+        {{#token}}
+          <a href="/logout">Logout</a>
+        {{/token}}
+        {{^token}}
+          <a href="/githuboauth">Login with GitHub</a>
+        {{/token}}
+      </div>
+    </div>
+  </script>
+  
+  <script type='text/mustache' class="dataTableTemplate">
+    <table class="data-table" cellspacing="0">
+      <tbody>
+        <tr>
+          {{#headers}}
+            <td class="column-header">
+              <div class="column-header-title">
+                <span class="column-header-name slim">{{header}}</span>
+              </div>
+            </td>
+          {{/headers}}
+        </tr>
+        {{#rows}}
+          <tr data-id="{{id}}">
+            {{#cells}}
+            <td data-header="{{header}}" class="{{state}}">
+              <div class="data-table-cell-content {{state}}">
+                <div class="data-table-cell-value {{state}}">{{value}}</div>
+              </div>
+            </td>
+            {{/cells}}
+          </tr>
+        {{/rows}}
+      </tbody>
+    </table>
+  </script>
+  
+  <script type='text/mustache' class="chartTemplate">
+    <div data-key="{{key}}" class="chart">
+      <div class="title">{{key}}</div>
+    </div>
+  </script>
+  
+</body> 
+</html>
