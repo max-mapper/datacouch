@@ -29,6 +29,21 @@
 /* Common styles
 -------------------------------------------------------------------------------*/
 
+
+svg {
+  font: 10px sans-serif;
+}
+
+line.bin {
+  stroke: #000;
+  stroke-width: 3px;
+}
+
+.axis path, .axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
 #document .author { display: none }
 
 html {
@@ -78,29 +93,24 @@ h1 {
 }
 h2 { font-size: 120%; padding-bottom: 15px; }
 
-svg {
-  display: block;
-}
-
-path {
-  fill:#F0F1EB;
-  stroke: #000;
-  stroke-width: .5px;
-}
-
-circle {
-  fill: #ccc;
-  stroke: #000;
-  display: none;
-  pointer-events: none;
-}
-
-
 /* Common styles
 -------------------------------------------------------------------------------*/
 
 #container { width: 1100px; margin: auto; }
 
+#dataviz { position: relative; }
+
+#chart {
+  position: relative;
+  left: 40px;
+}
+
+#y_axis {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 40px;
+}
 
 div {
   -moz-transition-duration: 1s;
