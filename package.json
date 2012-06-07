@@ -15,11 +15,11 @@
     "underscore",
     "flatdb"
   ],
-  "version": "0.0.1-61",
+  "version": "0.0.1-64",
   "scripts": {
     "start": "app.js"
   },
   "engines": {
-    "node": "v0.6.18"
+    "node": "v0.6.x"
   }
 }
