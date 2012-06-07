@@ -1,7 +1,25 @@
 {
   "name": "datacouch",
-  "version": "0.0.0",
-  "dependencies": {
-    "tako": "0.3.0"
+  "subdomain": "data",
+  "domains": [
+    "datacouch.com",
+    "burritomap.com"
+  ],
+  "bundleDependencies": [
+    "async",
+    "gist",
+    "request",
+    "tako",
+    "filed",
+    "mapleTree",
+    "underscore",
+    "flatdb"
+  ],
+  "version": "0.0.1-61",
+  "scripts": {
+    "start": "app.js"
+  },
+  "engines": {
+    "node": "v0.6.18"
   }
 }

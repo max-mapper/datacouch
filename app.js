@@ -4,7 +4,7 @@ var filed = require('filed')
 var gist = require('gist')
 var request = require('request')
 var qs = require('querystring')
-var leveldb = require('leveldb')
+var flatdb = require('flatdb')
 var https = require('https')
 
 var htmldir = path.resolve(__dirname, 'attachments')
@@ -75,10 +75,10 @@ t.auth(function(req, resp, cb) {
   var token = extractToken(req)
   if (!token) return cb(null)
   getDB('users', function(err, db) {
-    db.get(token, function(err, data) {
+    db.find({token: token}, function(err, docs) {
       if (err) return cb(null)
-      if (!data) return cb(null)
-      cb(JSON.parse(data))
+      if (!docs || docs.length === 0) return cb(null)
+      cb(docs[0])
     })
   })
 })
@@ -89,7 +89,7 @@ function getProfile(token, cb) {
 
 function saveUser(token, resp) {
   getDB('users', function(err, db) {
-    db.put(token, JSON.stringify({token: token}), function(err) {
+    db.save({token: token}, function(err) {
       if (err) {
         resp.statusCode = 500
         return resp.end('error saving user')
@@ -104,8 +104,8 @@ function saveUser(token, resp) {
 function getDB(name, cb) {
   if (!t.dbs) t.dbs = {}
   if (t.dbs[name]) return cb(null, t.dbs[name])
-  leveldb.open(name + ".leveldb", { create_if_missing: true }, function(err, db) {
-    if (err) return cb(err)
+  var db = new flatdb(name)
+  db.on('connect', function() {
     t.dbs[name] = db
     cb(null, db)
   })
