@@ -52,8 +52,8 @@ function getProfile(cb) {
 function handleColumnHeaderClick(e) {
   var key = $(e.currentTarget).find('.column-header-name').text()
   createDimensions(key)
-  app.dimensions[key].filterRange([0,1000000])
-  var group = app.dimensions[key + " group"]
+  var group = app.dimensions[key].group
+  console.log(group.all())
   var xmax = 0, ymax = 0
   var data = _.map(group.all(), function(g) {
     if (g.key > ymax) ymax = g.key
@@ -108,8 +108,34 @@ function handleColumnHeaderClick(e) {
 }
 
 function createDimensions(key) {
-  app.dimensions[key] = app.crossfilter.dimension(function (d) { return +(d[key]) })
-  app.dimensions[key + " group"] = app.dimensions[key].group(Math.floor)
+  var asc = app.crossfilter.dimension(function (d) { return +(d[key]) })
+  var desc = app.crossfilter.dimension(function (d) { return -1 * (+(d[key])) })
+  var sorter = new BucketSort(+(desc.top(1)[0][key]), +(asc.top(1)[0][key]), 100)
+  var buckets = app.crossfilter.dimension(function (d) {
+    return sorter.getBucket(+d[key])
+  })
+  var group = buckets.group()
+  app.dimensions[key] = {
+    asc: asc,
+    desc: desc,
+    buckets: buckets,
+    group: group
+  }
+}
+
+function BucketSort(min, max, size) {
+  var me = this
+  var step = (max - min) / size
+  me.buckets = []
+  _.times(size, function() {
+    me.buckets.push(min)
+    min += step
+  })
+}
+
+BucketSort.prototype.getBucket = function(value) {
+  var idx = _.sortedIndex(this.buckets, value)
+  return this.buckets[idx]
 }
 
 function handleCSVUpload() {

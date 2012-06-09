@@ -963,17 +963,17 @@ require.define("fs", function (require, module, exports, __dirname, __filename) 
 
 });
 
-require.define("/package.json", function (require, module, exports, __dirname, __filename) {
+require.define("/node_modules/csv/package.json", function (require, module, exports, __dirname, __filename) {
 module.exports = {}
 });
 
-require.define("/index.js", function (require, module, exports, __dirname, __filename) {
+require.define("/node_modules/csv/index.js", function (require, module, exports, __dirname, __filename) {
 
 module.exports = require('./lib/csv');
 
 });
 
-require.define("csv", function (require, module, exports, __dirname, __filename) {
+require.define("/node_modules/csv/lib/csv.js", function (require, module, exports, __dirname, __filename) {
 // Module CSV - Copyright David Worms <open@adaltas.com> (BSD Licensed)
 
 var EventEmitter = require('events').EventEmitter,
@@ -1419,6 +1419,143 @@ module.exports = function(){
     }
     
     return csv;
+};
+
+});
+
+require.define("/node_modules/lump/package.json", function (require, module, exports, __dirname, __filename) {
+module.exports = {"main":"index.js"}
+});
+
+require.define("/node_modules/lump/index.js", function (require, module, exports, __dirname, __filename) {
+var Stream = require('stream');
+var util = require('util');
+var pathway = require('pathway');
+
+exports = module.exports = function (opts, size, path) {
+    if (size === undefined) {
+        // everything in opts
+    }
+    else if (Array.isArray(size)) {
+        opts = { data : opts, path : size };
+    }
+    else {
+        opts = { data : opts, size : size, path : path };
+    }
+    
+    var data = opts.path ? pathway(opts.data, opts.path) : opts.data;
+    return computeLumps(data, opts.size);
+};
+
+exports.stream = function (opts) {
+    return new Lump(opts);
+};
+
+function Lump (opts, path) {
+    if (!opts) opts = {};
+    if (typeof opts === 'number') opts = { size : opts };
+    if (!opts.size) throw new Error('required parameter "size" not given');
+    
+    this.writable = true;
+    this.size = opts.size;
+    this.path = path || opts.path || [];
+    this.data = [];
+}
+
+util.inherits(Lump, Stream);
+
+Lump.prototype.lumps = function () {
+    return computeLumps(this.data, this.size);
+};
+
+Lump.prototype.write = function (obj) {
+    var self = this;
+    var xs = pathway(obj, self.path);
+    self.data.push.apply(self.data, xs);
+};
+
+Lump.prototype.end = function () {
+    this.emit('end');
+};
+
+function computeLumps (data, size) {
+    var min = Math.min.apply(null, data);
+    var max = Math.max.apply(null, data);
+    var step = (max - min) / size;
+    
+    var lumps = [];
+    var sorted = data.sort();
+    var ix = 0;
+    
+    for (var x = min; x < max; x += step) {
+        var lump = { min : x, max : x + step, count : 0 };
+        for (; sorted[ix] < x + step; ix++) {
+            lump.count ++;
+        }
+        lumps.push(lump);
+    }
+    return lumps;
+}
+
+});
+
+require.define("/node_modules/lump/node_modules/pathway/package.json", function (require, module, exports, __dirname, __filename) {
+module.exports = {"main":"index.js"}
+});
+
+require.define("/node_modules/lump/node_modules/pathway/index.js", function (require, module, exports, __dirname, __filename) {
+var concatMap = require('concat-map');
+
+module.exports = function pathway (obj, path) {
+    return path.reduce(function (nodes, p, ip) {
+        if (typeof p === 'function') {
+            return withFilter(nodes, p)
+        }
+        else if (typeof p === 'boolean') {
+            return withFilter(nodes, function () { return p });
+        }
+        else if (isRegExp(p)) {
+            return withFilter(nodes, function (key) { return p.test(key) })
+        }
+        else {
+            return concatMap(nodes, function (node, ix) {
+                if (!node[p]) return [];
+                return [ node[p] ];
+            })
+        }
+    }, [ obj ]);
+};
+
+function withFilter (nodes, fn) {
+    return concatMap(nodes, function (node) {
+        if (typeof node !== 'object') return [];
+        
+        return Object.keys(node)
+            .filter(function (key) { return fn(key, node[key]) })
+            .map(function (key) { return node[key] })
+        ;
+    });
+}
+
+function isRegExp (x) {
+    return Object.prototype.toString.call(x) === '[object RegExp]';
+}
+
+});
+
+require.define("/node_modules/lump/node_modules/pathway/node_modules/concat-map/package.json", function (require, module, exports, __dirname, __filename) {
+module.exports = {"main":"index.js"}
+});
+
+require.define("/node_modules/lump/node_modules/pathway/node_modules/concat-map/index.js", function (require, module, exports, __dirname, __filename) {
+module.exports = function (xs, fn) {
+    var res = [];
+    for (var i = 0; i < xs.length; i++) {
+        var x = fn(xs[i], i);
+        if (Array.isArray(x)) res.push.apply(res, x);
+        else res.push(x);
+    }
+    return res;
 };
 
 });
