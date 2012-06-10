@@ -15,7 +15,7 @@
     "underscore",
     "flatdb"
   ],
-  "version": "0.0.1-64",
+  "version": "0.0.1-66",
   "scripts": {
     "start": "app.js"
   },

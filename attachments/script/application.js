@@ -115,6 +115,7 @@ function createDimensions(key) {
     return sorter.getBucket(+d[key])
   })
   var group = buckets.group()
+  buckets.filterRange([0,999999])
   app.dimensions[key] = {
     asc: asc,
     desc: desc,
@@ -193,6 +194,12 @@ function parseCSV(fileStream) {
     })
 }
 
+function updateDocs(func) {
+  app.rows = _.map(app.rows, func)
+  renderDataTable(app.rows.slice(0, 9))
+  app.crossfilter = crossfilter(app.rows)
+}
+
 $(function() {
   app.on('csv', function(rows) {
     app.rows = rows
@@ -205,5 +212,14 @@ $(function() {
     render('nav', '#navigation', profile)
     render('uploadForm', '#wrapper')
     $('#upload').click(handleCSVUpload)
+  })
+  
+  $('textarea').val("function(doc) {\n  \n  return doc;\n}");  
+  
+  $('.transformButton').click(function(e) {
+    e.preventDefault()
+    eval("var func = " + $('textarea').val())
+    updateDocs(func)
+    return false
   })
 })
