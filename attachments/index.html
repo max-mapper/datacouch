@@ -5,12 +5,12 @@
   <title>DataCouch</title>
   
   <link href="styles/styles.css" media="screen" rel="stylesheet" type="text/css" />
+  <link href="styles/boxplot.css" media="screen" rel="stylesheet" type="text/css" />
   
   <script src="script/jquery-1.6.1.min.js"></script>
   <script src="script/jquery.mustache.js"></script>
   <script src="script/crossfilter.js"></script>
-  <script src="script/d3.min.js"></script>
-  <script src="script/d3.layout.min.js"></script>
+  <script src="script/d3.v2.js"></script>
   <script src="script/underscore.js"></script>
   <script src="script/request.js"></script>
   <script src="script/dominode-filestream.js"></script>
@@ -32,9 +32,10 @@
     <p>DataCouch is currently being rewritten. <a href="http://github.com/maxogden/datacouch">Stay tuned</a></p>
     
     <div id="wrapper"></div>
-    <textarea></textarea><input class="transformButton" type="button" value="dooooo it"></input>
+    <textarea></textarea><input class="transformButton" type="button" value="transform documents"></input>
     <div id="dataviz">
-      <div id="chart"></div>
+      <div class="chart" id="boxplot"></div>
+      <div class="chart" id="histogram"></div>
     </div>
     
   </div>

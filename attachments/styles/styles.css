@@ -44,7 +44,10 @@ line.bin {
   stroke: #000;
   shape-rendering: crispEdges;
 }
+
 #document .author { display: none }
+
+.chart { float: left }
 
 html {
   margin: 0; padding: 0; 
@@ -156,7 +159,7 @@ div {
 #navigation .navitem { margin: 0px 10px }
 /* Main */
 
-#wrapper {  }
+#wrapper { overflow: scroll }
 
 .caption { font-style: italic; }
 
